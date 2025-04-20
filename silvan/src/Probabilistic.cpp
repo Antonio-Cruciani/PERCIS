@@ -84,6 +84,43 @@ Probabilistic::Probabilistic( const std::string &filename,const std::string &per
 }
 
 
+// Creates the graph for running the approximation algorithm using fixed sample size
+// For more information see the graph class.
+Probabilistic::Probabilistic( const std::string &filename,const std::string &percolation_name,const uint32_t sample_size, const bool uniform ,bool directed,const double verb ,  const std::string output_file_): Graph( filename,percolation_name, directed ), verbose(verb) {
+  approx = (double *) calloc( get_nn(), sizeof(double) );
+  approx_toadd = (double *) calloc( get_nn(), sizeof(double) );
+  time_bfs = (double *) calloc( omp_get_max_threads(), sizeof(double) );
+  time_comp_finished = (double *) calloc( omp_get_max_threads(), sizeof(double) );
+  time_critical = (double *) calloc( omp_get_max_threads(), sizeof(double) );
+  time_critical_round = (double *) calloc( omp_get_max_threads(), sizeof(double) );
+  time_mcera = (double *) calloc( omp_get_max_threads(), sizeof(double) );
+  emp_wimpy_vars = (double *) calloc( get_nn(), sizeof(double) );
+  for (uint32_t i = 0; i < get_nn(); i++) {
+      approx[i] = 0;
+      approx_toadd[i] = 0;
+      emp_wimpy_vars[i] = 0;
+  }
+  for(int i=0; i<omp_get_max_threads(); i++){
+    time_bfs[i] = 0.;
+    time_comp_finished[i] = 0.;
+    time_critical[i] = 0.;
+    time_critical_round[i] = 0.;
+    time_mcera[i] = 0.;
+  }
+  n_pairs = 0;
+  vis_edges = 0;
+  if (verbose > 0) {
+      print_data();
+  }
+  output_file = output_file_;
+  // mcrade
+  mcrade = (int64_t *) calloc( get_nn()*mctrials, sizeof(int64_t) );
+  partition_index = (int *) calloc( get_nn(), sizeof(int) );
+  mcrade_randgen = new Rand_gen( 2021 );
+  sup_bcest = 0.0;
+}
+
+
 double numsamplesboundfunction(double x_ , double rho, double delta_ , double eps_){
   double v_x = x_*(1.-x_);
   double arg_h = eps_/v_x;
@@ -492,6 +529,7 @@ void Probabilistic::one_round(Sp_sampler &sp_sampler) {
           // mcrade
           int* sigmas = 0;
           if(path_length > 0 && firstpass == false){
+
             uint64_t maxval_sigmas = 100000000;
             double maxval_half = (double)maxval_sigmas/2.;
             time_mcera[omp_get_thread_num()] -= get_time_sec();
@@ -502,6 +540,7 @@ void Probabilistic::one_round(Sp_sampler &sp_sampler) {
             }
             time_mcera[omp_get_thread_num()] += get_time_sec();
           }
+
           double one_over_num_paths = 1./(double)num_paths;
           /*for(uint32_t u:path){
             approx_toadd[u] += one_over_num_paths;
@@ -511,7 +550,7 @@ void Probabilistic::one_round(Sp_sampler &sp_sampler) {
               //approx[u]++;
               uint32_t u = elem_path.first;
               double appx_to_add_u = elem_path.second*one_over_num_paths;//approx_toadd[u];
-        
+
               if(appx_to_add_u > 0.){
                 //approx_toadd[u] = 0.;
                 approx[u] += appx_to_add_u;
@@ -527,11 +566,14 @@ void Probabilistic::one_round(Sp_sampler &sp_sampler) {
                   time_mcera[omp_get_thread_num()] += get_time_sec();
                 }
                 if(firstpass == true && !absolute){
+                  
                   if(approx_toadd[u] == 0 && approx[u] >= 3){
                     distinct_nodes_top_k += 1;
                     approx_toadd[u] = 1;
                   }
+
                 }
+
               if(approx[u] > sup_bcest){
                 sup_bcest = approx[u];
               }
@@ -791,6 +833,8 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,uint3
 
     // Step 2: compute percolation differences
     auto [total_sum, minus_sum] = percolation_differences(sorted_dict, percolation_states.size());
+    double d_max = compute_d_max(percolation_states.size(), percolation_states,minus_sum);
+    cout<<"d_max: "<<d_max<<endl;
     if (uniform){
       cout<<" Running the approximation algorithm using Uniform Sampling"<<endl;
     }else{
@@ -1157,6 +1201,143 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,uint3
     n_pairs += tau;
 }
 
+void Probabilistic::run_fixed_sample_size(uint32_t k, double delta, double err,uint32_t sample_size, bool uniform) {
+  this->absolute = (k == 0);
+  this->err = err;
+  this->delta = delta;
+  start_time = get_time_sec();
+  cout<<"Running fixed sample size algorithm "<<endl;
+  cout<<"Sample Size: "<<sample_size<<endl;
+
+  // Step 1: sort
+  auto sorted_dict = sort_percolation_states(percolation_states);
+
+  // Step 2: compute percolation differences
+  auto [total_sum, minus_sum] = percolation_differences(sorted_dict, percolation_states.size());
+  double d_max = compute_d_max(percolation_states.size(), percolation_states,minus_sum);
+  cout<<"d_max: "<<d_max<<endl;
+  if (uniform){
+    cout<<"Running the approximation algorithm using Uniform Sampling"<<endl;
+  }else{
+    cout<<"Running the approximation algorithm using Non-Uniform Sampling"<<endl;
+  }
+  
+  sup_bcest = 0;
+  sup_emp_wimpy_var = 0;
+  void_samples = 0;
+  sup_bcest_partition = (uint64_t*) calloc( 1 , sizeof(uint64_t) );
+  sup_empwvar_partition = (double*) calloc( 1 , sizeof(double) );
+  epsilon_partition = (double*) calloc( 1 , sizeof(double) );
+  max_mcera_partition = (int64_t*) calloc( mctrials*1 , sizeof(int64_t) );
+
+  *time_bfs = 0;
+  *time_critical = 0;
+  *time_critical_round = 0;
+  *time_mcera = 0;
+  void_samples = 0;
+  sp_lengths = (uint64_t *) malloc( (get_nn()+1)*sizeof(uint64_t) );
+  for( int i=0; i <= graph_diameter; i++ ){
+    sp_lengths[i] = 0;
+}
+  firstpass = false;
+ 
+  union_sample = get_nn();
+  // guess a first sample size according to what we computed in the first phase
+  this->top_k = new Ranking_list(union_sample);
+  this->k = 0;
+    delete(this->top_k);   
+    this->top_k = new Ranking_list(union_sample);
+    uint32_t v_mc_index;
+    for (uint32_t i = 0; i < get_nn(); i++) {
+        approx[i] = 0;
+        approx_toadd[i] = 0;
+        emp_wimpy_vars[i] = 0;
+        // mcrade
+        v_mc_index = i*mctrials;
+        for(uint32_t j = 0; j < mctrials; j++){
+          mcrade[v_mc_index+j] = 0;
+        }
+    }
+
+
+
+ 
+  // initialize the next at the first, it will be updated during iterations
+  last_output = get_time_sec();
+  second_phase_started = true;
+
+  // start second phase
+  cout << "Starting Sampling Phase... " << std::endl;
+  srand( SEED );
+  uint32_t *random_seed = (uint32_t *) malloc( omp_get_max_threads()*sizeof(uint32_t) );
+  for( int i=0; i < omp_get_max_threads(); i++ ){
+      random_seed[i] = rand();
+  }
+  omega = sample_size;
+  cout<<"Using "<< omp_get_max_threads()<<" Threads"<<endl;
+  double time_required_second_pass = get_time_sec();
+  uint32_t op_per_thread = sample_size / omp_get_max_threads()-1;
+  cout<<"Operation per Thread "<< op_per_thread<<endl;
+  n_pairs = 0;
+  #pragma omp parallel
+  {
+      Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform);
+      Status status(union_sample);
+      status.n_pairs = 0;
+      for (uint32_t i = 0; i <= op_per_thread; i++) {
+        one_round(sp_sampler);
+        double current_time = get_time_sec();
+
+        if (verbose > 0 && current_time - last_output > verbose) {
+          get_status (&status);
+          #pragma omp critical(print)
+          {
+              if (current_time - last_output > verbose) {
+                  last_output = current_time;
+                  print_status(&status);
+              }
+          }
+      }
+      }
+
+
+
+          
+      
+  }
+  std::cout << "out of sampling phase " << std::endl;
+  std::cout << "time for the sampling phase " << get_time_sec() - time_required_second_pass << std::endl;
+  std::cout << "void_samples sampling phase " << void_samples << " (" << (double)void_samples/(double)num_samples << ")" << std::endl;
+  std::cout << "sampled " << n_pairs << " pairs" << std::endl;
+
+
+
+  bool output_results = output_file.length() >= 1;
+
+  if(output_results){
+    std::ofstream output_file_str;
+    output_file_str.open(output_file);
+    if(!absolute){
+      for(uint32_t i=0; i < this->numresults_topk; i++){
+        uint64_t node_id = this->top_k->get(i);
+        double approx_node = this->top_k->get_value(i)/(double)num_samples;
+        output_file_str << node_id << ","<< approx_node << "\n";
+      }
+    }
+    else{
+        for(uint32_t i=0; i < get_nn(); i++){
+          uint64_t node_id = i;
+          double approx_node = approx[i]/(double)num_samples;
+          output_file_str << node_id << ","<< approx_node << "\n";
+        }
+    }
+    output_file_str.close();
+  }
+
+}
+
+
+
 std::vector<std::pair<int, double>> Probabilistic::sort_percolation_states(const std::vector<double>& percolation_states) {
   int n = percolation_states.size();
   std::vector<std::pair<int, double>> sorted;
@@ -1200,6 +1381,45 @@ Probabilistic::percolation_differences(const std::vector<std::pair<int, double>>
     }
 
     return {total_sum, minus_sum};
+}
+
+double Probabilistic::compute_d_max(int n, const std::vector<double>& X, const std::map<int, double>& minus_sum) {
+  std::vector<int> sorted_indices(n);
+  std::iota(sorted_indices.begin(), sorted_indices.end(), 0);
+
+  std::sort(sorted_indices.begin(), sorted_indices.end(),
+            [&X](int a, int b) { return X[a] < X[b]; });
+
+  std::vector<double> sorted_X(n);
+  for (int i = 0; i < n; ++i) {
+      sorted_X[i] = X[sorted_indices[i]];
+  }
+
+  std::vector<double> prefix_sum(n + 1, 0.0);
+  for (int i = 0; i < n; ++i) {
+      prefix_sum[i + 1] = prefix_sum[i] + sorted_X[i];
+  }
+
+  std::vector<double> Y(n, 0.0);
+  for (int i = 0; i < n; ++i) {
+      double left_sum = i * sorted_X[i] - prefix_sum[i];
+      double right_sum = (prefix_sum[n] - prefix_sum[i + 1]) - (n - i - 1) * sorted_X[i];
+      Y[sorted_indices[i]] = left_sum + right_sum;
+  }
+
+  double max_d = -1.0;
+
+  for (int v = 0; v < n; ++v) {
+      auto it = minus_sum.find(v);
+      if (it != minus_sum.end() && std::abs(it->second) > 1e-9) {
+          double val = 1.0 + Y[v] / it->second;
+          if (!std::isnan(val)) {
+              max_d = std::max(max_d, val);
+          }
+      }
+  }
+
+  return max_d;
 }
 
 

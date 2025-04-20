@@ -28,10 +28,13 @@ class Probabilistic : public Graph
 {
     public:
         Probabilistic( const std::string &filename,const std::string &percolation_name, const bool uniform ,bool directed = false,const double verb = 60, const double sampling_rate_ = 2.3, bool alpha_given_ = false, const double empirical_peeling_param_ = 2.0 , const bool enable_m_hat_ = true, const std::string output_file_ = "" );
+        Probabilistic( const std::string &filename,const std::string &percolation_name,const uint32_t sample_size, const bool uniform ,bool directed = false,const double verb = 60,  const std::string output_file_ = "" );
         virtual ~Probabilistic();
         void run(const uint32_t k, const double delta, const double err = 0,const bool uniform = false,
                  const uint32_t union_sample = 0,
                  const uint32_t start_factor = 100);
+        
+        void run_fixed_sample_size(uint32_t k, double delta, double err,uint32_t sample_size, bool uniform);
         inline double get_centrality(const uint32_t v) const {
             return (double) approx[v] / n_pairs;
         }
@@ -56,6 +59,7 @@ class Probabilistic : public Graph
         double computeRelBound(double bc_est , double delta , double rho , double m_samples , bool upper);
         std::tuple<double, std::map<int, double>> percolation_differences(const std::vector<std::pair<int, double>>& sorted_perc, int n);
         std::vector<std::pair<int, double>> sort_percolation_states(const std::vector<double>& percolation_states);
+        double compute_d_max(int n, const std::vector<double>& X, const std::map<int, double>& minus_sum);
 
         double delta;
         double err;
