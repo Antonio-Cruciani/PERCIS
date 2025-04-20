@@ -1,6 +1,11 @@
 #include "Sp_sampler.h"
 #include "Rand_gen.h"
 #include <iostream>
+#include <vector>
+#include <numeric> // for std::iota
+#include <algorithm>
+#include <random>
+#include <stdexcept>
 
 #define UNVISITED 0
 #define VISITED_U 1
@@ -10,23 +15,64 @@ using namespace std;
 
 // Instantiates an object, that samples from the graph g.
 // INPUT: g (a graphs), seed (the seed for the random sampler).
-Sp_sampler::Sp_sampler( const Graph *g, const uint32_t seed ) {
+Sp_sampler::Sp_sampler( const Graph *g, const uint32_t seed, const double sum_perc ,const bool uniform_sampling) {
     uint32_t n = g->get_nn();
     q = (uint32_t*) malloc( n*sizeof(uint32_t));
     ball_indicator = (uint32_t*) calloc( n, sizeof(uint32_t));
     dist = (uint32_t*) malloc( n*sizeof(uint32_t));
     uint32_t *max_deg = (uint32_t*) malloc( n*sizeof(uint32_t));
-
+    sampling_kernel = build_outgoing_weights(g->get_percolation_states());
+    uniform = uniform_sampling;
+    denominator_kernel = sum_perc;
+    percolation_states = g->get_percolation_states();
     for( uint32_t i=0; i<n; i++ ){
         max_deg[i] = max( g->degrees[i], g->in_degrees[i] );
     }
     pred = new Graph( n, max_deg);
     free(max_deg);
-
+   
     randgen = new Rand_gen( seed );
     n_paths = (uint64_t*) malloc( n*sizeof(uint64_t));
     this->g = g;
 }
+
+
+
+std::pair<int, int> weighted_sample_kappa(const std::vector<double>& X,const std::vector<double>& weights ,std::mt19937& rng) {
+    int n = X.size();
+    //std::vector<double> weights = build_outgoing_weights(X);
+  
+    // Step 1: Sample s ∝ outgoing mass
+    std::vector<int> valid_s;
+    std::vector<double> valid_weights;
+    for (int i = 0; i < n; ++i) {
+        if (weights[i] > 0) {
+            valid_s.push_back(i);
+            valid_weights.push_back(weights[i]);
+        }
+    }
+  
+    if (valid_s.empty()) {
+        throw std::runtime_error("No valid s with positive outgoing kernel mass.");
+    }
+  
+    std::discrete_distribution<int> dist_s(valid_weights.begin(), valid_weights.end());
+    int s = valid_s[dist_s(rng)];
+  
+    // Step 2: Sample z ≠ s ∝ max(0, X[s] - X[z])
+    std::vector<double> cond_weights(n, 0.0);
+    for (int z = 0; z < n; ++z) {
+        if (z != s) {
+            cond_weights[z] = std::max(0.0, X[s] - X[z]);
+        }
+    }
+  
+    std::discrete_distribution<int> dist_z(cond_weights.begin(), cond_weights.end());
+    int z = dist_z(rng);
+  
+    return {s, z};
+  }
+  
 
 // Returns a random node.
 inline uint32_t Sp_sampler::random_node() const {
@@ -38,7 +84,7 @@ inline uint32_t Sp_sampler::random_node() const {
 // in the path. The list of these vertices is not necessarily ordered.
 // We do not return the vector by reference, because the compiler optimizations
 // avoid to copy the whole vector before returning it.
-map<uint32_t, int>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_length , int &num_paths , double alpha_sp_sampling) {
+map<uint32_t, double>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_length , int &num_paths , double alpha_sp_sampling) {
     // Sample sp
     uint32_t end_q = 0;
     uint64_t tot_weight = 0, cur_edge = 0;
@@ -54,24 +100,35 @@ map<uint32_t, int>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_length 
     uint32_t start_u = 0, start_v = 1, end_u = 1, end_v = 2, start_cur, end_cur, *new_end_cur;
     uint32_t sum_degs_u = 0, sum_degs_v = 0, *sum_degs_cur;
     uint32_t neigh_num;
-
-    while (u == v) {
-        v = random_node();
+    std::random_device rd;
+    std::mt19937 rng(rd());
+    uint32_t source, target;
+    // to finish
+    if (uniform){
+        while (u == v) {
+            v = random_node();
+        }
+    }else{
+        std::tie(u, v) = weighted_sample_kappa(g->get_percolation_states(),sampling_kernel, rng);
+    }
+    if (percolation_states[u]<= percolation_states[v]){
+        return std::map<uint32_t,double>();//vector<uint32_t>();
     }
 
     bool guess_void = false;
     if(g->directed){
       if(g->cc[u] < g->cc[v]){
         guess_void = true;
-        return std::map<uint32_t,int>();//vector<uint32_t>();
+        return std::map<uint32_t,double>();//vector<uint32_t>();
       }
     }
     else{
       if(g->cc[u] != g->cc[v]){
         guess_void = true;
-        return std::map<uint32_t,int>();//vector<uint32_t>();
+        return std::map<uint32_t,double>();//vector<uint32_t>();
       }
     }
+    
 
     end_q = 2;
 
@@ -153,7 +210,7 @@ map<uint32_t, int>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_length 
           std::cout << "Error: guess void false, path.size() == 0 " << std::endl;
           std::cout << "   cc[u] " << g->cc[u] << " cc[v] " << g->cc[v] << std::endl;
         }
-        return std::map<uint32_t,int>();//vector<uint32_t>();
+        return std::map<uint32_t,double>();//vector<uint32_t>();
     }
 
     for (pair<uint32_t, uint32_t> p : sp_edges) {
@@ -168,7 +225,7 @@ map<uint32_t, int>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_length 
        num_paths_to_sample = alpha_sp_sampling*tot_weight;
     }
     num_paths = num_paths_to_sample;
-    std::map<uint32_t, int> path_map;
+    std::map<uint32_t, double> path_map;
     for(int j = 0; j<num_paths_to_sample; j++){
 
         random_edge = randgen->get_max(tot_weight);
@@ -190,8 +247,14 @@ map<uint32_t, int>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_length 
           std::cout << u << " ";
         }
         std::cout << std::endl;*/
+        source = u;
+        target = v;
         for(uint32_t u:path){
-          path_map[u] = path_map[u]+1;
+            if (uniform){
+                path_map[u] =  path_map[u] + 1.0*g->get_nn()*(g->get_nn()-1)* max(0.0,percolation_states[source]-percolation_states[target])/denominator_kernel;
+            }else{
+                path_map[u] = path_map[u]+1;
+            }
         }
 
     }
@@ -253,7 +316,7 @@ void Sp_sampler::backtrack_path( const uint32_t u, const uint32_t v, const uint3
 
     for ( uint32_t t=0; t<pred->get_deg(start); t++ ) {
         w = pred->get_adj(start)[t];
-        cur_pred += n_paths[v];
+        cur_pred += n_paths[w];
         if (cur_pred > random_pred) {
             break;
         }
@@ -280,6 +343,35 @@ void Sp_sampler::backtrack_all_paths( const uint32_t u, const uint32_t v, const 
     }
 }
 
+std::vector<double> Sp_sampler::build_outgoing_weights(const std::vector<double>& X) {
+    int n = X.size();
+    vector<int> sorted_indices(n);
+    std::iota(sorted_indices.begin(), sorted_indices.end(), 0);
+  
+    // sort indices based on X values
+    std::sort(sorted_indices.begin(), sorted_indices.end(),
+              [&](int a, int b) { return X[a] < X[b]; });
+  
+    std::vector<double> sorted_X(n);
+    for (int i = 0; i < n; ++i) {
+        sorted_X[i] = X[sorted_indices[i]];
+    }
+  
+    std::vector<double> prefix_sum(n);
+    std::partial_sum(sorted_X.begin(), sorted_X.end(), prefix_sum.begin());
+  
+    std::vector<double> weights(n, 0.0);
+    for (int rank = 0; rank < n; ++rank) {
+        int s = sorted_indices[rank];
+        double x_s = sorted_X[rank];
+  
+        // Left: sum_{z: X[z] < X[s]} max(0, x_s - x_z)
+        weights[s] += rank * x_s - (rank > 0 ? prefix_sum[rank - 1] : 0.0);
+    }
+  
+    return weights;
+  }
+  
 Sp_sampler::~Sp_sampler()
 {
     free(q);

@@ -22,13 +22,15 @@ double verb = 60;
 double delta;
 double err;
 char *graph_file;
+char *percolation_file;
+
 std::string output_file;
 int64_t k = 0;
 double sampling_rate = 2.3;
 bool alpha_given = false;
 double empirical_peeling_param = 2.0;
 bool m_hat_enabled = true;
-
+bool uniform = false;
 // mcrade
 int num_mc = 10;
 
@@ -37,10 +39,11 @@ int num_mc = 10;
  */
 void usage(const char *binary_name) {
     std::cerr << binary_name
-        << ": compute betweenness centrality approximations for all nodes"
+        << ": compute percolation centrality approximations for all nodes"
         << std::endl;
-    std::cerr << "USAGE: " << binary_name << " [-dhm] [-v verbosity] [-k k_value] [-o output] [-a a_emp_peeling] [-s alpha] epsilon delta graph"
+    std::cerr << "USAGE: " << binary_name << " [-udhm] [-u uniform sampling] [-v verbosity] [-k k_value] [-o output] [-a a_emp_peeling] [-s alpha] epsilon delta percolation_states graph"
         << std::endl;
+    std::cerr << "\t-u: use uniform sampling for the approximation" << std::endl;
     std::cerr << "\t-d: consider the graph as directed" << std::endl;
     std::cerr << "\t-k: compute the top-k betweenness centralities (if 0, compute all of them with absolute error) " << std::endl;
     std::cerr << "\t-h: print this help message" << std::endl;
@@ -51,6 +54,7 @@ void usage(const char *binary_name) {
     std::cerr << "\t-m: disable the computation of m_hat" << std::endl;
     std::cerr << "\terr: accuracy (0 < epsilon < 1), relative accuracy if k > 0" << std::endl;
     std::cerr << "\tdelta: confidence (0 < delta < 1)" << std::endl;
+    std::cerr << "\tpercolation states file" << std::endl;
     std::cerr << "\tgraph: graph edge list file" << std::endl;
 }
 
@@ -60,8 +64,12 @@ void usage(const char *binary_name) {
  */
 int parse_command_line(int& argc, char *argv[]) {
     int opt;
-    while ((opt = getopt(argc, argv, "dhmk:o:s:a:v:")) != -1) {
+    while ((opt = getopt(argc, argv, "udhmk:o:s:a:v:")) != -1) {
         switch (opt) {
+        case 'u':
+            uniform = true;
+            cout<<"Selected Uniform Sampling"<<endl;
+            break;
         case 'd':
             directed = true;
             break;
@@ -109,6 +117,30 @@ int parse_command_line(int& argc, char *argv[]) {
         }
     }
 
+
+    if (optind != argc - 4) {
+        std::cerr << ERROR_HEADER << "Wrong number of arguments" << std::endl;
+        return 1;
+    } else {
+        err = std::strtod(argv[argc - 4], NULL);
+        if (errno == ERANGE || err >= 1.0 || err <= 0.0) {
+            std::cerr << ERROR_HEADER <<
+                "The error err should be greater than 0 and smaller than 1"
+                << std::endl;
+            return 1;
+        }
+        delta = std::strtod(argv[argc - 3], NULL);
+        if (errno == ERANGE || delta >= 1.0 || delta <= 0.0) {
+            std::cerr << ERROR_HEADER <<
+                "Delta should be greater than 0 and smaller than 1"
+                << std::endl;
+            return 1;
+        }
+        percolation_file = argv[argc - 2];
+        graph_file = argv[argc - 1];
+    }
+    
+    /*
     if (optind != argc - 3) {
         std::cerr << ERROR_HEADER << "Wrong number of arguments" << std::endl;
         return 1;
@@ -134,8 +166,11 @@ int parse_command_line(int& argc, char *argv[]) {
           std::cerr << "Problems with input graph file" << std::endl;
           return 1;
         }
+        percolation_file = argv[argc - 2];
+        
+        
     }
-
+    */
     return 0;
 }
 
@@ -146,9 +181,8 @@ int main(int argc, char *argv[]){
         usage(argv[0]);
         return correct_parse!=2;
     }
-
-    Probabilistic G( graph_file, directed, verb , sampling_rate , alpha_given , empirical_peeling_param , m_hat_enabled , output_file);
-    G.run((uint32_t) k, delta, err);
+    Probabilistic G( graph_file,percolation_file, uniform, directed, verb , sampling_rate , alpha_given , empirical_peeling_param , m_hat_enabled , output_file);
+    G.run((uint32_t) k, delta, err,uniform);
     std::cout << "run finished" << std::endl;
     return 0;
 }

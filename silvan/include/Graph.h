@@ -9,12 +9,16 @@ class Graph
 {
     public:
         Graph( const uint32_t nodes_num, const uint32_t *maxdegs );
-        Graph( const std::string &filename, const bool directed=false );
+        Graph( const std::string &filename,const std::string &percolation_name, const bool directed=false );
         inline uint32_t get_nn() const {
             return nodes_num;
         }
         const inline uint64_t get_ne(){
             return edges_num;
+        }
+ 
+        const std::vector<double>& get_percolation_states() const {
+            return percolation_states;
         }
         virtual ~Graph();
         void add_edge(const uint32_t, const uint32_t);
@@ -34,6 +38,7 @@ class Graph
         bool directed;
         uint32_t estimate_diameter();
         uint32_t *cc;
+        std::vector<double> percolation_states;
         void compute_cc();
         void print_data();
     protected:

@@ -7,10 +7,17 @@
 #include <cfloat>
 #include <omp.h>
 #include <fstream>
+#include <vector>
+#include <numeric> // for std::iota
+#include <algorithm>
+#include <random>
+#include <stdexcept>
 
 #include "utilities.h"
 #include "Probabilistic.h"
 #include "Sp_sampler.h"
+
+
 
 #define SEED 42
 
@@ -38,7 +45,7 @@ Status::~Status() {
 
 // Creates the graph for running the approximation algorithm.
 // For more information see the graph class.
-Probabilistic::Probabilistic( const std::string &filename, const bool directed, const double verb, const double sampling_rate_, const bool alpha_given_, const double empirical_peeling_param_ , const bool enable_m_hat_, const std::string output_file_ ): Graph( filename, directed ), verbose(verb) {
+Probabilistic::Probabilistic( const std::string &filename,const std::string &percolation_name, const bool uniform,const bool directed, const double verb, const double sampling_rate_, const bool alpha_given_, const double empirical_peeling_param_ , const bool enable_m_hat_, const std::string output_file_ ): Graph( filename,percolation_name, directed ), verbose(verb) {
     approx = (double *) calloc( get_nn(), sizeof(double) );
     approx_toadd = (double *) calloc( get_nn(), sizeof(double) );
     time_bfs = (double *) calloc( omp_get_max_threads(), sizeof(double) );
@@ -469,7 +476,7 @@ void Probabilistic::one_round(Sp_sampler &sp_sampler) {
     int path_length = 0;
     int num_paths = 0;
     time_bfs[omp_get_thread_num()] -= get_time_sec();
-    map<uint32_t, int>/*vector<uint32_t>*/ path = sp_sampler.random_path(path_length , num_paths , alpha_sp_sampling);
+    map<uint32_t, double>/*vector<uint32_t>*/ path = sp_sampler.random_path(path_length , num_paths , alpha_sp_sampling);
     time_bfs[omp_get_thread_num()] += get_time_sec();
 
 
@@ -504,6 +511,7 @@ void Probabilistic::one_round(Sp_sampler &sp_sampler) {
               //approx[u]++;
               uint32_t u = elem_path.first;
               double appx_to_add_u = elem_path.second*one_over_num_paths;//approx_toadd[u];
+        
               if(appx_to_add_u > 0.){
                 //approx_toadd[u] = 0.;
                 approx[u] += appx_to_add_u;
@@ -772,11 +780,22 @@ double Probabilistic::getUpperBoundAvgDiameter(double delta , bool verbose){
 // are approximated with absolute error); delta is the probabilistic guarantee; err is the
 // maximum error allowed; union_sample and start_factor are parameters of the algorithm
 // that are automatically chosen.
-void Probabilistic::run(uint32_t k, double delta, double err, uint32_t union_sample, uint32_t start_factor) {
+void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,uint32_t union_sample, uint32_t start_factor) {
     this->absolute = (k == 0);
     this->err = err;
     this->delta = delta;
     start_time = get_time_sec();
+
+    // Step 1: sort
+    auto sorted_dict = sort_percolation_states(percolation_states);
+
+    // Step 2: compute percolation differences
+    auto [total_sum, minus_sum] = percolation_differences(sorted_dict, percolation_states.size());
+    if (uniform){
+      cout<<" Running the approximation algorithm using Uniform Sampling"<<endl;
+    }else{
+      cout<<" Running the approximation algorithm using Non-Uniform Sampling"<<endl;
+    }
     graph_diameter = estimate_diameter();
     //omp_set_num_threads(64);
     std::cout << "estimated diameter of the graph: " << graph_diameter << std::endl;
@@ -824,7 +843,7 @@ void Probabilistic::run(uint32_t k, double delta, double err, uint32_t union_sam
     bool stop_first_pass = false;
     #pragma omp parallel
     {
-        Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] );
+        Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform);
         while( !stop_first_pass ) {
             for (int i = 0; i <= samples_per_step; i++) {
                 one_round(sp_sampler);
@@ -1053,7 +1072,7 @@ void Probabilistic::run(uint32_t k, double delta, double err, uint32_t union_sam
 
     #pragma omp parallel
     {
-        Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] );
+        Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform);
         Status status(union_sample);
         status.n_pairs = 0;
 
@@ -1137,6 +1156,54 @@ void Probabilistic::run(uint32_t k, double delta, double err, uint32_t union_sam
 
     n_pairs += tau;
 }
+
+std::vector<std::pair<int, double>> Probabilistic::sort_percolation_states(const std::vector<double>& percolation_states) {
+  int n = percolation_states.size();
+  std::vector<std::pair<int, double>> sorted;
+
+  for (int i = 0; i < n; ++i) {
+      sorted.emplace_back(i, percolation_states[i]);
+  }
+
+  std::sort(sorted.begin(), sorted.end(), [](const auto& a, const auto& b) {
+      return a.second < b.second;
+  });
+
+  return sorted;
+}
+
+std::tuple<double, std::map<int, double>>
+Probabilistic::percolation_differences(const std::vector<std::pair<int, double>>& sorted_perc, int n) {
+    std::vector<double> svp(n + 1, 0.0);
+    std::map<int, double> minus_sum;
+    double total_sum = 0.0;
+
+    int j = 0;
+    double k = 0.0;
+
+    // First pass: compute svp and total_sum
+    for (const auto& [key, value] : sorted_perc) {
+        if (j > 0) {
+            svp[j + 1] = svp[j] + k;
+            total_sum += j * value - svp[j + 1];
+        }
+        k = value;
+        ++j;
+    }
+    svp[n] += k;
+
+    // Second pass: compute minus_sum
+    j = 0;
+    for (const auto& [key, value] : sorted_perc) {
+        minus_sum[key] = total_sum - value * (2 * j - n) - svp[n] + 2 * svp[j + 1];
+        ++j;
+    }
+
+    return {total_sum, minus_sum};
+}
+
+
+
 
 // Destructor of the class Probabilistic.
 Probabilistic::~Probabilistic() {

@@ -6,7 +6,12 @@
 #include <math.h>
 #include "Graph.h"
 #include <limits.h>
-
+#include <vector>
+#include <numeric> // for std::iota
+#include <algorithm>
+#include <random>
+#include <stdexcept>
+#include <string>
 using namespace std;
 
 // Creates an empty graph.
@@ -18,6 +23,8 @@ Graph::Graph( const uint32_t nodes_num, const uint32_t *maxdegs ) {
     adj = (uint32_t **) malloc( nodes_num * sizeof(uint32_t *) );
     degrees = (uint32_t *) malloc( nodes_num * sizeof(uint32_t ) );
     cc = (uint32_t *) malloc( nodes_num * sizeof(uint32_t ) );
+    vector<double> percolation_states(nodes_num);
+    std::iota(percolation_states.begin(), percolation_states.end(), 0.0);
     inc = NULL;
     in_degrees = NULL;
 
@@ -34,14 +41,15 @@ Graph::Graph( const uint32_t nodes_num, const uint32_t *maxdegs ) {
 // integer values per line which are the two endpoints of the edge).
 // Multiple edges and self-loops are ignored.
 // This is the main costructor.
-Graph::Graph( const string &graph_path, const bool directed ) : directed(directed)
+// In addition loads the percolation states
+Graph::Graph( const string &graph_path,const string &percolation_states_path, const bool directed ) : directed(directed)
 {
     vector< set< uint32_t > > pre_adj(0);
     vector< set< uint32_t > > pre_inc(0);
     ifstream fin(graph_path);
     uint32_t u=0, v=0;
     string line;
-
+    cout<<" Reding graph"<<endl;
     while( getline(fin, line) ){
         if( line[0] != '#' ){
             sscanf( line.c_str(), "%u %u", &u, &v );
@@ -86,7 +94,28 @@ Graph::Graph( const string &graph_path, const bool directed ) : directed(directe
             in_degrees[i] = j;
        }
     }
+    cout<<" Reding states"<<endl;
+
     cc = (uint32_t *) malloc( nodes_num * sizeof(uint32_t ) );
+    // Loading percolation states
+    percolation_states.resize(nodes_num);
+    ifstream fin_perc(percolation_states_path);
+    uint32_t i = 0;
+    double p_u = 0.0;
+    while( getline(fin_perc, line) ){
+        if( line[0] != '#' ){
+            sscanf( line.c_str(), "%lf", &p_u );
+            percolation_states[i] = p_u;
+            i++;           
+        }
+    }
+    if (i != nodes_num){
+        cout<< "Mismatch in number of nodes and length of the percolation states!!! "<<endl;
+        cout<< "Nodes: "<<nodes_num<<endl;
+        cout<< "Length P. states: "<<i<<endl;
+    }
+    cout<<" done"<<endl;
+
 }
 
 // Prints some data about the graph.
@@ -98,6 +127,21 @@ void Graph::print_data() {
     }
     cout << "Number of nodes: " << get_nn() << endl;
     cout << "Number of edges: " << get_ne() << endl;
+
+    double min_val = *std::min_element(percolation_states.begin(), percolation_states.end());
+
+    // Maximum
+    double max_val = *std::max_element(percolation_states.begin(), percolation_states.end());
+
+    // Average
+    double sum = std::accumulate(percolation_states.begin(), percolation_states.end(), 0.0);
+    double avg = sum / percolation_states.size();
+    cout << "Maximum Percolation State: "<<max_val<<endl;
+    cout << "Minimum Percolation State: "<<min_val<<endl;
+    cout << "Average Percolation State: "<<avg<<endl;
+
+
+
 }
 
 // Computes the (strongly) connected components of the input graph.
