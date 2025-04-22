@@ -1,2 +1,2 @@
 build:
-	g++ -fopenmp -std=c++11 -Ofast -Wall -g -Iinclude main.cpp src/* -lm -o silvan
+	g++ -fopenmp -std=c++17 -Ofast -Wall -g -Iinclude main.cpp src/* -lm -o silvan
