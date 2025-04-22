@@ -6,23 +6,24 @@
 #include <algorithm>
 #include <random>
 #include <stdexcept>
+#include <cassert>
 //#include <cmath>
-
+using namespace std;
 #define UNVISITED 0
 #define VISITED_U 1
 #define VISITED_V 2
 
-using namespace std;
+
 
 // Instantiates an object, that samples from the graph g.
 // INPUT: g (a graphs), seed (the seed for the random sampler).
-Sp_sampler::Sp_sampler( const Graph *g, const uint32_t seed, const double sum_perc ,const bool uniform_sampling) {
+Sp_sampler::Sp_sampler( const Graph *g, const uint32_t seed, const double sum_perc ,const bool uniform_sampling,const vector<double>& weights) {
     uint32_t n = g->get_nn();
     q = (uint32_t*) malloc( n*sizeof(uint32_t));
     ball_indicator = (uint32_t*) calloc( n, sizeof(uint32_t));
     dist = (uint32_t*) malloc( n*sizeof(uint32_t));
     uint32_t *max_deg = (uint32_t*) malloc( n*sizeof(uint32_t));
-    sampling_kernel = build_outgoing_weights(g->get_percolation_states());
+    sampling_kernel = weights;
     uniform = uniform_sampling;
     denominator_kernel = sum_perc;
     percolation_states = g->get_percolation_states();
@@ -35,6 +36,7 @@ Sp_sampler::Sp_sampler( const Graph *g, const uint32_t seed, const double sum_pe
     randgen = new Rand_gen( seed );
     n_paths = (uint64_t*) malloc( n*sizeof(uint64_t));
     this->g = g;
+    //sorted_X = X;
 }
 
 
@@ -111,6 +113,12 @@ map<uint32_t, double>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_leng
         }
     }else{
         std::tie(u, v) = weighted_sample_kappa(g->get_percolation_states(),sampling_kernel, rng);
+        /*
+        for (size_t i = 1; i < sorted_X.size(); ++i) {
+            assert(sorted_X[i-1] >= sorted_X[i]); // or <= depending on expected sort
+          }
+        std::tie(u,v) = non_uniform_sampling(sorted_X,sampling_kernel, rng);
+        */
     }
     if (percolation_states[u]<= percolation_states[v]){
         return std::map<uint32_t,double>();//vector<uint32_t>();
@@ -344,39 +352,70 @@ void Sp_sampler::backtrack_all_paths( const uint32_t u, const uint32_t v, const 
     }
 }
 
-std::vector<double> Sp_sampler::build_outgoing_weights(const std::vector<double>& X) {
-    int n = X.size();
-    vector<int> sorted_indices(n);
-    std::iota(sorted_indices.begin(), sorted_indices.end(), 0);
-  
-    // sort indices based on X values
-    std::sort(sorted_indices.begin(), sorted_indices.end(),
-              [&](int a, int b) { return X[a] < X[b]; });
-  
-    std::vector<double> sorted_X(n);
-    for (int i = 0; i < n; ++i) {
-        sorted_X[i] = X[sorted_indices[i]];
-    }
-  
-    std::vector<double> prefix_sum(n);
-    std::partial_sum(sorted_X.begin(), sorted_X.end(), prefix_sum.begin());
-  
-    std::vector<double> weights(n, 0.0);
-    for (int rank = 0; rank < n; ++rank) {
-        int s = sorted_indices[rank];
-        double x_s = sorted_X[rank];
-  
-        // Left: sum_{z: X[z] < X[s]} max(0, x_s - x_z)
-        weights[s] += rank * x_s - (rank > 0 ? prefix_sum[rank - 1] : 0.0);
-    }
-  
-    return weights;
-  }
-/*
-  This is the optimized sampler. We could precompute w,c,r once before the sampling phase and then each thread has only to run the bynary search.
 
-  
-  std::vector<std::pair<int, int>> NonUnifSampling(const std::vector<double>& X, int ell, std::mt19937& rng) {
+std::pair<int, int> Sp_sampler::non_uniform_sampling(const std::vector<double>& X, const SamplingPreprocessing& preproc, std::mt19937& rng) {
+    int n = X.size();
+    
+    for (size_t i = 1; i < X.size(); ++i) {
+        if (X[i - 1] < X[i]) {
+            std::cerr << "X not sorted: X[" << i-1 << "] = " << X[i-1]
+                      << ", X[" << i << "] = " << X[i] << std::endl;
+        } // or <= depending on expected sort
+      }
+    //std::vector<std::pair<int, int>> S;
+    std::uniform_real_distribution<double> dist(0.0, 1.0);
+
+    //for (int it = 0; it < ell; ++it) {
+    // Sample s
+    int a = 1, b = n;
+    //int d = (int)std::ceil((a + b) / 2.0);
+    int d = a + (b - a) / 2;
+    double u = dist(rng);
+    
+    while (a < b) {
+        double k = (preproc.total_c - preproc.r[d + 1]) / preproc.total_c;
+        if (u <= k) {
+            b = d;
+        } else {
+            a = d + 1;
+        }
+        //d = (int)std::ceil((a + b) / 2.0);
+        d = a + (b - a) / 2;
+    }
+
+    int s = b;
+
+    // Sample t given s
+    a = s;
+    b = n;
+    //d = (int)std::ceil((a + b) / 2.0);
+    d = a + (b - a) / 2;
+    u = dist(rng);
+
+    while (a < b) {
+        double numerator = (d - s + 1) * X[s - 1] - preproc.w[s] + preproc.w[d + 1];
+        double denominator = (n - s + 1) * X[s - 1] - preproc.w[s];
+        double k = numerator / denominator;
+
+        if (u <= k) {
+            b = d;
+        } else {
+            a = d + 1;
+        }
+        //d = (int)std::ceil((a + b) / 2.0);
+        d = a + (b - a) / 2;
+
+    }
+
+    int t = b;
+    //S.emplace_back(s - 1, t - 1); // shift back to 0-based indexing
+    //}
+
+    return {s-1,t-1};// shift back to 0-based indexing
+}
+
+/*
+  std::vector<std::pair<int, int>> Sp_sampler::NonUnifSampling(const std::vector<double>& X, int ell, std::mt19937& rng) {
     int n = X.size();
     std::vector<double> w(n + 2, 0.0);
     std::vector<double> c(n + 2, 0.0);
@@ -437,8 +476,8 @@ std::vector<double> Sp_sampler::build_outgoing_weights(const std::vector<double>
 
     return S;
 }
-
 */
+
   
 Sp_sampler::~Sp_sampler()
 {

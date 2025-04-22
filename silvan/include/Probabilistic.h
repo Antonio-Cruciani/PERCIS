@@ -8,6 +8,7 @@
 #include "Ranking_list.h"
 #include "Rand_gen.h"
 #include "Sp_sampler.h"
+#include "SamplingPreprocessing.h"
 
 class Status {
     public:
@@ -60,6 +61,8 @@ class Probabilistic : public Graph
         std::tuple<double, std::map<int, double>> percolation_differences(const std::vector<std::pair<int, double>>& sorted_perc, int n);
         std::vector<std::pair<int, double>> sort_percolation_states(const std::vector<double>& percolation_states);
         double compute_d_max(int n, const std::vector<double>& X, const std::map<int, double>& minus_sum);
+        std::vector<double> build_outgoing_weights(const std::vector<double>& X);
+        SamplingPreprocessing compute_sampling_preprocessing(const std::vector<double>& X);
 
         double delta;
         double err;
@@ -113,6 +116,9 @@ class Probabilistic : public Graph
         std::map<int, int> partitions_ids_map;
         std::string output_file;
         uint32_t numresults_topk;
+        // Kernel used for the non uniform sampling
+        std::vector<double> sampling_kernel;
+        //SamplingPreprocessing sampling_kernel;
 };
 
 

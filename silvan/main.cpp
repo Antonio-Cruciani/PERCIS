@@ -43,7 +43,7 @@ void usage(const char *binary_name) {
     std::cerr << binary_name
         << ": compute percolation centrality approximations for all nodes"
         << std::endl;
-    std::cerr << "USAGE: " << binary_name << " [-fudhm] [-f fixed sample size] [-u uniform sampling] [-v verbosity] [-k k_value] [-o output] [-a a_emp_peeling] [-s alpha] [-g sample_size] epsilon delta percolation_states graph"
+    std::cerr << "USAGE: " << binary_name << " [-fudhm] [-f fixed sample size] [-u uniform sampling] [-v verbosity] [-k k_value] [-o output] [-a a_emp_peeling] [-s alpha]  [-g sample_size] epsilon delta percolation_states graph"
         << std::endl;
     std::cerr << "\t-f: run fixed sample size" << std::endl;
     std::cerr << "\t-u: use uniform sampling for the approximation" << std::endl;

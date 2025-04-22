@@ -12,7 +12,7 @@
 #include <algorithm>
 #include <random>
 #include <stdexcept>
-
+#include <cassert>
 #include "utilities.h"
 #include "Probabilistic.h"
 #include "Sp_sampler.h"
@@ -73,14 +73,16 @@ Probabilistic::Probabilistic( const std::string &filename,const std::string &per
     }
     output_file = output_file_;
     // mcrade
-    mcrade = (int64_t *) calloc( get_nn()*mctrials, sizeof(int64_t) );
-    partition_index = (int *) calloc( get_nn(), sizeof(int) );
-    mcrade_randgen = new Rand_gen( 2021 );
+    //mcrade = (int64_t *) calloc( get_nn()*mctrials, sizeof(int64_t) );
+    //partition_index = (int *) calloc( get_nn(), sizeof(int) );
+    //mcrade_randgen = new Rand_gen( 2021 );
     sup_bcest = 0.0;
     alpha_sp_given = alpha_given_;
     alpha_sp_sampling = sampling_rate_;
-    empirical_peeling_a = empirical_peeling_param_;
+    //empirical_peeling_a = empirical_peeling_param_;
     enable_m_hat = enable_m_hat_;
+    //sampling_kernel = compute_sampling_preprocessing(get_percolation_states());
+
 }
 
 
@@ -114,10 +116,12 @@ Probabilistic::Probabilistic( const std::string &filename,const std::string &per
   }
   output_file = output_file_;
   // mcrade
-  mcrade = (int64_t *) calloc( get_nn()*mctrials, sizeof(int64_t) );
-  partition_index = (int *) calloc( get_nn(), sizeof(int) );
+  //mcrade = (int64_t *) calloc( get_nn()*mctrials, sizeof(int64_t) );
+  //partition_index = (int *) calloc( get_nn(), sizeof(int) );
   mcrade_randgen = new Rand_gen( 2021 );
   sup_bcest = 0.0;
+  //sampling_kernel =  compute_sampling_preprocessing(get_percolation_states());
+
 }
 
 
@@ -527,9 +531,9 @@ void Probabilistic::one_round(Sp_sampler &sp_sampler) {
           num_samples++;
 
           // mcrade
-          int* sigmas = 0;
+          //int* sigmas = 0;
           if(path_length > 0 && firstpass == false){
-
+            /*
             uint64_t maxval_sigmas = 100000000;
             double maxval_half = (double)maxval_sigmas/2.;
             time_mcera[omp_get_thread_num()] -= get_time_sec();
@@ -539,6 +543,7 @@ void Probabilistic::one_round(Sp_sampler &sp_sampler) {
               //std::cout << "sigmas[j] " << sigmas[j] << std::endl;
             }
             time_mcera[omp_get_thread_num()] += get_time_sec();
+            */
           }
 
           double one_over_num_paths = 1./(double)num_paths;
@@ -556,6 +561,7 @@ void Probabilistic::one_round(Sp_sampler &sp_sampler) {
                 approx[u] += appx_to_add_u;
                 emp_wimpy_vars[u] += pow(appx_to_add_u,2.);
                 top_k->put(u, approx[u]);
+                /*
                 if(firstpass == false){
                   // mcrade
                   time_mcera[omp_get_thread_num()] -= get_time_sec();
@@ -565,6 +571,7 @@ void Probabilistic::one_round(Sp_sampler &sp_sampler) {
                   }
                   time_mcera[omp_get_thread_num()] += get_time_sec();
                 }
+                */
                 if(firstpass == true && !absolute){
                   
                   if(approx_toadd[u] == 0 && approx[u] >= 3){
@@ -585,12 +592,13 @@ void Probabilistic::one_round(Sp_sampler &sp_sampler) {
           }
           void_samples += path_length == 0;
           sp_lengths[path_length] += 1;
-
+          /*
           if(path_length > 0 && firstpass == false){
             time_mcera[omp_get_thread_num()] -= get_time_sec();
             free(sigmas);
             time_mcera[omp_get_thread_num()] += get_time_sec();
           }
+          */
       }
     }
     else{
@@ -834,12 +842,24 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,uint3
     // Step 2: compute percolation differences
     auto [total_sum, minus_sum] = percolation_differences(sorted_dict, percolation_states.size());
     double d_max = compute_d_max(percolation_states.size(), percolation_states,minus_sum);
+
     cout<<"d_max: "<<d_max<<endl;
     if (uniform){
-      cout<<" Running the approximation algorithm using Uniform Sampling"<<endl;
+      cout<<"Running the approximation algorithm using Uniform Sampling"<<endl;
     }else{
-      cout<<" Running the approximation algorithm using Non-Uniform Sampling"<<endl;
+      cout<<"Running the approximation algorithm using Non-Uniform Sampling"<<endl;
     }
+    std::vector<double> weights = build_outgoing_weights(percolation_states);
+    /*
+    std::vector<double> sorted_X = percolation_states;
+    sort(sorted_X.begin(), sorted_X.end(), [](double a, double b) {
+        return a > b;  // sort in non-increasing order
+    });
+    for (size_t i = 1; i < sorted_X.size(); ++i) {
+      assert(sorted_X[i-1] >= sorted_X[i]); // or <= depending on expected sort
+    }
+    SamplingPreprocessing preprocessed_weights = compute_sampling_preprocessing(sorted_X);
+    */
     graph_diameter = estimate_diameter();
     //omp_set_num_threads(64);
     std::cout << "estimated diameter of the graph: " << graph_diameter << std::endl;
@@ -887,7 +907,7 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,uint3
     bool stop_first_pass = false;
     #pragma omp parallel
     {
-        Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform);
+        Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,weights);
         while( !stop_first_pass ) {
             for (int i = 0; i <= samples_per_step; i++) {
                 one_round(sp_sampler);
@@ -913,6 +933,7 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,uint3
     // empirical peeling
 
     //int max_num_partitions = (int)(log((double)num_samples)/log(empirical_peeling_a)+1);
+    /*
     number_of_non_empty_partitions = 0;
     map<int, int> non_empty_partitions;
     for (uint32_t i = 0; i < get_nn(); i++) {
@@ -955,6 +976,8 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,uint3
     *time_critical = 0;
     *time_critical_round = 0;
     *time_mcera = 0;
+    */
+    *time_critical_round = 0;
 
     std::cout << "time for first pass " << get_time_sec() - start_time << std::endl;
     std::cout << "void_samples first pass " << void_samples << std::endl;
@@ -1014,16 +1037,18 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,uint3
     }
     delete(this->top_k);
     this->top_k = new Ranking_list(union_sample);
-    uint32_t v_mc_index;
+    //uint32_t v_mc_index;
     for (uint32_t i = 0; i < get_nn(); i++) {
         approx[i] = 0;
         approx_toadd[i] = 0;
         emp_wimpy_vars[i] = 0;
         // mcrade
+        /*
         v_mc_index = i*mctrials;
         for(uint32_t j = 0; j < mctrials; j++){
           mcrade[v_mc_index+j] = 0;
         }
+        */
     }
     sup_bcest = 0;
     omega = pow(10.,15);
@@ -1031,7 +1056,7 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,uint3
       omega = max_num_samples;
     }
 
-
+    /*
     // guess a first sample size according to what we computed in the first phase
     first_stopping_samples = 0;//2./err/err*( highest_freq*log(2./delta) );
     double eps_guess = 1.;
@@ -1082,6 +1107,7 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,uint3
         }
       }
     }
+    */
 
 
 
@@ -1116,7 +1142,7 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,uint3
 
     #pragma omp parallel
     {
-        Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform);
+        Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,weights);
         Status status(union_sample);
         status.n_pairs = 0;
 
@@ -1133,21 +1159,23 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,uint3
               }
             }
             // check stopping condition for mcrade
-            if (!stop_mcrade && num_samples < last_stopping_samples && num_samples >= next_stopping_samples) {
-                get_status (&status);
-                #pragma omp critical(stopcond)
-                {
-                    if (!stop_mcrade  && num_samples < last_stopping_samples && num_samples >= next_stopping_samples) {
-                        stop_mcrade = compute_finished_mcrade(&status);
-                        if(stop_mcrade){
-                          std::cout << "/* stop_mcrade is true */" << std::endl;
-                        }
-                        else{
-                          next_stopping_samples = get_next_stopping_sample();
-                        }
-                    }
-                }
-            }
+            
+            //if (!stop_mcrade && num_samples < last_stopping_samples && num_samples >= next_stopping_samples) {
+            //    get_status (&status);
+            //    #pragma omp critical(stopcond)
+            //    {
+             //       if (!stop_mcrade  && num_samples < last_stopping_samples && num_samples >= next_stopping_samples) {
+             //           stop_mcrade = compute_finished_mcrade(&status);
+              //          if(stop_mcrade){
+               //           std::cout << "/* stop_mcrade is true */" << std::endl;
+               //         }
+               //         else{
+               //           next_stopping_samples = get_next_stopping_sample();
+               //         }
+               //     }
+               // }
+           // }
+            
 
             double current_time = get_time_sec();
 
@@ -1168,9 +1196,11 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,uint3
     std::cout << "void_samples second pass " << void_samples << " (" << (double)void_samples/(double)num_samples << ")" << std::endl;
 
     if (verbose > 0) {
+      /*
         if(!absolute){
           cout << "eps_final_topk " << eps_final_topk << std::endl;
         }
+          */
         Status status(union_sample);
         get_status(&status);
         print_status(&status, true);
@@ -1221,15 +1251,24 @@ void Probabilistic::run_fixed_sample_size(uint32_t k, double delta, double err,u
   }else{
     cout<<"Running the approximation algorithm using Non-Uniform Sampling"<<endl;
   }
-  
+  std::vector<double> weights = build_outgoing_weights(percolation_states);
+
+  /*
+  std::vector<double> sorted_X = percolation_states;
+  sort(sorted_X.begin(), sorted_X.end(), [](double a, double b) {
+      return a > b;  // sort in non-increasing order
+  });
+  SamplingPreprocessing preprocessed_weights = compute_sampling_preprocessing(percolation_states);
+  */
   sup_bcest = 0;
   sup_emp_wimpy_var = 0;
   void_samples = 0;
+  /*
   sup_bcest_partition = (uint64_t*) calloc( 1 , sizeof(uint64_t) );
   sup_empwvar_partition = (double*) calloc( 1 , sizeof(double) );
   epsilon_partition = (double*) calloc( 1 , sizeof(double) );
   max_mcera_partition = (int64_t*) calloc( mctrials*1 , sizeof(int64_t) );
-
+  */
   *time_bfs = 0;
   *time_critical = 0;
   *time_critical_round = 0;
@@ -1247,16 +1286,18 @@ void Probabilistic::run_fixed_sample_size(uint32_t k, double delta, double err,u
   this->k = 0;
     delete(this->top_k);   
     this->top_k = new Ranking_list(union_sample);
-    uint32_t v_mc_index;
+    //uint32_t v_mc_index;
     for (uint32_t i = 0; i < get_nn(); i++) {
         approx[i] = 0;
         approx_toadd[i] = 0;
         emp_wimpy_vars[i] = 0;
         // mcrade
+        /*
         v_mc_index = i*mctrials;
         for(uint32_t j = 0; j < mctrials; j++){
           mcrade[v_mc_index+j] = 0;
         }
+        */
     }
 
 
@@ -1281,7 +1322,7 @@ void Probabilistic::run_fixed_sample_size(uint32_t k, double delta, double err,u
   n_pairs = 0;
   #pragma omp parallel
   {
-      Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform);
+      Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,weights);
       Status status(union_sample);
       status.n_pairs = 0;
       for (uint32_t i = 0; i <= op_per_thread; i++) {
@@ -1422,6 +1463,57 @@ double Probabilistic::compute_d_max(int n, const std::vector<double>& X, const s
   return max_d;
 }
 
+std::vector<double> Probabilistic::build_outgoing_weights(const std::vector<double>& X) {
+  int n = X.size();
+  vector<int> sorted_indices(n);
+  std::iota(sorted_indices.begin(), sorted_indices.end(), 0);
+
+  // sort indices based on X values
+  std::sort(sorted_indices.begin(), sorted_indices.end(),
+            [&](int a, int b) { return X[a] < X[b]; });
+
+  std::vector<double> sorted_X(n);
+  for (int i = 0; i < n; ++i) {
+      sorted_X[i] = X[sorted_indices[i]];
+  }
+
+  std::vector<double> prefix_sum(n);
+  std::partial_sum(sorted_X.begin(), sorted_X.end(), prefix_sum.begin());
+
+  std::vector<double> weights(n, 0.0);
+  for (int rank = 0; rank < n; ++rank) {
+      int s = sorted_indices[rank];
+      double x_s = sorted_X[rank];
+
+      // Left: sum_{z: X[z] < X[s]} max(0, x_s - x_z)
+      weights[s] += rank * x_s - (rank > 0 ? prefix_sum[rank - 1] : 0.0);
+  }
+
+  return weights;
+}
+
+
+ //This is the optimized sampler. We could precompute w,c,r once before the sampling phase and then each thread has only to run the bynary search.
+ SamplingPreprocessing Probabilistic::compute_sampling_preprocessing(const std::vector<double>& X){
+  int n = X.size();
+  for (size_t i = 1; i < X.size(); ++i) {
+    assert(X[i-1] >= X[i]); // or <= depending on expected sort
+  }
+  SamplingPreprocessing result;
+  result.w.resize(n + 2, 0.0);
+  result.c.resize(n + 2, 0.0);
+  result.r.resize(n + 2, 0.0);
+  result.total_c = 0.0;
+
+  // Preprocessing: compute w, c, r
+  for (int i = n; i >= 1; --i) {
+      result.w[i] = result.w[i + 1] + X[i - 1];
+      result.c[i] = (n - i + 1) * X[i - 1] - result.w[i];
+      result.r[i] = result.r[i + 1] + result.c[i];
+      result.total_c += result.c[i];
+  }
+  return result;
+}
 
 
 
@@ -1430,13 +1522,13 @@ Probabilistic::~Probabilistic() {
     free(approx);
     delete(top_k);
     // mcrade
-    free(mcrade);
+    //free(mcrade);
     free(emp_wimpy_vars);
     delete(mcrade_randgen);
-    free(partition_index);
-    free(epsilon_partition);
-    free(sup_bcest_partition);
-    free(sup_empwvar_partition);
-    free(max_mcera_partition);
+    //free(partition_index);
+   // free(epsilon_partition);
+    //free(sup_bcest_partition);
+    //free(sup_empwvar_partition);
+    //free(max_mcera_partition);
     free(sp_lengths);
 }
