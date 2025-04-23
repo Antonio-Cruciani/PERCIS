@@ -45,7 +45,7 @@ Status::~Status() {
 
 // Creates the graph for running the approximation algorithm.
 // For more information see the graph class.
-Probabilistic::Probabilistic( const std::string &filename,const std::string &percolation_name, const bool uniform,const bool directed, const double verb, const double sampling_rate_, const bool alpha_given_, const double empirical_peeling_param_ , const bool enable_m_hat_, const std::string output_file_ ): Graph( filename,percolation_name, directed ), verbose(verb) {
+Probabilistic::Probabilistic( const std::string &filename,const std::string &percolation_name, const bool uniform,  bool optimized_samplig ,const bool directed, const double verb, const double sampling_rate_, const bool alpha_given_, const double empirical_peeling_param_ , const bool enable_m_hat_, const std::string output_file_ ): Graph( filename,percolation_name, directed ), verbose(verb) {
     approx = (double *) calloc( get_nn(), sizeof(double) );
     approx_toadd = (double *) calloc( get_nn(), sizeof(double) );
     time_bfs = (double *) calloc( omp_get_max_threads(), sizeof(double) );
@@ -88,7 +88,7 @@ Probabilistic::Probabilistic( const std::string &filename,const std::string &per
 
 // Creates the graph for running the approximation algorithm using fixed sample size
 // For more information see the graph class.
-Probabilistic::Probabilistic( const std::string &filename,const std::string &percolation_name,const uint32_t sample_size, const bool uniform ,bool directed,const double verb ,  const std::string output_file_): Graph( filename,percolation_name, directed ), verbose(verb) {
+Probabilistic::Probabilistic( const std::string &filename,const std::string &percolation_name,const uint32_t sample_size, const bool uniform , bool optimized_samplig ,bool directed,const double verb ,  const std::string output_file_): Graph( filename,percolation_name, directed ), verbose(verb) {
   approx = (double *) calloc( get_nn(), sizeof(double) );
   approx_toadd = (double *) calloc( get_nn(), sizeof(double) );
   time_bfs = (double *) calloc( omp_get_max_threads(), sizeof(double) );
@@ -830,7 +830,7 @@ double Probabilistic::getUpperBoundAvgDiameter(double delta , bool verbose){
 // are approximated with absolute error); delta is the probabilistic guarantee; err is the
 // maximum error allowed; union_sample and start_factor are parameters of the algorithm
 // that are automatically chosen.
-void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,uint32_t union_sample, uint32_t start_factor) {
+void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool optimized_sampling,uint32_t union_sample, uint32_t start_factor) {
     this->absolute = (k == 0);
     this->err = err;
     this->delta = delta;
@@ -849,8 +849,24 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,uint3
     }else{
       cout<<"Running the approximation algorithm using Non-Uniform Sampling"<<endl;
     }
+    double start_time_kernel = get_time_sec();
+    SamplingPreprocessing kernel;
+    if (optimized_sampling){
+      cout<<"Using the binary search-based non Uniform Sampler"<<endl;
+      kernel = preprocessing(get_percolation_states());
+      //kernel.optimized = true // By default is true
+    }else{
+      cout<<"Using the linear Non Uniform Sampler"<<endl;
+      kernel.weights = build_outgoing_weights(percolation_states);
+      kernel.optimized = false;
+
+      //std::vector<double> weights = build_outgoing_weights(percolation_states);
+    }
+    double finish_time_kernel = get_time_sec();
+    cout<<"Sampling Kernel Built in "<< finish_time_kernel - start_time_kernel<<" seconds "<<endl;
+
     //std::vector<double> weights = build_outgoing_weights(percolation_states);
-    SamplingPreprocessing kernel = preprocessing(get_percolation_states());
+    //SamplingPreprocessing kernel = preprocessing(get_percolation_states());
     
    
     //SamplingPreprocessing preprocessed_weights = compute_sampling_preprocessing(sorted_X);
@@ -1228,7 +1244,7 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,uint3
     n_pairs += tau;
 }
 
-void Probabilistic::run_fixed_sample_size(uint32_t k, double delta, double err,uint32_t sample_size, bool uniform) {
+void Probabilistic::run_fixed_sample_size(uint32_t k, double delta, double err,uint32_t sample_size, bool uniform,bool optimized_sampling) {
   this->absolute = (k == 0);
   this->err = err;
   this->delta = delta;
@@ -1249,9 +1265,23 @@ void Probabilistic::run_fixed_sample_size(uint32_t k, double delta, double err,u
     cout<<"Running the approximation algorithm using Non-Uniform Sampling"<<endl;
   }
   //std::vector<double> weights = build_outgoing_weights(percolation_states);
+  double start_time_kernel = get_time_sec();
+  SamplingPreprocessing kernel;
+  if (optimized_sampling){
+    cout<<"Using the binary search-based non Uniform Sampler"<<endl;
+    kernel = preprocessing(get_percolation_states());
+    //kernel.optimized = true // By default is true
+  }else{
+    cout<<"Using the linear Non Uniform Sampler"<<endl;
+    kernel.weights = build_outgoing_weights(percolation_states);
+    kernel.optimized = false;
 
-  
-  SamplingPreprocessing kernel = preprocessing(get_percolation_states());
+    //std::vector<double> weights = build_outgoing_weights(percolation_states);
+  }
+  //std::v
+  double finish_time_kernel = get_time_sec();
+  cout<<"Sampling Kernel Built in "<< finish_time_kernel - start_time_kernel<<" seconds "<<endl;
+  //SamplingPreprocessing kernel = preprocessing(get_percolation_states());
 
   sup_bcest = 0;
   sup_emp_wimpy_var = 0;
@@ -1262,39 +1292,46 @@ void Probabilistic::run_fixed_sample_size(uint32_t k, double delta, double err,u
   epsilon_partition = (double*) calloc( 1 , sizeof(double) );
   max_mcera_partition = (int64_t*) calloc( mctrials*1 , sizeof(int64_t) );
   */
+ cout<<"I am here 0"<<endl;
   *time_bfs = 0;
   *time_critical = 0;
   *time_critical_round = 0;
   *time_mcera = 0;
   void_samples = 0;
-  sp_lengths = (uint64_t *) malloc( (get_nn()+1)*sizeof(uint64_t) );
-  for( int i=0; i <= graph_diameter; i++ ){
-    sp_lengths[i] = 0;
-}
+  cout<<"I am here 0.5"<<endl;
+  sp_lengths = (uint64_t *) malloc( 1*sizeof(uint64_t) );
+  cout<<"I am here 0.6"<<endl;
+  
+
+cout<<"I am here 1"<<endl;
   firstpass = false;
  
   union_sample = get_nn();
   // guess a first sample size according to what we computed in the first phase
+  /*
   this->top_k = new Ranking_list(union_sample);
   this->k = 0;
-    delete(this->top_k);   
-    this->top_k = new Ranking_list(union_sample);
-    //uint32_t v_mc_index;
-    for (uint32_t i = 0; i < get_nn(); i++) {
-        approx[i] = 0;
-        approx_toadd[i] = 0;
-        emp_wimpy_vars[i] = 0;
-        // mcrade
-        /*
-        v_mc_index = i*mctrials;
-        for(uint32_t j = 0; j < mctrials; j++){
-          mcrade[v_mc_index+j] = 0;
-        }
-        */
-    }
+  delete(this->top_k);   
+  */
+  this->top_k = new Ranking_list(union_sample);
+  this->k = 0;
+
+  //uint32_t v_mc_index;
+  for (uint32_t i = 0; i < get_nn(); i++) {
+      approx[i] = 0;
+      approx_toadd[i] = 0;
+      emp_wimpy_vars[i] = 0;
+      // mcrade
+      /*
+      v_mc_index = i*mctrials;
+      for(uint32_t j = 0; j < mctrials; j++){
+        mcrade[v_mc_index+j] = 0;
+      }
+      */
+  }
 
 
-
+  cout<<"I am here 2 "<<endl;
  
   // initialize the next at the first, it will be updated during iterations
   last_output = get_time_sec();
@@ -1485,3 +1522,18 @@ std::vector<double> Probabilistic::build_outgoing_weights(const std::vector<doub
   return weights;
 }
 Probabilistic::~Probabilistic() = default;
+/*
+Probabilistic::~Probabilistic()
+{
+    free(approx);
+    free(approx_toadd);
+    free(time_bfs);
+    free(time_comp_finished);
+    free(time_critical);
+    free(time_mcera);
+    free(emp_wimpy_vars);
+    //delete(randgen);
+    //delete(pred);
+}
+
+*/

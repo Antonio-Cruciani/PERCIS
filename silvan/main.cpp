@@ -33,7 +33,7 @@ bool m_hat_enabled = true;
 bool uniform = false;
 // mcrade
 int num_mc = 10;
-
+bool optimized = true;
 bool fixed_ss = false;
 uint32_t sample_size;
 /**
@@ -43,7 +43,7 @@ void usage(const char *binary_name) {
     std::cerr << binary_name
         << ": compute percolation centrality approximations for all nodes"
         << std::endl;
-    std::cerr << "USAGE: " << binary_name << " [-fudhm] [-f fixed sample size] [-u uniform sampling] [-v verbosity] [-k k_value] [-o output] [-a a_emp_peeling] [-s alpha]  [-g sample_size] epsilon delta percolation_states graph"
+    std::cerr << "USAGE: " << binary_name << " [-fudhm] [-f fixed sample size] [-u uniform sampling] [-v verbosity] [-k k_value] [-o output] [-a a_emp_peeling] [-s alpha]  [-g sample_size] [-b linear_sampler] epsilon delta percolation_states graph"
         << std::endl;
     std::cerr << "\t-f: run fixed sample size" << std::endl;
     std::cerr << "\t-u: use uniform sampling for the approximation" << std::endl;
@@ -56,7 +56,7 @@ void usage(const char *binary_name) {
     std::cerr << "\t-s: parameter alpha for sampling shortest paths (def. = 2.3)" << std::endl;
     std::cerr << "\t-m: disable the computation of m_hat" << std::endl;
     std::cerr << "\t-g: sample size in case of fixed sample size" << std::endl;
-
+    std::cerr << "\t-b: use the linear time non uniform sampler" << std::endl;
     std::cerr << "\terr: accuracy (0 < epsilon < 1), relative accuracy if k > 0" << std::endl;
     std::cerr << "\tdelta: confidence (0 < delta < 1)" << std::endl;
     std::cerr << "\tpercolation states file" << std::endl;
@@ -69,8 +69,11 @@ void usage(const char *binary_name) {
  */
 int parse_command_line(int& argc, char *argv[]) {
     int opt;
-    while ((opt = getopt(argc, argv,"fudhmk:o:s:a:v:g:")) != -1) {
+    while ((opt = getopt(argc, argv,"bfudhmk:o:s:a:v:g:")) != -1) {
         switch (opt) {
+        case 'b':
+            optimized = false;
+            break;
         case 'f':
             fixed_ss = true;
             break;
@@ -200,11 +203,11 @@ int main(int argc, char *argv[]){
         return correct_parse!=2;
     }
     if (!fixed_ss){
-        Probabilistic G( graph_file,percolation_file, uniform, directed, verb , sampling_rate , alpha_given , empirical_peeling_param , m_hat_enabled , output_file);
-        G.run((uint32_t) k, delta, err,uniform);
+        Probabilistic G( graph_file,percolation_file, uniform,optimized, directed, verb , sampling_rate , alpha_given , empirical_peeling_param , m_hat_enabled , output_file);
+        G.run((uint32_t) k, delta, err,uniform,optimized);
     }else{
-        Probabilistic G( graph_file,percolation_file,sample_size, uniform,directed, verb , output_file);
-        G.run_fixed_sample_size(k,delta,err,sample_size,uniform);
+        Probabilistic G( graph_file,percolation_file,sample_size, uniform,optimized,directed, verb , output_file);
+        G.run_fixed_sample_size(k,delta,err,sample_size,uniform,optimized);
     }
     std::cout << "run finished" << std::endl;
     return 0;

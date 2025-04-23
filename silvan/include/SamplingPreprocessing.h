@@ -11,6 +11,9 @@ struct SamplingPreprocessing {
     double c_total;
     std::vector<double> X;
     std::vector<int> original_index_map;
+    //Weights is used in case on linear non uniform sampling
+    std::vector<double> weights;
+    bool optimized = true;
 };
 
 #endif // SAMPLING_PREPROCESSING_H
