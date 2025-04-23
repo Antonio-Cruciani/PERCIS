@@ -16,7 +16,7 @@
 #include "utilities.h"
 #include "Probabilistic.h"
 #include "Sp_sampler.h"
-
+#include "NonUniformSampler.h"
 
 
 #define SEED 42
@@ -850,17 +850,11 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,uint3
       cout<<"Running the approximation algorithm using Non-Uniform Sampling"<<endl;
     }
     //std::vector<double> weights = build_outgoing_weights(percolation_states);
+    SamplingPreprocessing kernel = preprocessing(get_percolation_states());
     
-    std::vector<double> sorted_X = percolation_states;
-    sort(sorted_X.begin(), sorted_X.end(), [](double a, double b) {
-        return a > b;  // sort in non-increasing order
-    });
-    this->sorted_X = sorted_X;
-    for (size_t i = 1; i < sorted_X.size(); ++i) {
-      assert(sorted_X[i-1] >= sorted_X[i]); // or <= depending on expected sort
-    }
+   
     //SamplingPreprocessing preprocessed_weights = compute_sampling_preprocessing(sorted_X);
-    this->sampling_kernel =  compute_sampling_preprocessing(sorted_X);
+    //this->sampling_kernel =  compute_sampling_preprocessing(sorted_X);
     graph_diameter = estimate_diameter();
     //omp_set_num_threads(64);
     std::cout << "estimated diameter of the graph: " << graph_diameter << std::endl;
@@ -909,7 +903,7 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,uint3
     #pragma omp parallel
     {
         //Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,weights);
-        Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,sampling_kernel,sorted_X);
+        Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,kernel);
         while( !stop_first_pass ) {
             for (int i = 0; i <= samples_per_step; i++) {
                 one_round(sp_sampler);
@@ -1145,7 +1139,7 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,uint3
     #pragma omp parallel
     {
         //Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,weights);
-        Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,sampling_kernel,sorted_X);
+        Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,kernel);
         Status status(union_sample);
         status.n_pairs = 0;
 
@@ -1257,13 +1251,8 @@ void Probabilistic::run_fixed_sample_size(uint32_t k, double delta, double err,u
   //std::vector<double> weights = build_outgoing_weights(percolation_states);
 
   
-  std::vector<double> sorted_X = percolation_states;
-  sort(sorted_X.begin(), sorted_X.end(), [](double a, double b) {
-      return a > b;  // sort in non-increasing order
-  });
-  this->sorted_X = sorted_X;
-  this->sampling_kernel = compute_sampling_preprocessing(percolation_states);
-  
+  SamplingPreprocessing kernel = preprocessing(get_percolation_states());
+
   sup_bcest = 0;
   sup_emp_wimpy_var = 0;
   void_samples = 0;
@@ -1326,7 +1315,7 @@ void Probabilistic::run_fixed_sample_size(uint32_t k, double delta, double err,u
   n_pairs = 0;
   #pragma omp parallel
   {
-      Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,sampling_kernel,sorted_X);
+      Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,kernel);
       Status status(union_sample);
       status.n_pairs = 0;
       for (uint32_t i = 0; i <= op_per_thread; i++) {
@@ -1495,45 +1484,4 @@ std::vector<double> Probabilistic::build_outgoing_weights(const std::vector<doub
 
   return weights;
 }
-
-
- //This is the optimized sampler. We could precompute w,c,r once before the sampling phase and then each thread has only to run the bynary search.
- SamplingPreprocessing Probabilistic::compute_sampling_preprocessing(const std::vector<double>& X){
-  int n = X.size();
-  for (size_t i = 1; i < X.size(); ++i) {
-    assert(X[i-1] >= X[i]); // or <= depending on expected sort
-  }
-  SamplingPreprocessing result;
-  result.w.resize(n + 2, 0.0);
-  result.c.resize(n + 2, 0.0);
-  result.r.resize(n + 2, 0.0);
-  result.total_c = 0.0;
-
-  // Preprocessing: compute w, c, r
-  for (int i = n; i >= 1; --i) {
-      result.w[i] = result.w[i + 1] + X[i - 1];
-      result.c[i] = (n - i + 1) * X[i - 1] - result.w[i];
-      result.r[i] = result.r[i + 1] + result.c[i];
-      result.total_c += result.c[i];
-  }
-  return result;
-}
-
-//SamplingPreprocessing Probabilistic::get_sampling_kernel(){return this->sampling_kernel;};
-//vector<double> Probabilistic::get_sorted_X(){return this->sorted_X;};
-
-// Destructor of the class Probabilistic.
-Probabilistic::~Probabilistic() {
-    free(approx);
-    delete(top_k);
-    // mcrade
-    //free(mcrade);
-    free(emp_wimpy_vars);
-    delete(mcrade_randgen);
-    //free(partition_index);
-   // free(epsilon_partition);
-    //free(sup_bcest_partition);
-    //free(sup_empwvar_partition);
-    //free(max_mcera_partition);
-    free(sp_lengths);
-}
+Probabilistic::~Probabilistic() = default;

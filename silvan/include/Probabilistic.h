@@ -9,6 +9,7 @@
 #include "Rand_gen.h"
 #include "Sp_sampler.h"
 #include "SamplingPreprocessing.h"
+#include "NonUniformSampler.h"
 
 class Status {
     public:
@@ -48,9 +49,7 @@ class Probabilistic : public Graph
         inline SamplingPreprocessing get_sampling_kernel() const{
             return sampling_kernel;
         };
-        inline std::vector<double> get_sorted_X() const {
-            return sorted_X;
-        };
+
         double verbose = 60;
     protected:
     private:
@@ -68,7 +67,7 @@ class Probabilistic : public Graph
         std::vector<std::pair<int, double>> sort_percolation_states(const std::vector<double>& percolation_states);
         double compute_d_max(int n, const std::vector<double>& X, const std::map<int, double>& minus_sum);
         std::vector<double> build_outgoing_weights(const std::vector<double>& X);
-        SamplingPreprocessing compute_sampling_preprocessing(const std::vector<double>& X);
+
        
 
         double delta;
@@ -126,7 +125,7 @@ class Probabilistic : public Graph
         // Kernel used for the non uniform sampling
         //std::vector<double> sampling_kernel;
         SamplingPreprocessing sampling_kernel;
-        std::vector<double> sorted_X;
+
 
 };
 

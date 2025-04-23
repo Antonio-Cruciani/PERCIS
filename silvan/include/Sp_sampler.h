@@ -9,11 +9,12 @@
 #include "Rand_gen.h"
 #include "Graph.h"
 #include "SamplingPreprocessing.h"
+#include "NonUniformSampler.h"
 
 class Sp_sampler
 {
     public:
-        Sp_sampler( const Graph *g, const uint32_t seed ,const double sum_perc, const bool uniform,const SamplingPreprocessing& sampling_kernel,std::vector<double>& sorted_X);
+        Sp_sampler( const Graph *g, const uint32_t seed ,const double sum_perc, const bool uniform,const SamplingPreprocessing& sampling_kernel);
         virtual ~Sp_sampler();
         std::map<uint32_t, double>/*vector<uint32_t>*/ random_path(int &path_length , int &num_paths , double alpha_sp_sampling);
         uint64_t vis_edges;
@@ -26,7 +27,6 @@ class Sp_sampler
         void backtrack_all_paths( const uint32_t u, const uint32_t v, const uint32_t start, std::vector<uint32_t> &path );
         inline uint32_t random_node() const;
         //std::vector<double> build_outgoing_weights(const std::vector<double>& X);
-        std::pair<int, int> non_uniform_sampling(const std::vector<double>& X, const SamplingPreprocessing& preproc, std::mt19937& rng);
         double denominator_kernel;
         Graph *pred;
         uint32_t *ball_indicator;
