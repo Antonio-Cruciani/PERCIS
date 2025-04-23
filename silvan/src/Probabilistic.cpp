@@ -1334,54 +1334,41 @@ void Probabilistic::run_fixed_sample_size(uint32_t k, double delta, double err,u
     second_phase_started = true;
     cout<<"Using "<< omp_get_max_threads()<<" Threads"<<endl;
     double time_required_second_pass = get_time_sec();
-    uint32_t op_per_thread = sample_size / omp_get_max_threads()-1;
-    cout<<"Operation per Thread "<< op_per_thread<<endl;
+    //uint32_t op_per_thread = sample_size / omp_get_max_threads()-1;
+    //cout<<"Operation per Thread "<< op_per_thread<<endl;
+    
     #pragma omp parallel
     {
-        //Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,weights);
-        Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,kernel);
-        Status status(union_sample);
-        status.n_pairs = 0;
+      int tid = omp_get_thread_num();
+      uint32_t base = sample_size / omp_get_num_threads();
+      uint32_t extra = sample_size % omp_get_num_threads();
+      auto m = min(static_cast<double>(tid), static_cast<double>(extra));
+      uint32_t from = tid * base + m;
+      uint32_t to = from + base + (tid < extra ? 1 : 0);
+  
+      Sp_sampler sp_sampler(this, random_seed[tid], total_sum, uniform, kernel);
+      Status status(union_sample);
+      status.n_pairs = 0;
+  
+      for (uint32_t i = from; i < to; ++i) {
+          one_round(sp_sampler);  // just do your job; no need to monitor num_samples
+      }
 
-        for (uint32_t i = 0; i <= op_per_thread; i++) {
-            one_round(sp_sampler);
-        }
+      double current_time = get_time_sec();
+      if (verbose > 0 && current_time - last_output > verbose) {
+          get_status(&status);
+          #pragma omp critical(print)
+          {
+              if (current_time - last_output > verbose) {
+                  last_output = current_time;
+                  print_status(&status);
+              }
+          }
+      }
 
-        // stop if enough samples have been processed
-     
-        // check stopping condition for mcrade
-        
-        //if (!stop_mcrade && num_samples < last_stopping_samples && num_samples >= next_stopping_samples) {
-        //    get_status (&status);
-        //    #pragma omp critical(stopcond)
-        //    {
-          //       if (!stop_mcrade  && num_samples < last_stopping_samples && num_samples >= next_stopping_samples) {
-          //           stop_mcrade = compute_finished_mcrade(&status);
-          //          if(stop_mcrade){
-            //           std::cout << "/* stop_mcrade is true */" << std::endl;
-            //         }
-            //         else{
-            //           next_stopping_samples = get_next_stopping_sample();
-            //         }
-            //     }
-            // }
-        // }
-        
 
-        double current_time = get_time_sec();
-
-        if (verbose > 0 && current_time - last_output > verbose) {
-            get_status (&status);
-            #pragma omp critical(print)
-            {
-                if (current_time - last_output > verbose) {
-                    last_output = current_time;
-                    print_status(&status);
-                }
-            }
-        }
-        
     }
+    
     cout << "out of the sampling phase " << std::endl;
     std::cout << "time for the sampling phase pass " << get_time_sec() - time_required_second_pass << std::endl;
     std::cout << "void_samples sampling phase " << void_samples << " (" << (double)void_samples/(double)num_samples << ")" << std::endl;
