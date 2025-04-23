@@ -17,13 +17,14 @@ using namespace std;
 
 // Instantiates an object, that samples from the graph g.
 // INPUT: g (a graphs), seed (the seed for the random sampler).
-Sp_sampler::Sp_sampler( const Graph *g, const uint32_t seed, const double sum_perc ,const bool uniform_sampling,const vector<double>& weights) {
+Sp_sampler::Sp_sampler( const Graph *g, const uint32_t seed, const double sum_perc ,const bool uniform_sampling, const SamplingPreprocessing& sampling_kernel,vector<double>& sorted_X) {
     uint32_t n = g->get_nn();
     q = (uint32_t*) malloc( n*sizeof(uint32_t));
     ball_indicator = (uint32_t*) calloc( n, sizeof(uint32_t));
     dist = (uint32_t*) malloc( n*sizeof(uint32_t));
     uint32_t *max_deg = (uint32_t*) malloc( n*sizeof(uint32_t));
-    sampling_kernel = weights;
+    this->sampling_kernel = sampling_kernel;
+    this->sorted_X = sorted_X;
     uniform = uniform_sampling;
     denominator_kernel = sum_perc;
     percolation_states = g->get_percolation_states();
@@ -36,7 +37,7 @@ Sp_sampler::Sp_sampler( const Graph *g, const uint32_t seed, const double sum_pe
     randgen = new Rand_gen( seed );
     n_paths = (uint64_t*) malloc( n*sizeof(uint64_t));
     this->g = g;
-    //sorted_X = X;
+    
 }
 
 
@@ -112,13 +113,13 @@ map<uint32_t, double>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_leng
             v = random_node();
         }
     }else{
-        std::tie(u, v) = weighted_sample_kappa(g->get_percolation_states(),sampling_kernel, rng);
-        /*
+        //std::tie(u, v) = weighted_sample_kappa(g->get_percolation_states(),sampling_kernel, rng);
+        
         for (size_t i = 1; i < sorted_X.size(); ++i) {
             assert(sorted_X[i-1] >= sorted_X[i]); // or <= depending on expected sort
           }
         std::tie(u,v) = non_uniform_sampling(sorted_X,sampling_kernel, rng);
-        */
+        
     }
     if (percolation_states[u]<= percolation_states[v]){
         return std::map<uint32_t,double>();//vector<uint32_t>();
@@ -396,6 +397,7 @@ std::pair<int, int> Sp_sampler::non_uniform_sampling(const std::vector<double>& 
         double numerator = (d - s + 1) * X[s - 1] - preproc.w[s] + preproc.w[d + 1];
         double denominator = (n - s + 1) * X[s - 1] - preproc.w[s];
         double k = numerator / denominator;
+        //double k = numerator / denominator;
 
         if (u <= k) {
             b = d;
@@ -410,7 +412,8 @@ std::pair<int, int> Sp_sampler::non_uniform_sampling(const std::vector<double>& 
     int t = b;
     //S.emplace_back(s - 1, t - 1); // shift back to 0-based indexing
     //}
-
+    cout<<"S 1 "<<(g->get_percolation_states())[s-1]<<" T 1 "<<(g->get_percolation_states())[t-1]<<"\n"<<endl;
+    
     return {s-1,t-1};// shift back to 0-based indexing
 }
 

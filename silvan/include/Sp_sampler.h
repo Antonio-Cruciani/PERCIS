@@ -13,12 +13,13 @@
 class Sp_sampler
 {
     public:
-        Sp_sampler( const Graph *g, const uint32_t seed ,const double sum_perc, const bool uniform, const std::vector<double>& weights);
+        Sp_sampler( const Graph *g, const uint32_t seed ,const double sum_perc, const bool uniform,const SamplingPreprocessing& sampling_kernel,std::vector<double>& sorted_X);
         virtual ~Sp_sampler();
         std::map<uint32_t, double>/*vector<uint32_t>*/ random_path(int &path_length , int &num_paths , double alpha_sp_sampling);
         uint64_t vis_edges;
         std::vector<double> percolation_states;
         std::vector<double> sorted_X;        //Sorted percolation states
+        SamplingPreprocessing sampling_kernel;
     protected:
     private:
         void backtrack_path( const uint32_t u, const uint32_t v, const uint32_t start, std::vector<uint32_t> &path );
@@ -33,7 +34,7 @@ class Sp_sampler
         uint32_t *q;
         uint64_t *n_paths;
         // Kernel used for the non uniform sampling
-        std::vector<double> sampling_kernel;
+        //std::vector<double> sampling_kernel;
         //SamplingPreprocessing sampling_kernel;
         bool uniform;
         Rand_gen *randgen;
