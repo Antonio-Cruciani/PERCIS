@@ -45,7 +45,7 @@ Status::~Status() {
 
 // Creates the graph for running the approximation algorithm.
 // For more information see the graph class.
-Probabilistic::Probabilistic( const std::string &filename,const std::string &percolation_name, const bool uniform,  bool optimized_samplig ,const bool directed, const double verb, const double sampling_rate_, const bool alpha_given_, const double empirical_peeling_param_ , const bool enable_m_hat_, const std::string output_file_ ): Graph( filename,percolation_name, directed ), verbose(verb) {
+Probabilistic::Probabilistic( const std::string &filename,const std::string &percolation_name, const bool uniform,  bool optimized_samplig ,const bool directed, const double verb, const double sampling_rate_, const bool alpha_given_, const double empirical_peeling_param_ , const bool enable_m_hat_,const bool vc_dim , const std::string output_file_ ): Graph( filename,percolation_name, directed ), verbose(verb) {
     approx = (double *) calloc( get_nn(), sizeof(double) );
     approx_toadd = (double *) calloc( get_nn(), sizeof(double) );
     time_bfs = (double *) calloc( omp_get_max_threads(), sizeof(double) );
@@ -88,7 +88,7 @@ Probabilistic::Probabilistic( const std::string &filename,const std::string &per
 
 // Creates the graph for running the approximation algorithm using fixed sample size
 // For more information see the graph class.
-Probabilistic::Probabilistic( const std::string &filename,const std::string &percolation_name,const uint32_t sample_size, const bool uniform , bool optimized_samplig ,bool directed,const double verb ,  const std::string output_file_): Graph( filename,percolation_name, directed ), verbose(verb) {
+Probabilistic::Probabilistic( const std::string &filename,const std::string &percolation_name,const uint32_t sample_size, const bool uniform , bool optimized_samplig ,bool directed,const double verb , const double sampling_rate_, const bool alpha_given_, const double empirical_peeling_param_ , const bool enable_m_hat_,  const std::string output_file_): Graph( filename,percolation_name, directed ), verbose(verb) {
   approx = (double *) calloc( get_nn(), sizeof(double) );
   approx_toadd = (double *) calloc( get_nn(), sizeof(double) );
   time_bfs = (double *) calloc( omp_get_max_threads(), sizeof(double) );
@@ -120,6 +120,10 @@ Probabilistic::Probabilistic( const std::string &filename,const std::string &per
   //partition_index = (int *) calloc( get_nn(), sizeof(int) );
   //mcrade_randgen = new Rand_gen( 2021 );
   sup_bcest = 0.0;
+  alpha_sp_given = alpha_given_;
+  alpha_sp_sampling = sampling_rate_;
+  //empirical_peeling_a = empirical_peeling_param_;
+  enable_m_hat = enable_m_hat_;
   //sampling_kernel =  compute_sampling_preprocessing(get_percolation_states());
 
 }
@@ -526,6 +530,7 @@ void Probabilistic::one_round(Sp_sampler &sp_sampler) {
     if(path_length > 0){
       #pragma omp critical
       {
+          //cout<<"Thread "<<omp_get_thread_num()<<" a lavoro"<<endl;
           n_pairs++;
           vis_edges += sp_sampler.vis_edges;
           num_samples++;
@@ -547,6 +552,7 @@ void Probabilistic::one_round(Sp_sampler &sp_sampler) {
           }
 
           double one_over_num_paths = 1./(double)num_paths;
+          //cout<<" number of paths "<<(double)num_paths<<endl;
           /*for(uint32_t u:path){
             approx_toadd[u] += one_over_num_paths;
           }*/
@@ -560,7 +566,7 @@ void Probabilistic::one_round(Sp_sampler &sp_sampler) {
                 //approx_toadd[u] = 0.;
                 approx[u] += appx_to_add_u;
                 emp_wimpy_vars[u] += pow(appx_to_add_u,2.);
-                top_k->put(u, approx[u]);
+                //top_k->put(u, approx[u]);
                 /*
                 if(firstpass == false){
                   // mcrade
@@ -588,6 +594,7 @@ void Probabilistic::one_round(Sp_sampler &sp_sampler) {
                 sup_emp_wimpy_var = emp_wimpy_vars[u];
               }
             }
+            //cout<<"Done 1 path"<<endl;
 
           }
           void_samples += path_length == 0;
@@ -599,6 +606,8 @@ void Probabilistic::one_round(Sp_sampler &sp_sampler) {
             time_mcera[omp_get_thread_num()] += get_time_sec();
           }
           */
+         //cout<<"Thread "<<omp_get_thread_num()<<" a libero"<<endl;
+
       }
     }
     else{
@@ -622,10 +631,11 @@ void Probabilistic::get_status (Status *status) const {
     #pragma omp critical
     {
         if (status != NULL) {
-            for(uint32_t i=0; i<union_sample; i++) {
-                status->top_k[i] = top_k->get(i);
-                status->approx_top_k[i] = approx[status->top_k[i]];
-            }
+
+            //for(uint32_t i=0; i<union_sample; i++) {
+                //status->top_k[i] = top_k->get(i);
+                //status->approx_top_k[i] = approx[status->top_k[i]];
+            //}
             status->n_pairs = n_pairs;
         }
     }
@@ -830,7 +840,7 @@ double Probabilistic::getUpperBoundAvgDiameter(double delta , bool verbose){
 // are approximated with absolute error); delta is the probabilistic guarantee; err is the
 // maximum error allowed; union_sample and start_factor are parameters of the algorithm
 // that are automatically chosen.
-void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool optimized_sampling,uint32_t union_sample, uint32_t start_factor) {
+void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool optimized_sampling,const bool vc_dim,uint32_t union_sample, uint32_t start_factor) {
     this->absolute = (k == 0);
     this->err = err;
     this->delta = delta;
@@ -876,8 +886,10 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool 
     std::cout << "estimated diameter of the graph: " << graph_diameter << std::endl;
     std::cout << "time for estimating diameter " << get_time_sec() - start_time << std::endl;
     uint32_t tau = max(1. / err * (log(1. / delta)) , 1000.);
-    tau = max((double)tau , 2 * graph_diameter * (log(1. / delta)) );
-    std::cout << "Starting first pass. Tentative number of samples: " << tau << std::endl;
+    if (!vc_dim){
+      tau = max((double)tau , 2 * graph_diameter * (log(1. / delta)) );
+      std::cout << "Starting first pass. Tentative number of samples: " << tau << std::endl;
+    }
     num_samples = 0;
     sup_bcest = 0;
     sup_emp_wimpy_var = 0;
@@ -902,7 +914,7 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool 
 
     last_output = get_time_sec();
     start_time = get_time_sec();
-    this->top_k = new Ranking_list(union_sample);
+    //this->top_k = new Ranking_list(union_sample);
     srand( SEED );
     uint32_t *random_seed = (uint32_t *) malloc( omp_get_max_threads()*sizeof(uint32_t) );
     for( int i=0; i < omp_get_max_threads(); i++ ){
@@ -914,33 +926,34 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool 
     int samples_per_step = 10;
 
     // first phase sampling
-
-    bool stop_first_pass = false;
-    #pragma omp parallel
-    {
-        //Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,weights);
-        Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,kernel);
-        while( !stop_first_pass ) {
-            for (int i = 0; i <= samples_per_step; i++) {
-                one_round(sp_sampler);
-            }
-            if( !stop_first_pass ){
-              #pragma omp critical(stop)
-              {
-                if(absolute){
-                  // check if sampled enough pairs
-                  stop_first_pass = n_pairs >= tau;
-                }
-                else{
-                  // check if at least k distinct nodes have been sampled
-                  stop_first_pass = distinct_nodes_top_k >= 1.5*k && n_pairs >= tau;
+    if (!vc_dim){
+      bool stop_first_pass = false;
+      #pragma omp parallel
+      {
+          //Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,weights);
+          Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,kernel);
+          while( !stop_first_pass ) {
+              for (int i = 0; i <= samples_per_step; i++) {
+                  one_round(sp_sampler);
+              }
+              if( !stop_first_pass ){
+                #pragma omp critical(stop)
+                {
+                  if(absolute){
+                    // check if sampled enough pairs
+                    stop_first_pass = n_pairs >= tau;
+                  }
+                  else{
+                    // check if at least k distinct nodes have been sampled
+                    stop_first_pass = distinct_nodes_top_k >= 1.5*k && n_pairs >= tau;
+                  }
                 }
               }
-            }
-        }
+          }
+      }
+      std::cout << "First pass finished after " << num_samples << " iteration" << std::endl;
     }
-
-    std::cout << "First pass finished after " << num_samples << " iteration" << std::endl;
+    
 
     // empirical peeling
 
@@ -1001,7 +1014,7 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool 
     double time_required_second_pass = get_time_sec();
 
     // for the absolute approximation, compute upper bound to number of samples
-    if(absolute){
+    if(absolute && !vc_dim){
 
       // compute upper bound on average shortest path length
       double avg_diam_upperbound = getUpperBoundAvgDiameter(delta/8. , true);
@@ -1029,7 +1042,7 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool 
 
       // number of samples with VC dim bound
       double VC_bound = 0.5 / err / err * (log2(graph_diameter-1) + 1 + log(2. / delta));
-
+   
       std::cout << "sup_bcest: " << sup_bcest/(double)num_samples << endl;
       std::cout << "sup_emp_wimpy_var: " << sup_emp_wimpy_var/(double)num_samples << std::endl;
       std::cout << "top1bc_upperbound: " << top1bc_upperbound << std::endl;
@@ -1038,17 +1051,25 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool 
       std::cout << "VC_bound: " << VC_bound << std::endl;
       std::cout << "alpha_sp_sampling: " << alpha_sp_sampling << std::endl;
     }
+    if (vc_dim){
+      double VC_bound = 0.5 / err / err * (log2(graph_diameter-1) + 1 + log(2. / delta));
 
+      max_num_samples = VC_bound;
+      std::cout<<"Using VC Bound: "<<max_num_samples<<endl;
+    }
     // reset variables for second pass
     iteration_index = 1;
     n_pairs = 0;
+    /*
     double est_kth_bc = 1.0;
+
     if(!absolute){
       est_kth_bc = this->top_k->get_value(k)/(double)num_samples + 1.0/(double)num_samples;
       cout << "est_kth_bc: " << est_kth_bc << std::endl;
     }
-    delete(this->top_k);
-    this->top_k = new Ranking_list(union_sample);
+    */
+    //delete(this->top_k);
+    //this->top_k = new Ranking_list(union_sample);
     //uint32_t v_mc_index;
     for (uint32_t i = 0; i < get_nn(); i++) {
         approx[i] = 0;
@@ -1225,11 +1246,13 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool 
       std::ofstream output_file_str;
       output_file_str.open(output_file);
       if(!absolute){
+        /*
         for(uint32_t i=0; i < this->numresults_topk; i++){
           uint64_t node_id = this->top_k->get(i);
           double approx_node = this->top_k->get_value(i)/(double)num_samples;
           output_file_str << node_id << ","<< approx_node << "\n";
         }
+      */
       }
       else{
           for(uint32_t i=0; i < get_nn(); i++){
@@ -1240,82 +1263,241 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool 
       }
       output_file_str.close();
     }
+    if (!vc_dim){
 
-    n_pairs += tau;
+      n_pairs += tau;
+    }
 }
 
 void Probabilistic::run_fixed_sample_size(uint32_t k, double delta, double err,uint32_t sample_size, bool uniform,bool optimized_sampling) {
-    this->absolute = (k == 0);
-    this->err = err;
-    this->delta = delta;
-    start_time = get_time_sec();
+  this->absolute = (k == 0);
+  this->err = err;
+  this->delta = delta;
+  start_time = get_time_sec();
 
-    // Step 1: sort
-    auto sorted_dict = sort_percolation_states(percolation_states);
+  // Step 1: sort
+  auto sorted_dict = sort_percolation_states(percolation_states);
 
-    // Step 2: compute percolation differences
-    auto [total_sum, minus_sum] = percolation_differences(sorted_dict, percolation_states.size());
-    double d_max = compute_d_max(percolation_states.size(), percolation_states,minus_sum);
+  // Step 2: compute percolation differences
+  auto [total_sum, minus_sum] = percolation_differences(sorted_dict, percolation_states.size());
+  double d_max = compute_d_max(percolation_states.size(), percolation_states,minus_sum);
 
-    cout<<"d_max: "<<d_max<<endl;
-    if (uniform){
-      cout<<"Running the approximation algorithm using Uniform Sampling"<<endl;
-    }else{
-      cout<<"Running the approximation algorithm using Non-Uniform Sampling"<<endl;
-    }
-    double start_time_kernel = get_time_sec();
-    SamplingPreprocessing kernel;
-    if (optimized_sampling){
-      cout<<"Using the binary search-based non Uniform Sampler"<<endl;
-      kernel = preprocessing(get_percolation_states());
-      //kernel.optimized = true // By default is true
-    }else{
-      cout<<"Using the linear Non Uniform Sampler"<<endl;
-      kernel.weights = build_outgoing_weights(percolation_states);
-      kernel.optimized = false;
+  cout<<"d_max: "<<d_max<<endl;
+  if (uniform){
+    cout<<"Running the approximation algorithm using Uniform Sampling"<<endl;
+  }else{
+    cout<<"Running the approximation algorithm using Non-Uniform Sampling"<<endl;
+  }
+  double start_time_kernel = get_time_sec();
+  SamplingPreprocessing kernel;
+  if (optimized_sampling){
+    cout<<"Using the binary search-based non Uniform Sampler"<<endl;
+    kernel = preprocessing(get_percolation_states());
+    //kernel.optimized = true // By default is true
+  }else{
+    cout<<"Using the linear Non Uniform Sampler"<<endl;
+    kernel.weights = build_outgoing_weights(percolation_states);
+    kernel.optimized = false;
 
-      //std::vector<double> weights = build_outgoing_weights(percolation_states);
-    }
-    double finish_time_kernel = get_time_sec();
-    cout<<"Sampling Kernel Built in "<< finish_time_kernel - start_time_kernel<<" seconds "<<endl;
+    //std::vector<double> weights = build_outgoing_weights(percolation_states);
+  }
+  double finish_time_kernel = get_time_sec();
+  cout<<"Sampling Kernel Built in "<< finish_time_kernel - start_time_kernel<<" seconds "<<endl;
 
-    graph_diameter = get_nn();
+  //std::vector<double> weights = build_outgoing_weights(percolation_states);
+  //SamplingPreprocessing kernel = preprocessing(get_percolation_states());
+  
+ 
+  //SamplingPreprocessing preprocessed_weights = compute_sampling_preprocessing(sorted_X);
+  //this->sampling_kernel =  compute_sampling_preprocessing(sorted_X);
+  //graph_diameter = estimate_diameter();
+  //omp_set_num_threads(64);
+  /*
+  std::cout << "estimated diameter of the graph: " << graph_diameter << std::endl;
+  std::cout << "time for estimating diameter " << get_time_sec() - start_time << std::endl;
+  uint32_t tau = max(1. / err * (log(1. / delta)) , 1000.);
+  tau = max((double)tau , 2 * graph_diameter * (log(1. / delta)) );
+  std::cout << "Starting first pass. Tentative number of samples: " << tau << std::endl;
+  */
+  num_samples = 0;
+  sup_bcest = 0;
+  sup_emp_wimpy_var = 0;
+  void_samples = 0;
+  second_phase_started = false;
+  enable_emp_peel = empirical_peeling_a > 1;
+  /*
+  if(!enable_emp_peel){
+    empirical_peeling_a = 100*tau;
+  }
+  */
 
-    num_samples = 0;
-    sup_bcest = 0;
-    sup_emp_wimpy_var = 0;
-    void_samples = 0;
-    
-
-    if (union_sample == 0) {
+  if (union_sample == 0) {
       union_sample = min(get_nn(), (uint32_t) max( 2 * sqrt(get_ne()) / omp_get_max_threads(), k+20. ));
+  }
+  this->union_sample=union_sample;
+  this->k=min(k, get_nn());
+
+  sp_lengths = (uint64_t *) malloc( (get_nn()+1)*sizeof(uint64_t) );
+  int nn = get_nn();
+  for( int i=0; i <= nn ; i++ ){
+      sp_lengths[i] = 0;
+  }
+  
+  last_output = get_time_sec();
+  start_time = get_time_sec();
+  //this->top_k = new Ranking_list(union_sample);
+
+  srand( SEED );
+  uint32_t *random_seed = (uint32_t *) malloc( omp_get_max_threads()*sizeof(uint32_t) );
+  for( int i=0; i < omp_get_max_threads(); i++ ){
+      random_seed[i] = rand();
+  }
+  distinct_nodes_top_k = 0;
+
+  firstpass = true;
+  //int samples_per_step = 10;
+  /*
+  // first phase sampling
+  cout<<"Sono qua"<<endl;
+  bool stop_first_pass = false;
+  #pragma omp parallel
+  {
+      //Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,weights);
+      Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,kernel);
+      while( !stop_first_pass ) {
+          for (int i = 0; i <= samples_per_step; i++) {
+              one_round(sp_sampler);
+          }
+          if( !stop_first_pass ){
+            #pragma omp critical(stop)
+            {
+              if(absolute){
+                // check if sampled enough pairs
+                stop_first_pass = n_pairs >= tau;
+              }
+              else{
+                // check if at least k distinct nodes have been sampled
+                stop_first_pass = distinct_nodes_top_k >= 1.5*k && n_pairs >= tau;
+              }
+            }
+          }
+      }
+  }
+
+  std::cout << "First pass finished after " << num_samples << " iteration" << std::endl;
+  */
+  // empirical peeling
+
+  //int max_num_partitions = (int)(log((double)num_samples)/log(empirical_peeling_a)+1);
+  /*
+  number_of_non_empty_partitions = 0;
+  map<int, int> non_empty_partitions;
+  for (uint32_t i = 0; i < get_nn(); i++) {
+    double emp_w_node = emp_wimpy_vars[i]/(double)num_samples;
+    double min_inv_w_node = min(1./emp_w_node , (double)num_samples);
+    int node_partition_idx = (int)(log(min_inv_w_node)/log(empirical_peeling_a)+1);
+    if(!enable_emp_peel){
+      node_partition_idx = 0;
     }
+    partition_index[i] = node_partition_idx;
+    non_empty_partitions[node_partition_idx] = non_empty_partitions[node_partition_idx] + 1;
+  }
+  number_of_non_empty_partitions = non_empty_partitions.size();
+  //map<int, int> partitions_ids_map;
+  int part_idx = 0;
+  for (const auto &elem : non_empty_partitions){
+    partitions_ids_map[elem.first] = part_idx;
+    part_idx++;
+  }
 
-    this->union_sample=union_sample;
-    this->k=min(k, get_nn());
+  sup_bcest_partition = (uint64_t*) calloc( number_of_non_empty_partitions , sizeof(uint64_t) );
+  sup_empwvar_partition = (double*) calloc( number_of_non_empty_partitions , sizeof(double) );
+  epsilon_partition = (double*) calloc( number_of_non_empty_partitions , sizeof(double) );
+  max_mcera_partition = (int64_t*) calloc( mctrials*number_of_non_empty_partitions , sizeof(int64_t) );
+  for(int i = 0; i < number_of_non_empty_partitions; i++){
+    sup_bcest_partition[i] = 0;
+    sup_empwvar_partition[i] = 0;
+    epsilon_partition[i] = 1.0;
+    for(uint32_t j = 0; j < mctrials; j++){
+      max_mcera_partition[i*mctrials+j] = 0;
+    }
+  }
+  std::cout << "number_of_non_empty_partitions  " << number_of_non_empty_partitions << std::endl;
+  for (const auto &elem : non_empty_partitions){
+    std::cout << "  part. w. index  " << elem.first << " has " << elem.second << " elements, map to " << partitions_ids_map[elem.first] << std::endl;
+  }
 
-    sp_lengths = (uint64_t *) malloc( (graph_diameter+1)*sizeof(uint64_t) );
+
+  *time_bfs = 0;
+  *time_critical = 0;
+  *time_critical_round = 0;
+  *time_mcera = 0;
+  */
+  *time_critical_round = 0;
+
+  //std::cout << "time for first pass " << get_time_sec() - start_time << std::endl;
+  //std::cout << "void_samples first pass " << void_samples << std::endl;
+  void_samples = 0;
+
+  firstpass = false;
+  double max_num_samples = sample_size;
+
+  double time_required_second_pass = get_time_sec();
+  /*
+  // for the absolute approximation, compute upper bound to number of samples
+  if(absolute){
+
+    // compute upper bound on average shortest path length
+    double avg_diam_upperbound = getUpperBoundAvgDiameter(delta/8. , true);
+
+    // reset counters of shortest path lengths
     for( int i=0; i <= graph_diameter; i++ ){
         sp_lengths[i] = 0;
     }
 
-    //last_output = get_time_sec();
-    //start_time = get_time_sec();
+    // compute upper bound on top-1 bc
+    double top1bc_upperbound = getUpperBoundTop1BC(sup_bcest/(double)num_samples , delta/8.);
+    double wimpy_var_upperbound = getUpperBoundTop1BC(sup_emp_wimpy_var/(double)num_samples , delta/8.);
 
-    this->top_k = new Ranking_list(union_sample);
-    srand( SEED );
-    uint32_t *random_seed = (uint32_t *) malloc( omp_get_max_threads()*sizeof(uint32_t) );
-    for( int i=0; i < omp_get_max_threads(); i++ ){
-        random_seed[i] = rand();
+    if(alpha_sp_given == false && wimpy_var_upperbound > 0.9 * top1bc_upperbound){
+      alpha_sp_sampling = -1.;
     }
 
-    *time_critical_round = 0;
+    // compute upper limit on number of samples
+    if(enable_m_hat){
+      max_num_samples = getUpperBoundSamples(top1bc_upperbound , wimpy_var_upperbound , avg_diam_upperbound , err , delta/2.);
+    }
+    else{
+      max_num_samples = 0;
+    }
+    
+    // number of samples with VC dim bound
+    double VC_bound = 0.5 / err / err * (log2(graph_diameter-1) + 1 + log(2. / delta));
 
-    firstpass = false;
-    //double max_num_samples = sample_size;
-    n_pairs = 0;
+    std::cout << "sup_bcest: " << sup_bcest/(double)num_samples << endl;
+    std::cout << "sup_emp_wimpy_var: " << sup_emp_wimpy_var/(double)num_samples << std::endl;
+    std::cout << "top1bc_upperbound: " << top1bc_upperbound << std::endl;
+    std::cout << "wimpy_var_upperbound: " << wimpy_var_upperbound << std::endl;
+    std::cout << "max_num_samples: " << max_num_samples << std::endl;
+    std::cout << "VC_bound: " << VC_bound << std::endl;
+    std::cout << "alpha_sp_sampling: " << alpha_sp_sampling << std::endl;
+  }
+  */
 
-    for (uint32_t i = 0; i < get_nn(); i++) {
+  // reset variables for second pass
+  iteration_index = 1;
+  n_pairs = 0;
+  //double est_kth_bc = 1.0;
+  /*
+  if(!absolute){
+    est_kth_bc = this->top_k->get_value(k)/(double)num_samples + 1.0/(double)num_samples;
+    cout << "est_kth_bc: " << est_kth_bc << std::endl;
+  }
+  */
+  //delete(this->top_k);
+  //this->top_k = new Ranking_list(union_sample);
+  //uint32_t v_mc_index;
+  for (uint32_t i = 0; i < get_nn(); i++) {
       approx[i] = 0;
       approx_toadd[i] = 0;
       emp_wimpy_vars[i] = 0;
@@ -1326,87 +1508,352 @@ void Probabilistic::run_fixed_sample_size(uint32_t k, double delta, double err,u
         mcrade[v_mc_index+j] = 0;
       }
       */
+  }
+  sup_bcest = 0;
+  omega = max_num_samples;
+
+
+  /*
+  // guess a first sample size according to what we computed in the first phase
+  first_stopping_samples = 0;//2./err/err*( highest_freq*log(2./delta) );
+  double eps_guess = 1.;
+  // start a binary search to find a good starting sample size
+  double first_sample_lower = 1./err*log(2./delta);
+  double first_sample_upper = omega;
+  bool debug_first_sample_size_heuristic = false;
+  double sup_emp_wimpy_var_norm = sup_emp_wimpy_var/(double)num_samples + 1/(double)num_samples;
+  while(first_sample_upper - first_sample_lower > 10){
+    if(debug_first_sample_size_heuristic) cout << "--- LOG SEARCH ITER" << std::endl;
+    num_samples = (first_sample_upper + first_sample_lower)/2.;
+    if(absolute){
+      eps_guess = sqrt(2*sup_emp_wimpy_var_norm*log(2./delta)/(double)num_samples) + log(2./delta)/(double)num_samples/3.;
     }
+    else{
+      eps_guess = sqrt(2*est_kth_bc*log(2./delta/est_kth_bc)/(double)num_samples) + log(2./delta/est_kth_bc)/(double)num_samples/3.;
+    }
+    if(debug_first_sample_size_heuristic) {
+      double term1 = sqrt(2*sup_emp_wimpy_var_norm*log(2./delta)/(double)num_samples);
+      double term2 = log(2./delta)/(double)num_samples/3.;
+      cout << "  eps_guess: " << eps_guess << std::endl;
+      cout << "  num_samples: " << num_samples << std::endl;
+      cout << "  sup_emp_wimpy_var_norm: " << sup_emp_wimpy_var_norm << std::endl;
+      cout << "  term1: " << term1 << std::endl;
+      cout << "  term2: " << term2 << std::endl;
+    }
+    if(absolute){
+      if(eps_guess > err){
+        first_sample_lower = num_samples;
+        if(debug_first_sample_size_heuristic) cout << "lower increased at: " << first_sample_lower << std::endl;
+      }
+      else{
+        first_sample_upper = num_samples;
+        if(debug_first_sample_size_heuristic) cout << "upper decreased at: " << first_sample_upper << std::endl;
+      }
+    }
+    else{
+      bool violated_condition_lower_1 = est_kth_bc+eps_guess > est_kth_bc/(1.-err);
+      bool violated_condition_upper_1 = est_kth_bc-eps_guess < est_kth_bc/(1.+err);
+      bool violated_condition_lower_2 = eps_guess >= est_kth_bc*err*pow((1-err)/(1+err),2.);
+      if(violated_condition_lower_1 || violated_condition_upper_1 || violated_condition_lower_2){
+        first_sample_lower = num_samples;
+        if(debug_first_sample_size_heuristic) cout << "(top-k) lower increased at: " << first_sample_lower << std::endl;
+      }
+      else{
+        first_sample_upper = num_samples;
+        if(debug_first_sample_size_heuristic) cout << "(top-k) upper decreased at: " << first_sample_upper << std::endl;
+      }
+    }
+  }
+  */
 
-    omega = sample_size;
 
-    cout<<"Sample size: "<<omega<<endl;
-    second_phase_started = true;
-    cout<<"Using "<< omp_get_max_threads()<<" Threads"<<endl;
-    double time_required_second_pass = get_time_sec();
-    //uint32_t op_per_thread = sample_size / omp_get_max_threads()-1;
-    //cout<<"Operation per Thread "<< op_per_thread<<endl;
-    
-    #pragma omp parallel
-    {
-      int tid = omp_get_thread_num();
-      uint32_t base = sample_size / omp_get_num_threads();
-      uint32_t extra = sample_size % omp_get_num_threads();
-      auto m = min(static_cast<double>(tid), static_cast<double>(extra));
-      uint32_t from = tid * base + m;
-      uint32_t to = from + base + (tid < extra ? 1 : 0);
+
+  first_stopping_samples = num_samples;
+  num_samples = 0;
+  sup_emp_wimpy_var = 0;
+  /*
+  if(enable_m_hat){
+    double max_num_iterations = log((double)max_num_samples/(double)first_stopping_samples)/log(1.2)+1;
+    delta_for_progressive_bound = delta/(floor(max_num_iterations));
+  }
   
-      Sp_sampler sp_sampler(this, random_seed[tid], total_sum, uniform, kernel);
+
+
+
+
+  cout << "first_stopping_samples: " << first_stopping_samples << std::endl;
+  // we stop at omega
+  last_stopping_samples = omega;
+  cout << "last_stopping_samples: " << last_stopping_samples << std::endl;
+  if(first_stopping_samples >= last_stopping_samples/4){
+    first_stopping_samples = last_stopping_samples/4;
+    cout << "first_stopping_samples dropped to " << first_stopping_samples << std::endl;
+  }
+  // initialize the next at the first, it will be updated during iterations
+  next_stopping_samples = first_stopping_samples;
+  */
+  bool stop_mcrade = false;
+  last_output = get_time_sec();
+  second_phase_started = true;
+  omega = sample_size;
+  last_stopping_samples = omega;
+  // start second phase
+  cout << "Sample Size: "<<omega<<endl;
+  cout << "Starting Sampling Phase... " << endl;
+
+  #pragma omp parallel
+  {
+      //Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,weights);
+      Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,kernel);
       Status status(union_sample);
       status.n_pairs = 0;
-  
-      for (uint32_t i = from; i < to; ++i) {
-          one_round(sp_sampler);  // just do your job; no need to monitor num_samples
-      }
 
-      double current_time = get_time_sec();
-      if (verbose > 0 && current_time - last_output > verbose) {
-          get_status(&status);
-          #pragma omp critical(print)
-          {
-              if (current_time - last_output > verbose) {
-                  last_output = current_time;
-                  print_status(&status);
+      while( !stop_mcrade ) {
+          for (uint32_t i = 0; i <= 10; i++) {
+              one_round(sp_sampler);
+          }
+
+          // stop if enough samples have been processed
+          if(num_samples >= omega){
+            #pragma omp critical(stopcond)
+            {
+              stop_mcrade = true;
+            }
+          }
+          // check stopping condition for mcrade
+          
+          //if (!stop_mcrade && num_samples < last_stopping_samples && num_samples >= next_stopping_samples) {
+          //    get_status (&status);
+          //    #pragma omp critical(stopcond)
+          //    {
+           //       if (!stop_mcrade  && num_samples < last_stopping_samples && num_samples >= next_stopping_samples) {
+           //           stop_mcrade = compute_finished_mcrade(&status);
+            //          if(stop_mcrade){
+             //           std::cout << "/* stop_mcrade is true */" << std::endl;
+             //         }
+             //         else{
+             //           next_stopping_samples = get_next_stopping_sample();
+             //         }
+             //     }
+             // }
+         // }
+          
+
+          double current_time = get_time_sec();
+
+          if (!stop_mcrade && verbose > 0 && current_time - last_output > verbose) {
+              get_status (&status);
+              #pragma omp critical(print)
+              {
+                  if (current_time - last_output > verbose) {
+                      last_output = current_time;
+                      print_status(&status);
+                  }
               }
           }
       }
+  }
+  cout << "out of the sampling phase " << std::endl;
+  std::cout << "time for fampling phase " << get_time_sec() - time_required_second_pass << std::endl;
+  std::cout << "void_samples sampling phase pass " << void_samples << " (" << (double)void_samples/(double)num_samples << ")" << std::endl;
 
-
-    }
-    
-    cout << "out of the sampling phase " << std::endl;
-    std::cout << "time for the sampling phase pass " << get_time_sec() - time_required_second_pass << std::endl;
-    std::cout << "void_samples sampling phase " << void_samples << " (" << (double)void_samples/(double)num_samples << ")" << std::endl;
-
-    if (verbose > 0) {
-      /*
-        if(!absolute){
-          cout << "eps_final_topk " << eps_final_topk << std::endl;
-        }
-          */
-        Status status(union_sample);
-        get_status(&status);
-        print_status(&status, true);
-    }
-    bool output_results = output_file.length() >= 1;
-
-    if(output_results){
-      std::ofstream output_file_str;
-      output_file_str.open(output_file);
+  if (verbose > 0) {
+    /*
       if(!absolute){
-        for(uint32_t i=0; i < this->numresults_topk; i++){
-          uint64_t node_id = this->top_k->get(i);
-          double approx_node = this->top_k->get_value(i)/(double)num_samples;
+        cout << "eps_final_topk " << eps_final_topk << std::endl;
+      }
+        */
+      Status status(union_sample);
+      get_status(&status);
+      print_status(&status, true);
+  }
+
+  bool output_results = output_file.length() >= 1;
+
+  if(output_results){
+    std::ofstream output_file_str;
+    output_file_str.open(output_file);
+    if(!absolute){
+      for(uint32_t i=0; i < this->numresults_topk; i++){
+        uint64_t node_id = this->top_k->get(i);
+        double approx_node = this->top_k->get_value(i)/(double)num_samples;
+        output_file_str << node_id << ","<< approx_node << "\n";
+      }
+    }
+    else{
+        for(uint32_t i=0; i < get_nn(); i++){
+          uint64_t node_id = i;
+          double approx_node = approx[i]/(double)num_samples;
           output_file_str << node_id << ","<< approx_node << "\n";
         }
-      }
-      else{
-          for(uint32_t i=0; i < get_nn(); i++){
-            uint64_t node_id = i;
-            double approx_node = approx[i]/(double)num_samples;
-            output_file_str << node_id << ","<< approx_node << "\n";
-          }
-      }
-      output_file_str.close();
     }
+    output_file_str.close();
+  }
 
+  //n_pairs += tau;
 }
 
+/*
+void Probabilistic::run_fixed_sample_size(uint32_t k, double delta, double err,uint32_t sample_size, bool uniform,bool optimized_sampling) {
+  this->absolute = (k == 0);
+  this->err = err;
+  this->delta = delta;
+  start_time = get_time_sec();
+
+  // Step 1: sort
+  auto sorted_dict = sort_percolation_states(percolation_states);
+
+  // Step 2: compute percolation differences
+  auto [total_sum, minus_sum] = percolation_differences(sorted_dict, percolation_states.size());
+  double d_max = compute_d_max(percolation_states.size(), percolation_states,minus_sum);
+
+  cout<<"d_max: "<<d_max<<endl;
+  if (uniform){
+    cout<<"Running the approximation algorithm using Uniform Sampling"<<endl;
+  }else{
+    cout<<"Running the approximation algorithm using Non-Uniform Sampling"<<endl;
+  }
+  double start_time_kernel = get_time_sec();
+  SamplingPreprocessing kernel;
+  if (optimized_sampling){
+    cout<<"Using the binary search-based non Uniform Sampler"<<endl;
+    kernel = preprocessing(get_percolation_states());
+    //kernel.optimized = true // By default is true
+  }else{
+    cout<<"Using the linear Non Uniform Sampler"<<endl;
+    kernel.weights = build_outgoing_weights(percolation_states);
+    kernel.optimized = false;
+
+    //std::vector<double> weights = build_outgoing_weights(percolation_states);
+  }
+  double finish_time_kernel = get_time_sec();
+  cout<<"Sampling Kernel Built in "<< finish_time_kernel - start_time_kernel<<" seconds "<<endl;
+
+  graph_diameter = get_nn();
+
+  num_samples = 0;
+  sup_bcest = 0;
+  sup_emp_wimpy_var = 0;
+  void_samples = 0;
+  
+
+  if (union_sample == 0) {
+    union_sample = min(get_nn(), (uint32_t) max( 2 * sqrt(get_ne()) / omp_get_max_threads(), k+20. ));
+  }
+
+  this->union_sample=union_sample;
+  this->k=min(k, get_nn());
+
+  sp_lengths = (uint64_t *) malloc( (graph_diameter+1)*sizeof(uint64_t) );
+  for( int i=0; i <= graph_diameter; i++ ){
+      sp_lengths[i] = 0;
+  }
+
+  //last_output = get_time_sec();
+  //start_time = get_time_sec();
+
+  this->top_k = new Ranking_list(union_sample);
+  srand( SEED );
+  uint32_t *random_seed = (uint32_t *) malloc( omp_get_max_threads()*sizeof(uint32_t) );
+  for( int i=0; i < omp_get_max_threads(); i++ ){
+      random_seed[i] = rand();
+  }
+
+  *time_critical_round = 0;
+
+  firstpass = false;
+  //double max_num_samples = sample_size;
+  n_pairs = 0;
+
+  for (uint32_t i = 0; i < get_nn(); i++) {
+    approx[i] = 0;
+    approx_toadd[i] = 0;
+    emp_wimpy_vars[i] = 0;
+    // mcrade
+   
+  }
+
+  omega = sample_size;
+
+  cout<<"Sample size: "<<omega<<endl;
+  second_phase_started = true;
+  cout<<"Using "<< omp_get_max_threads()<<" Threads"<<endl;
+  double time_required_second_pass = get_time_sec();
+  //uint32_t op_per_thread = sample_size / omp_get_max_threads()-1;
+  //cout<<"Operation per Thread "<< op_per_thread<<endl;
+  bool stop_mcrade = false;
+  uint32_t tau = 0;
+  #pragma omp parallel
+  {
+      //Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,weights);
+      Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,kernel);
+      Status status(union_sample);
+      status.n_pairs = 0;
+
+      while( !stop_mcrade ) {
+          for (uint32_t i = 0; i <= 10; i++) {
+              one_round(sp_sampler);
+          }
+
+          // stop if enough samples have been processed
+          if( num_samples >= omega){
+            #pragma omp critical(stopcond)
+            {
+              stop_mcrade = true;
+            }
+          }
+          double current_time = get_time_sec();
+
+          if (!stop_mcrade && verbose > 0 && current_time - last_output > verbose) {
+              get_status (&status);
+              #pragma omp critical(print)
+              {
+                  if (current_time - last_output > verbose) {
+                      last_output = current_time;
+                      print_status(&status);
+                  }
+              }
+          }
+
+        }
+    }
+
+  
+  cout << "out of the sampling phase " << std::endl;
+  std::cout << "time for the sampling phase pass " << get_time_sec() - time_required_second_pass << std::endl;
+  std::cout << "void_samples sampling phase " << void_samples << " (" << (double)void_samples/(double)num_samples << ")" << std::endl;
+
+  if (verbose > 0) {
+
+      Status status(union_sample);
+      get_status(&status);
+      print_status(&status, true);
+  }
+  bool output_results = output_file.length() >= 1;
+
+  if(output_results){
+    std::ofstream output_file_str;
+    output_file_str.open(output_file);
+    if(!absolute){
+      for(uint32_t i=0; i < this->numresults_topk; i++){
+        uint64_t node_id = this->top_k->get(i);
+        double approx_node = this->top_k->get_value(i)/(double)num_samples;
+        output_file_str << node_id << ","<< approx_node << "\n";
+      }
+    }
+    else{
+        for(uint32_t i=0; i < get_nn(); i++){
+          uint64_t node_id = i;
+          double approx_node = approx[i]/(double)num_samples;
+          output_file_str << node_id << ","<< approx_node << "\n";
+        }
+    }
+    output_file_str.close();
+  }
+  n_pairs += tau;
+}
+
+*/
 /*
 void Probabilistic::run_fixed_sample_size_dep(uint32_t k, double delta, double err,uint32_t sample_size, bool uniform,bool optimized_sampling) {
   this->absolute = (k == 0);
@@ -1707,7 +2154,7 @@ Probabilistic::~Probabilistic()
 // Destructor of the class Probabilistic.
 Probabilistic::~Probabilistic() {
   free(approx);
-  delete(top_k);
+  //delete(top_k);
   // mcrade
   //free(mcrade);
   free(emp_wimpy_vars);
