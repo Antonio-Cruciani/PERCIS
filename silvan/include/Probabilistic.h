@@ -29,8 +29,8 @@ class Status {
 class Probabilistic : public Graph
 {
     public:
-        Probabilistic( const std::string &filename,const std::string &percolation_name, const bool uniform,  bool optimized_samplig = true ,bool directed = false,const double verb = 60, const double sampling_rate_ = 2.3, bool alpha_given_ = false, const double empirical_peeling_param_ = 2.0 , const bool enable_m_hat_ = true, const bool vc_dim = false, const std::string output_file_ = "" );
-        Probabilistic( const std::string &filename,const std::string &percolation_name,const uint32_t sample_size, const bool uniform , bool optimized_samplig = true,  bool directed = false,const double verb = 60, const double sampling_rate_ = 2.3, bool alpha_given_ = false, const double empirical_peeling_param_ = 2.0 , const bool enable_m_hat_ = true,const std::string output_file_ = "" );
+        Probabilistic( const std::string &filename,const std::string &percolation_name, const bool uniform,  bool optimized_samplig = true ,bool directed = false,const double verb = 60, const double sampling_rate_ = 2.3, bool alpha_given_ = false, const double empirical_peeling_param_ = 2.0 , const bool enable_m_hat_ = true, const bool vc_dim = false, const int thread_number = 0 ,const std::string output_file_ = "" );
+        Probabilistic( const std::string &filename,const std::string &percolation_name,const uint32_t sample_size, const bool uniform , bool optimized_samplig = true,  bool directed = false,const double verb = 60, const double sampling_rate_ = 2.3, bool alpha_given_ = false, const double empirical_peeling_param_ = 2.0 , const bool enable_m_hat_ = true,const int thread_number = 0,const std::string output_file_ = "" );
         virtual ~Probabilistic();
         void run(const uint32_t k, const double delta, const double err = 0,const bool uniform = false,const bool optimized_sampling = true,const bool vc_dim = false,
                  const uint32_t union_sample = 0,
@@ -125,6 +125,7 @@ class Probabilistic : public Graph
         // Kernel used for the non uniform sampling
         //std::vector<double> sampling_kernel;
         SamplingPreprocessing sampling_kernel;
+        int thread_n;
 
 
 };

@@ -37,6 +37,7 @@ bool optimized = true;
 bool fixed_ss = false;
 uint32_t sample_size;
 bool vc_dim = false;
+int thread_number = 0;
 /**
  * Print usage on stderr.
  */
@@ -44,7 +45,7 @@ void usage(const char *binary_name) {
     std::cerr << binary_name
         << ": compute percolation centrality approximations for all nodes"
         << std::endl;
-    std::cerr << "USAGE: " << binary_name << " [-fudhm] [-f vc_dimension ] [-u uniform sampling] [-v verbosity] [-k k_value] [-o output] [-a a_emp_peeling] [-s alpha]  [-g sample_size] [-b linear_sampler] epsilon delta percolation_states graph"
+    std::cerr << "USAGE: " << binary_name << " [-fudhm] [-f vc_dimension ] [-u uniform sampling] [-v verbosity] [-k k_value] [-o output] [-a a_emp_peeling] [-s alpha]  [-g sample_size] [-b linear_sampler] [-t thread_number] epsilon delta percolation_states graph"
         << std::endl;
     std::cerr << "\t-f: use the vc dimension upper bound on the sample size" << std::endl;
     std::cerr << "\t-u: use uniform sampling for the approximation" << std::endl;
@@ -57,7 +58,8 @@ void usage(const char *binary_name) {
     std::cerr << "\t-s: parameter alpha for sampling shortest paths (def. = 2.3)" << std::endl;
     std::cerr << "\t-m: disable the computation of m_hat" << std::endl;
     std::cerr << "\t-g: sample size in case of fixed sample size" << std::endl;
-    std::cerr << "\t-b: use the linear time non uniform sampler" << std::endl;
+    std::cerr << "\t-b: use the linea(constr time non uniform sampler" << std::endl;
+    std::cerr << "\t-t: set the thread number to use (max threads as default)" << std::endl;
     std::cerr << "\terr: accuracy (0 < epsilon < 1), relative accuracy if k > 0" << std::endl;
     std::cerr << "\tdelta: confidence (0 < delta < 1)" << std::endl;
     std::cerr << "\tpercolation states file" << std::endl;
@@ -70,7 +72,7 @@ void usage(const char *binary_name) {
  */
 int parse_command_line(int& argc, char *argv[]) {
     int opt;
-    while ((opt = getopt(argc, argv,"bfudhmk:o:s:a:v:g:")) != -1) {
+    while ((opt = getopt(argc, argv,"bfudhmk:o:s:a:v:g:t:")) != -1) {
         switch (opt) {
         case 'b':
             optimized = false;
@@ -135,7 +137,16 @@ int parse_command_line(int& argc, char *argv[]) {
                         << std::endl;
                 return 1;
             }
+            case 't':
+        thread_number = std::strtod(optarg, NULL);
+        if (errno == ERANGE || thread_number < 0) {
+            std::cerr << ERROR_HEADER
+                    << "The thread number should be a positive number"
+                    << std::endl;
+            return 1;
         }
+        }
+        
        
     }
 
@@ -205,10 +216,10 @@ int main(int argc, char *argv[]){
         return correct_parse!=2;
     }
     if (!fixed_ss){
-        Probabilistic G( graph_file,percolation_file, uniform,optimized, directed, verb , sampling_rate , alpha_given , empirical_peeling_param , m_hat_enabled , vc_dim,output_file);
+        Probabilistic G( graph_file,percolation_file, uniform,optimized, directed, verb , sampling_rate , alpha_given , empirical_peeling_param , m_hat_enabled , vc_dim, thread_number, output_file);
         G.run((uint32_t) k, delta, err,uniform,optimized,vc_dim);
     }else{
-        Probabilistic G( graph_file,percolation_file,sample_size, uniform,optimized,directed, verb ,sampling_rate , alpha_given, empirical_peeling_param , m_hat_enabled , output_file);
+        Probabilistic G( graph_file,percolation_file,sample_size, uniform,optimized,directed, verb ,sampling_rate , alpha_given, empirical_peeling_param , m_hat_enabled, thread_number , output_file);
         G.run_fixed_sample_size(k,delta,err,sample_size,uniform,optimized);
     }
     std::cout << "run finished" << std::endl;

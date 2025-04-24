@@ -45,7 +45,7 @@ Status::~Status() {
 
 // Creates the graph for running the approximation algorithm.
 // For more information see the graph class.
-Probabilistic::Probabilistic( const std::string &filename,const std::string &percolation_name, const bool uniform,  bool optimized_samplig ,const bool directed, const double verb, const double sampling_rate_, const bool alpha_given_, const double empirical_peeling_param_ , const bool enable_m_hat_,const bool vc_dim , const std::string output_file_ ): Graph( filename,percolation_name, directed ), verbose(verb) {
+Probabilistic::Probabilistic( const std::string &filename,const std::string &percolation_name, const bool uniform,  bool optimized_samplig ,const bool directed, const double verb, const double sampling_rate_, const bool alpha_given_, const double empirical_peeling_param_ , const bool enable_m_hat_,const bool vc_dim ,const int thread_number, const std::string output_file_ ): Graph( filename,percolation_name, directed ), verbose(verb) {
     approx = (double *) calloc( get_nn(), sizeof(double) );
     approx_toadd = (double *) calloc( get_nn(), sizeof(double) );
     time_bfs = (double *) calloc( omp_get_max_threads(), sizeof(double) );
@@ -82,13 +82,18 @@ Probabilistic::Probabilistic( const std::string &filename,const std::string &per
     //empirical_peeling_a = empirical_peeling_param_;
     enable_m_hat = enable_m_hat_;
     //sampling_kernel = compute_sampling_preprocessing(get_percolation_states());
-
+    if (thread_number == 0 || thread_number > omp_get_max_threads()){
+      thread_n = omp_get_max_threads();
+      
+    }else{
+      thread_n = thread_number;
+    }
 }
 
 
 // Creates the graph for running the approximation algorithm using fixed sample size
 // For more information see the graph class.
-Probabilistic::Probabilistic( const std::string &filename,const std::string &percolation_name,const uint32_t sample_size, const bool uniform , bool optimized_samplig ,bool directed,const double verb , const double sampling_rate_, const bool alpha_given_, const double empirical_peeling_param_ , const bool enable_m_hat_,  const std::string output_file_): Graph( filename,percolation_name, directed ), verbose(verb) {
+Probabilistic::Probabilistic( const std::string &filename,const std::string &percolation_name,const uint32_t sample_size, const bool uniform , bool optimized_samplig ,bool directed,const double verb , const double sampling_rate_, const bool alpha_given_, const double empirical_peeling_param_ , const bool enable_m_hat_, const int thread_number ,const std::string output_file_): Graph( filename,percolation_name, directed ), verbose(verb) {
   approx = (double *) calloc( get_nn(), sizeof(double) );
   approx_toadd = (double *) calloc( get_nn(), sizeof(double) );
   time_bfs = (double *) calloc( omp_get_max_threads(), sizeof(double) );
@@ -125,7 +130,12 @@ Probabilistic::Probabilistic( const std::string &filename,const std::string &per
   //empirical_peeling_a = empirical_peeling_param_;
   enable_m_hat = enable_m_hat_;
   //sampling_kernel =  compute_sampling_preprocessing(get_percolation_states());
+  if (thread_number == 0 || thread_number > omp_get_max_threads()){
+    thread_n = omp_get_max_threads();
 
+  }else{
+    thread_n = thread_number;
+  }
 }
 
 
@@ -845,7 +855,8 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool 
     this->err = err;
     this->delta = delta;
     start_time = get_time_sec();
-
+    cout<<"Using "<<thread_n<<" Threads"<<endl;
+    omp_set_num_threads(thread_n);
     // Step 1: sort
     auto sorted_dict = sort_percolation_states(percolation_states);
 
@@ -902,7 +913,7 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool 
 
 
     if (union_sample == 0) {
-        union_sample = min(get_nn(), (uint32_t) max( 2 * sqrt(get_ne()) / omp_get_max_threads(), k+20. ));
+        union_sample = min(get_nn(), (uint32_t) max( 2 * sqrt(get_ne()) / thread_n, k+20. ));
     }
     this->union_sample=union_sample;
     this->k=min(k, get_nn());
@@ -916,8 +927,8 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool 
     start_time = get_time_sec();
     //this->top_k = new Ranking_list(union_sample);
     srand( SEED );
-    uint32_t *random_seed = (uint32_t *) malloc( omp_get_max_threads()*sizeof(uint32_t) );
-    for( int i=0; i < omp_get_max_threads(); i++ ){
+    uint32_t *random_seed = (uint32_t *) malloc( thread_n*sizeof(uint32_t) );
+    for( int i=0; i < thread_n; i++ ){
         random_seed[i] = rand();
     }
     distinct_nodes_top_k = 0;
@@ -1274,6 +1285,8 @@ void Probabilistic::run_fixed_sample_size(uint32_t k, double delta, double err,u
   this->err = err;
   this->delta = delta;
   start_time = get_time_sec();
+  cout<<"Using "<<thread_n<<" Threads"<<endl;
+  omp_set_num_threads(thread_n);
 
   // Step 1: sort
   auto sorted_dict = sort_percolation_states(percolation_states);
@@ -1332,7 +1345,7 @@ void Probabilistic::run_fixed_sample_size(uint32_t k, double delta, double err,u
   */
 
   if (union_sample == 0) {
-      union_sample = min(get_nn(), (uint32_t) max( 2 * sqrt(get_ne()) / omp_get_max_threads(), k+20. ));
+      union_sample = min(get_nn(), (uint32_t) max( 2 * sqrt(get_ne()) / thread_n, k+20. ));
   }
   this->union_sample=union_sample;
   this->k=min(k, get_nn());
@@ -1348,8 +1361,8 @@ void Probabilistic::run_fixed_sample_size(uint32_t k, double delta, double err,u
   //this->top_k = new Ranking_list(union_sample);
 
   srand( SEED );
-  uint32_t *random_seed = (uint32_t *) malloc( omp_get_max_threads()*sizeof(uint32_t) );
-  for( int i=0; i < omp_get_max_threads(); i++ ){
+  uint32_t *random_seed = (uint32_t *) malloc( thread_n*sizeof(uint32_t) );
+  for( int i=0; i < thread_n; i++ ){
       random_seed[i] = rand();
   }
   distinct_nodes_top_k = 0;
