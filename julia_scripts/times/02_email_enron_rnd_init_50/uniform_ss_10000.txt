@@ -1,3 +1,0 @@
-total_time num_samples kernel_bulding_time void_samples d_max run
-0.029011 10087.0 0.000653028 10074.0 1.02041 1
-0.0272958 10120.0 0.000494957 10109.0 1.02041 1

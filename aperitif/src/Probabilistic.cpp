@@ -863,7 +863,7 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool 
     // Step 2: compute percolation differences
     auto [total_sum, minus_sum] = percolation_differences(sorted_dict, percolation_states.size());
     double d_max = compute_d_max(percolation_states.size(), percolation_states,minus_sum);
-
+    
     cout<<"d_max: "<<d_max<<endl;
     if (uniform){
       cout<<"Running the approximation algorithm using Uniform Sampling"<<endl;
@@ -872,16 +872,18 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool 
     }
     double start_time_kernel = get_time_sec();
     SamplingPreprocessing kernel;
-    if (optimized_sampling){
-      cout<<"Using the binary search-based non Uniform Sampler"<<endl;
-      kernel = preprocessing(get_percolation_states());
-      //kernel.optimized = true // By default is true
-    }else{
-      cout<<"Using the linear Non Uniform Sampler"<<endl;
-      kernel.weights = build_outgoing_weights(percolation_states);
-      kernel.optimized = false;
+    if (!uniform){
+      if (optimized_sampling ){
+        cout<<"Using the binary search-based non Uniform Sampler"<<endl;
+        kernel = preprocessing(get_percolation_states());
+        //kernel.optimized = true // By default is true
+      }else{
+        cout<<"Using the linear Non Uniform Sampler"<<endl;
+        kernel.weights = build_outgoing_weights(percolation_states);
+        kernel.optimized = false;
 
-      //std::vector<double> weights = build_outgoing_weights(percolation_states);
+        //std::vector<double> weights = build_outgoing_weights(percolation_states);
+      }
     }
     double finish_time_kernel = get_time_sec();
     cout<<"Sampling Kernel Built in "<< finish_time_kernel - start_time_kernel<<" seconds "<<endl;
@@ -1305,17 +1307,19 @@ void Probabilistic::run_fixed_sample_size(uint32_t k, double delta, double err,u
   }
   double start_time_kernel = get_time_sec();
   SamplingPreprocessing kernel;
-  if (optimized_sampling){
-    cout<<"Using the binary search-based non Uniform Sampler"<<endl;
-    kernel = preprocessing(get_percolation_states());
-    //kernel.optimized = true // By default is true
-  }else{
-    cout<<"Using the linear Non Uniform Sampler"<<endl;
-    kernel.weights = build_outgoing_weights(percolation_states);
-    kernel.optimized = false;
+    if (!uniform){
+      if (optimized_sampling ){
+        cout<<"Using the binary search-based non Uniform Sampler"<<endl;
+        kernel = preprocessing(get_percolation_states());
+        //kernel.optimized = true // By default is true
+      }else{
+        cout<<"Using the linear Non Uniform Sampler"<<endl;
+        kernel.weights = build_outgoing_weights(percolation_states);
+        kernel.optimized = false;
 
-    //std::vector<double> weights = build_outgoing_weights(percolation_states);
-  }
+        //std::vector<double> weights = build_outgoing_weights(percolation_states);
+      }
+    }
   double finish_time_kernel = get_time_sec();
   cout<<"Sampling Kernel Built in "<< finish_time_kernel - start_time_kernel<<" seconds "<<endl;
 
