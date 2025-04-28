@@ -101,13 +101,14 @@ for ss in sample_size_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
+            args = `-v 1 -g $ss -o $op -b -t $tn $epsilon $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
             for line in eachline(`../aperitif/aperitif $args`)
                 @info("$line")
-                _catch_and_update!(line,results)                
+                _catch_and_update!(line,results)  
+                flush(stderr)              
             end
             op_times = "non_uniform_ss_"*string(ss)*".txt"
             #op_times = "uniform_ss_"*string(ss)*".txt"
@@ -157,7 +158,8 @@ for ss in sample_size_list
             @info("Run Number $i")
             for line in eachline(`../aperitif/aperitif $args`)
                 @info("$line")
-                _catch_and_update!(line,results)                
+                _catch_and_update!(line,results)       
+                flush(stderr)                       
             end
             #op_times = "non_uniform_ss_"*string(ss)*".txt"
             op_times = "uniform_ss_"*string(ss)*".txt"
@@ -203,13 +205,14 @@ for ss in sample_size_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-d -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
+            args = `-d -v 1 -g $ss -o $op -b -t $tn $epsilon $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
             for line in eachline(`../aperitif/aperitif $args`)
                 @info("$line")
-                _catch_and_update!(line,results)                
+                _catch_and_update!(line,results)      
+                flush(stderr)                        
             end
             op_times = "non_uniform_ss_"*string(ss)*".txt"
             #op_times = "uniform_ss_"*string(ss)*".txt"
@@ -259,7 +262,8 @@ for ss in sample_size_list
             @info("Run Number $i")
             for line in eachline(`../aperitif/aperitif $args`)
                 @info("$line")
-                _catch_and_update!(line,results)                
+                _catch_and_update!(line,results)      
+                flush(stderr)                        
             end
             #op_times = "non_uniform_ss_"*string(ss)*".txt"
             op_times = "uniform_ss_"*string(ss)*".txt"
@@ -310,13 +314,14 @@ for ss in sample_size_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
+            args = `-v 1 -g $ss -o $op -b -t $tn $epsilon $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
             for line in eachline(`../aperitif/aperitif $args`)
                 @info("$line")
-                _catch_and_update!(line,results)                
+                _catch_and_update!(line,results)      
+                flush(stderr)                        
             end
             op_times = "non_uniform_ss_"*string(ss)*".txt"
             #op_times = "uniform_ss_"*string(ss)*".txt"
@@ -365,7 +370,8 @@ for ss in sample_size_list
             @info("Run Number $i")
             for line in eachline(`../aperitif/aperitif $args`)
                 @info("$line")
-                _catch_and_update!(line,results)                
+                _catch_and_update!(line,results)      
+                flush(stderr)                        
             end
             #op_times = "non_uniform_ss_"*string(ss)*".txt"
             op_times = "uniform_ss_"*string(ss)*".txt"
@@ -417,13 +423,14 @@ for ss in sample_size_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-d -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
+            args = `-d -v 1 -g $ss -o $op -b -t $tn $epsilon $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
             for line in eachline(`../aperitif/aperitif $args`)
                 @info("$line")
-                _catch_and_update!(line,results)                
+                _catch_and_update!(line,results)   
+                flush(stderr)                           
             end
             op_times = "non_uniform_ss_"*string(ss)*".txt"
             #op_times = "uniform_ss_"*string(ss)*".txt"
@@ -472,7 +479,8 @@ for ss in sample_size_list
             @info("Run Number $i")
             for line in eachline(`../aperitif/aperitif $args`)
                 @info("$line")
-                _catch_and_update!(line,results)                
+                _catch_and_update!(line,results)   
+                flush(stderr)                           
             end
             #op_times = "non_uniform_ss_"*string(ss)*".txt"
             op_times = "uniform_ss_"*string(ss)*".txt"
@@ -519,13 +527,14 @@ for ss in sample_size_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
+            args = `-v 1 -g $ss -o $op -b -t $tn $epsilon $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
             for line in eachline(`../aperitif/aperitif $args`)
                 @info("$line")
-                _catch_and_update!(line,results)                
+                _catch_and_update!(line,results)         
+                flush(stderr)                     
             end
             op_times = "non_uniform_ss_"*string(ss)*".txt"
             #op_times = "uniform_ss_"*string(ss)*".txt"
@@ -575,7 +584,8 @@ for ss in sample_size_list
             @info("Run Number $i")
             for line in eachline(`../aperitif/aperitif $args`)
                 @info("$line")
-                _catch_and_update!(line,results)                
+                _catch_and_update!(line,results)     
+                flush(stderr)                         
             end
             #op_times = "non_uniform_ss_"*string(ss)*".txt"
             op_times = "uniform_ss_"*string(ss)*".txt"
@@ -625,7 +635,7 @@ for ss in sample_size_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-d -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
+            args = `-d -v 1 -g $ss -o $op -b -t $tn $epsilon $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
