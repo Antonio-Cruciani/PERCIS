@@ -167,7 +167,7 @@ for ss in sample_size_list
                 _catch_and_update!(line,results)      
                 flush(stderr)                        
             end
-            op_times = "non_uniform_ss_"*string(ss)*".txt"
+            op_times = "non_uniform_bs_ss_"*string(ss)*".txt"
             #op_times = "uniform_ss_"*string(ss)*".txt"
 
             save_results(results,"../julia_scripts/",ds_name,op_times)
