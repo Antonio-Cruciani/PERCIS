@@ -1,9 +1,45 @@
 // NonUniformSampler.cpp
 #include "NonUniformSampler.h"
+#include "SamplingPreprocessing.h"
 #include <algorithm>
 #include <random>
+#include <iostream>
+#include <cmath>
+
+
+
+std::vector<TieRange> compute_tie_ranges(const std::vector<double>& sorted_X) {
+    std::vector<TieRange> tie_ranges;
+    int n = sorted_X.size();
+    int start = 0;
+
+    for (int i = 1; i <= n; ++i) {
+        if (i == n || sorted_X[i] != sorted_X[start]) {
+            tie_ranges.push_back({start, i - 1, sorted_X[start]});
+            start = i;
+        }
+    }
+    return tie_ranges;
+}
+
+int find_tie_group(const std::vector<TieRange>& ranges, int idx) {
+    int low = 0, high = ranges.size() - 1;
+    while (low <= high) {
+        int mid = (low + high) / 2;
+        if (ranges[mid].contains(idx)) {
+            return mid;
+        } else if (idx < ranges[mid].start) {
+            high = mid - 1;
+        } else {
+            low = mid + 1;
+        }
+    }
+    throw std::runtime_error("Index not found in any tie range");
+}
+
 
 SamplingPreprocessing preprocessing(const std::vector<double>& X) {
+    std::cout<<"Running Preprocessing"<<std::endl;
     int n = X.size();
     std::vector<std::pair<double, int>> value_index_pairs;
     for (int i = 0; i < n; ++i) {
@@ -41,6 +77,8 @@ SamplingPreprocessing preprocessing(const std::vector<double>& X) {
     kernel.r = r;
     kernel.c_vals = c_vals;
     kernel.c_total = c_total;
+    kernel.tie_ranges = compute_tie_ranges(kernel.X);
+    std::cout<<"Preprocessing Completed"<<std::endl;
     return kernel;
 }
 
@@ -54,7 +92,7 @@ std::pair<int, int> non_uniform_sampling_binary_search(const SamplingPreprocessi
   
     int a = 0, b = n - 1;
     while (a < b) {
-        int d = (a + b) / 2;
+        int d = ceil((a + b) / 2);
         double k = (kernel.c_total - kernel.r[d + 1]) / kernel.c_total;
         double u = dis(gen);
         if (u <= k) {
@@ -64,11 +102,15 @@ std::pair<int, int> non_uniform_sampling_binary_search(const SamplingPreprocessi
         }
     }
     int s = b;
+    int tie_group_index = find_tie_group(kernel.tie_ranges, s);
+    const auto& range = kernel.tie_ranges[tie_group_index];
+    std::uniform_int_distribution<int> tie_dist(range.start, range.end);
+    s = tie_dist(gen);
 
     a = s;
     b = n - 1;
     while (a < b) {
-        int d = (a + b) / 2;
+        int d = ceil((a + b) / 2);
         double numerator = (d - s + 1) * kernel.X[s] - kernel.w[s] + kernel.w[d + 1];
         double denominator = (n - s) * kernel.X[s] - kernel.w[s];
         double k = denominator == 0 ? 1.0 : numerator / denominator;

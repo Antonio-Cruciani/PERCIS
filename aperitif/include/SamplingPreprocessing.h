@@ -3,7 +3,15 @@
 #define SAMPLING_PREPROCESSING_H
 
 #include <vector>
+struct TieRange {
+    int start;  // inclusive
+    int end;    // inclusive
+    double value;
 
+    bool contains(int idx) const {
+        return idx >= start && idx <= end;
+    }
+};
 struct SamplingPreprocessing {
     std::vector<double> w;
     std::vector<double> c_vals;
@@ -14,6 +22,7 @@ struct SamplingPreprocessing {
     //Weights is used in case on linear non uniform sampling
     std::vector<double> weights;
     bool optimized = true;
+    std::vector<TieRange> tie_ranges;
 };
 
 #endif // SAMPLING_PREPROCESSING_H
