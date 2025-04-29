@@ -156,6 +156,8 @@ map<uint32_t, double>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_leng
     n_paths[v] = 1;
     dist[v] = 0;
 
+
+
     while( !have_to_stop ) {
         // Decide which ball should be expanded
         if (sum_degs_u <= sum_degs_v) {

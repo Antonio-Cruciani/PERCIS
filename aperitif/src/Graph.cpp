@@ -47,6 +47,121 @@ Graph::Graph( const string &graph_path,const string &percolation_states_path, co
     vector< set< uint32_t > > pre_adj(0);
     vector< set< uint32_t > > pre_inc(0);
     ifstream fin(graph_path);
+    //uint32_t u=0, v=0;
+    string line;
+    unordered_map<uint32_t, uint32_t> node_id_map;
+    set<pair<uint32_t, uint32_t>> edges_read;
+
+    uint32_t next_index = 0;
+    vector<pair<uint32_t, uint32_t>> edge_list;
+    uint32_t u_raw, v_raw;
+    cout << "Reading graph" << endl;
+    while (getline(fin, line)) {
+        if (line.empty() || line[0] == '#') continue;
+
+        sscanf(line.c_str(), "%u %u", &u_raw, &v_raw);
+
+        if (u_raw == v_raw) continue;  // skip self-loops
+
+        // Map u
+        if (node_id_map.find(u_raw) == node_id_map.end()) {
+            node_id_map[u_raw] = next_index++;
+        }
+        // Map v
+        if (node_id_map.find(v_raw) == node_id_map.end()) {
+            node_id_map[v_raw] = next_index++;
+        }
+
+        uint32_t u = node_id_map[u_raw];
+        uint32_t v = node_id_map[v_raw];
+        edge_list.emplace_back(u, v);
+        edges_read.insert(make_pair(u,v));
+        if (!directed) {
+            edge_list.emplace_back(v, u);
+            edges_read.insert(make_pair(v,u));
+        }
+    }
+    fin.close();
+
+
+    nodes_num = node_id_map.size();
+    edges_num = edges_read.size();
+    //edges_num = edge_list.size();
+
+    adj = (uint32_t **)malloc(nodes_num * sizeof(uint32_t *));
+    degrees = (uint32_t *)malloc(nodes_num * sizeof(uint32_t));
+    pre_adj.resize(nodes_num);
+   
+    if (directed) {
+        pre_inc.resize(nodes_num);
+    }
+
+    for (const auto &[u, v] : edge_list) {
+        pre_adj[u].insert(v);
+        if (directed) pre_inc[v].insert(u);
+    }
+
+
+    for (uint32_t i = 0; i < nodes_num; ++i) {
+        adj[i] = (uint32_t *)malloc(pre_adj[i].size() * sizeof(uint32_t));
+        degrees[i] = 0;
+        for (auto v : pre_adj[i]) {
+            adj[i][degrees[i]++] = v;
+        }
+    }
+
+    if (directed) {
+        inc = (uint32_t **)malloc(nodes_num * sizeof(uint32_t *));
+        in_degrees = (uint32_t *)malloc(nodes_num * sizeof(uint32_t));
+        for (uint32_t i = 0; i < nodes_num; ++i) {
+            inc[i] = (uint32_t *)malloc(pre_inc[i].size() * sizeof(uint32_t));
+            in_degrees[i] = 0;
+            for (auto u : pre_inc[i]) {
+                inc[i][in_degrees[i]++] = u;
+            }
+        }
+    } else {
+        inc = adj;
+        in_degrees = degrees;
+    }
+
+    std::cout << "Reading percolation states" << std::endl;
+    cc = (uint32_t *)malloc(nodes_num * sizeof(uint32_t));
+    percolation_states.assign(nodes_num, 0.0);
+
+    ifstream fin_perc(percolation_states_path);
+    uint32_t i = 0;
+    double p_u = 0.0;
+    while (getline(fin_perc, line)) {
+        if (line.empty() || line[0] == '#') continue;
+        if (i >= nodes_num) {
+            std::cerr << "Too many percolation state entries!" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        sscanf(line.c_str(), "%lf", &p_u);
+        percolation_states[i++] = p_u;
+    }
+
+    if (i != nodes_num) {
+        std::cerr << "Mismatch in number of nodes and percolation states!" << std::endl;
+        std::cerr << "Nodes: " << nodes_num << " P. states: " << i << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    std::cout << "Done" << std::endl;
+
+
+    
+
+}
+
+
+/*
+Graph::Graph( const string &graph_path,const string &percolation_states_path, const bool directed ) : directed(directed)
+{
+    vector< set< uint32_t > > pre_adj(0);
+    vector< set< uint32_t > > pre_inc(0);
+    ifstream fin(graph_path);
     uint32_t u=0, v=0;
     string line;
     cout<<" Reding graph"<<endl;
@@ -124,7 +239,7 @@ Graph::Graph( const string &graph_path,const string &percolation_states_path, co
     cout<<" done"<<endl;
 
 }
-
+*/
 // Prints some data about the graph.
 void Graph::print_data() {
     if (directed) {
