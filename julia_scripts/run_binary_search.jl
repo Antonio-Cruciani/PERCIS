@@ -68,7 +68,7 @@ tn = 64
 directed = false
 output = ""
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
-datasets = ["02_email_enron.txt"]
+#datasets = ["02_email_enron.txt"]
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Random Initiator Experiment")
 # Undirected
@@ -126,7 +126,7 @@ end
 
 
 # Directed
-#=
+
 datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
 
 for ss in sample_size_list
@@ -179,7 +179,6 @@ for ss in sample_size_list
 end
 
 
-=#
 #=
 
 
