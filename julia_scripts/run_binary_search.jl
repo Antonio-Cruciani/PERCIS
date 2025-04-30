@@ -73,6 +73,7 @@ datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.tx
 @info("Running Experiments for Random Initiator Experiment")
 # Undirected
 # Non Uniform 
+#=
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_rnd_init_50"
@@ -178,8 +179,8 @@ for ss in sample_size_list
     end
 end
 
+=#
 
-#=
 
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -227,7 +228,7 @@ for ss in sample_size_list
                 _catch_and_update!(line,results)      
                 flush(stderr)                        
             end
-            op_times = "non_uniform_ss_"*string(ss)*".txt"
+            op_times = "non_uniform_bs_ss_"*string(ss)*".txt"
             #op_times = "uniform_ss_"*string(ss)*".txt"
 
             save_results(results,"../julia_scripts/",ds_name,op_times)
@@ -287,7 +288,7 @@ for ss in sample_size_list
                 _catch_and_update!(line,results)   
                 flush(stderr)                           
             end
-            op_times = "non_uniform_ss_"*string(ss)*".txt"
+            op_times = "non_uniform_bs_ss_"*string(ss)*".txt"
             #op_times = "uniform_ss_"*string(ss)*".txt"
 
             save_results(results,"../julia_scripts/",ds_name,op_times)
@@ -341,7 +342,7 @@ for ss in sample_size_list
                 _catch_and_update!(line,results)         
                 flush(stderr)                     
             end
-            op_times = "non_uniform_ss_"*string(ss)*".txt"
+            op_times = "non_uniform_bs_ss_"*string(ss)*".txt"
             #op_times = "uniform_ss_"*string(ss)*".txt"
 
             save_results(results,"../julia_scripts/",ds_name,op_times)
@@ -398,7 +399,7 @@ for ss in sample_size_list
                 @info("$line")
                 _catch_and_update!(line,results)                
             end
-            op_times = "non_uniform_ss_"*string(ss)*".txt"
+            op_times = "non_uniform_bs_ss_"*string(ss)*".txt"
             #op_times = "uniform_ss_"*string(ss)*".txt"
 
             save_results(results,"../julia_scripts/",ds_name,op_times)
@@ -408,4 +409,3 @@ for ss in sample_size_list
 
     end
 end
-=#
