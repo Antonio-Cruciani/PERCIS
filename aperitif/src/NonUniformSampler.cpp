@@ -40,11 +40,17 @@ int find_tie_group(const std::vector<TieRange>& ranges, int idx) {
 
 SamplingPreprocessing preprocessing(const std::vector<double>& X) {
     std::cout<<"Running Preprocessing"<<std::endl;
+    std::random_device rd;
+    std::mt19937 rng(rd()); 
     int n = X.size();
     std::vector<std::pair<double, int>> value_index_pairs;
     for (int i = 0; i < n; ++i) {
         value_index_pairs.emplace_back(X[i], i);
     }
+    // This is a technical trick, in case of very skewed distribution of X we need to shuffle the indices before sorting them
+    // This shuffles the ties and allows the binary search not to fall on the same element of the skewed group.
+    // If you do not shuffle, in very skewed scenarios you might pick always the same s and obtain a bit of bias. 
+    std::shuffle(value_index_pairs.begin(), value_index_pairs.end(), rng);
 
     std::sort(value_index_pairs.begin(), value_index_pairs.end(),
               [](const auto& a, const auto& b) { return a.first > b.first; });
@@ -82,19 +88,18 @@ SamplingPreprocessing preprocessing(const std::vector<double>& X) {
     return kernel;
 }
 
-std::pair<int, int> non_uniform_sampling_binary_search(const SamplingPreprocessing& kernel) {
+std::pair<int, int> non_uniform_sampling_binary_search(const SamplingPreprocessing& kernel,std::mt19937& rng) {
     //std::vector<std::pair<int, int>> S;
     int n = kernel.X.size();
 
-    std::random_device rd;
-    std::mt19937 gen(rd());
+    
     std::uniform_real_distribution<> dis(0.0, 1.0);
   
     int a = 0, b = n - 1;
     while (a < b) {
         int d = ceil((a + b) / 2);
         double k = (kernel.c_total - kernel.r[d + 1]) / kernel.c_total;
-        double u = dis(gen);
+        double u = dis(rng);
         if (u <= k) {
             b = d;
         } else {
@@ -105,8 +110,8 @@ std::pair<int, int> non_uniform_sampling_binary_search(const SamplingPreprocessi
     int tie_group_index = find_tie_group(kernel.tie_ranges, s);
     const auto& range = kernel.tie_ranges[tie_group_index];
     std::uniform_int_distribution<int> tie_dist(range.start, range.end);
-    s = tie_dist(gen);
-
+    s = tie_dist(rng);
+    //double x_s = kernel.X[s]; 
     a = s;
     b = n - 1;
     while (a < b) {
@@ -114,7 +119,7 @@ std::pair<int, int> non_uniform_sampling_binary_search(const SamplingPreprocessi
         double numerator = (d - s + 1) * kernel.X[s] - kernel.w[s] + kernel.w[d + 1];
         double denominator = (n - s) * kernel.X[s] - kernel.w[s];
         double k = denominator == 0 ? 1.0 : numerator / denominator;
-        double u = dis(gen);
+        double u = dis(rng);
         if (u <= k) {
             b = d;
         } else {

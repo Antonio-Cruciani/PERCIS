@@ -19,7 +19,9 @@ using namespace std;
 
 // Instantiates an object, that samples from the graph g.
 // INPUT: g (a graphs), seed (the seed for the random sampler).
-Sp_sampler::Sp_sampler( const Graph *g, const uint32_t seed, const double sum_perc ,const bool uniform_sampling, const SamplingPreprocessing& sampling_kernel) {
+Sp_sampler::Sp_sampler( const Graph *g, const uint32_t seed, const double sum_perc ,const bool uniform_sampling, const SamplingPreprocessing& sampling_kernel) 
+:rng(seed)
+{
     uint32_t n = g->get_nn();
     q = (uint32_t*) malloc( n*sizeof(uint32_t));
     ball_indicator = (uint32_t*) calloc( n, sizeof(uint32_t));
@@ -38,6 +40,7 @@ Sp_sampler::Sp_sampler( const Graph *g, const uint32_t seed, const double sum_pe
     randgen = new Rand_gen( seed );
     n_paths = (uint64_t*) malloc( n*sizeof(uint64_t));
     this->g = g;
+    
     
 }
 
@@ -105,8 +108,8 @@ map<uint32_t, double>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_leng
     uint32_t start_u = 0, start_v = 1, end_u = 1, end_v = 2, start_cur, end_cur, *new_end_cur;
     uint32_t sum_degs_u = 0, sum_degs_v = 0, *sum_degs_cur;
     uint32_t neigh_num;
-    std::random_device rd;
-    std::mt19937 rng(rd());
+    //std::random_device rd;
+    //std::mt19937 rng(rd());
     uint32_t source, target;
     // to finish
     if (uniform){
@@ -116,7 +119,7 @@ map<uint32_t, double>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_leng
     }else{
         //std::tie(u, v) = weighted_sample_kappa(g->get_percolation_states(),sampling_kernel, rng);
         if (sampling_kernel.optimized){
-            std::tie(u,v) = non_uniform_sampling_binary_search(sampling_kernel);
+            std::tie(u,v) = non_uniform_sampling_binary_search(sampling_kernel,rng);
 
         }else{
             std::tie(u, v) = weighted_sample_kappa(g->get_percolation_states(),sampling_kernel.weights, rng);

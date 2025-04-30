@@ -40,6 +40,7 @@ class Sp_sampler
         bool uniform;
         Rand_gen *randgen;
         const Graph *g;
+        std::mt19937 rng;
 };
 
 #endif // SP_SAMPLER_H
