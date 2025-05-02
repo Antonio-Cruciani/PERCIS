@@ -159,7 +159,7 @@ for ss in sample_size_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-d -v 1 -g $ss -o $op -b -t $tn $epsilon $delta $ps $gf`
+            args = `-d -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
