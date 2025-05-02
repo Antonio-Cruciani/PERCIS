@@ -57,20 +57,29 @@ SamplingPreprocessing preprocessing(const std::vector<double>& X) {
     std::sort(value_index_pairs.begin(), value_index_pairs.end(),
               [](const auto& a, const auto& b) { return a.first > b.first; });
 
-    std::vector<double> sorted_X(n+1);
-    std::vector<int> sorted_to_original(n+1);
+    std::vector<double> sorted_X(n+1,0.0);
+    std::vector<int> sorted_to_original(n+1,0);
+    sorted_X[0] = 0.0;
+    for (int i = 1;i<n+1;i++){
+        sorted_X[i] = value_index_pairs[i-1].first;
+        sorted_to_original[i] = value_index_pairs[i-1].second;
+    }
+    /*
     for (int i = 0; i < n; ++i) {
         sorted_X[i+1] = value_index_pairs[i].first;
         sorted_to_original[i+1] = value_index_pairs[i].second;
-    }
+        //std::cout<<" i "<<i<<std::endl;
+    }*/
+    //std::cout<<"N value "<<n<<std::endl;
+    //std::cout<<"Len  sorted_to_original "<<sorted_to_original.size()<<std::endl;
 
     SamplingPreprocessing kernel;
     kernel.X = sorted_X;
     kernel.original_index_map = sorted_to_original;
 
-    std::vector<double> w(n + 2, 0.0);
-    std::vector<double> r(n + 2, 0.0);
-    std::vector<double> c_vals(n + 2, 0.0);
+    std::vector<double> w(n + 3, 0.0);
+    std::vector<double> r(n + 3, 0.0);
+    std::vector<double> c_vals(n + 3, 0.0);
     double c_total = 0.0;
 
     for (int i = n + 1; i >= 1; --i) {
@@ -90,12 +99,13 @@ SamplingPreprocessing preprocessing(const std::vector<double>& X) {
     return kernel;
 }
 
-std::pair<int, int> non_uniform_sampling_binary_search(const SamplingPreprocessing& kernel,std::mt19937& rng) {
+std::pair<int, int> non_uniform_sampling_binary_search(const SamplingPreprocessing& kernel,const int n,std::mt19937& rng) {
     //std::vector<std::pair<int, int>> S;
-    int n = kernel.X.size();
+    //int n = kernel.X.size();
 
     
     std::uniform_real_distribution<> dis(0.0, 1.0);
+    //std::cout<<"I am Here"<<std::endl;
     //b = n - 1;
     int a = 1, b = n;
     double u = dis(rng);
@@ -111,6 +121,8 @@ std::pair<int, int> non_uniform_sampling_binary_search(const SamplingPreprocessi
         d = floor((a + b) / 2.0);
     }
     int s = b+1;
+    //std::cout<<"Sampled S: "<<s<<" Mapped node "<<kernel.original_index_map[s]<<" PERC STATE VALUE: "<<kernel.X[s]<<std::endl;
+
     //int tie_group_index = find_tie_group(kernel.tie_ranges, s);
     //const auto& range = kernel.tie_ranges[tie_group_index];
     //std::uniform_int_distribution<int> tie_dist(range.start, range.end);
@@ -127,6 +139,9 @@ std::pair<int, int> non_uniform_sampling_binary_search(const SamplingPreprocessi
         double numerator = (d - s + 1) * kernel.X[s] - kernel.w[s] + kernel.w[d + 1];
         double denominator = (n - s + 1) * kernel.X[s] - kernel.w[s];
         //double k = denominator == 0 ? 1.0 : numerator / denominator;
+        if (denominator == 0){
+            std::cout<<"DIVISION BY 0"<<std::endl;
+        }
         double k = numerator/denominator;
         //double u = dis(rng);
         if (u <= k) {
@@ -137,7 +152,8 @@ std::pair<int, int> non_uniform_sampling_binary_search(const SamplingPreprocessi
         d = floor((a + b) / 2.0);
     }
     int t = b+1;
-
+    //std::cout<<"Sampled T: "<<t<<" Mapped node "<<kernel.original_index_map[t]<<" PERC STATE VALUE: "<<kernel.X[t]<<std::endl;
+    //std::cout<<"Len map "<<kernel.original_index_map.size()<<std::endl;
     //S.emplace_back(kernel.original_index_map[s], kernel.original_index_map[t]);
     
 

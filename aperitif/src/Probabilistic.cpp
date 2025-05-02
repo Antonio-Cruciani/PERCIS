@@ -533,7 +533,7 @@ void Probabilistic::one_round(Sp_sampler &sp_sampler) {
     time_bfs[omp_get_thread_num()] -= get_time_sec();
     map<uint32_t, double>/*vector<uint32_t>*/ path = sp_sampler.random_path(path_length , num_paths , alpha_sp_sampling);
     time_bfs[omp_get_thread_num()] += get_time_sec();
-
+    //cout<<"Outside random path"<<endl;
 
     time_critical[omp_get_thread_num()] -= get_time_sec();
 

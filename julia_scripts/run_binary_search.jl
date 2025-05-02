@@ -67,6 +67,7 @@ percolation_path = "../julia_scripts/percolation_states/"
 tn = 64
 directed = false
 output = ""
+
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 #datasets = ["02_email_enron.txt"]
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -180,7 +181,6 @@ end
 
 
 
-#=
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Random Spread Experiment")
@@ -408,4 +408,3 @@ for ss in sample_size_list
 
     end
 end
-=#

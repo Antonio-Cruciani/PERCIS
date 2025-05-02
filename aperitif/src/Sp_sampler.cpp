@@ -119,7 +119,7 @@ map<uint32_t, double>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_leng
     }else{
         //std::tie(u, v) = weighted_sample_kappa(g->get_percolation_states(),sampling_kernel, rng);
         if (sampling_kernel.optimized){
-            std::tie(u,v) = non_uniform_sampling_binary_search(sampling_kernel,rng);
+            std::tie(u,v) = non_uniform_sampling_binary_search(sampling_kernel,g->get_nn(),rng);
 
         }else{
             std::tie(u, v) = weighted_sample_kappa(g->get_percolation_states(),sampling_kernel.weights, rng);
@@ -127,6 +127,7 @@ map<uint32_t, double>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_leng
  
         
     }
+    //cout<<"HERETTO"<<endl;
     if (percolation_states[u]<= percolation_states[v]){
         return std::map<uint32_t,double>();//vector<uint32_t>();
     }
@@ -145,7 +146,7 @@ map<uint32_t, double>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_leng
       }
     }
     
-
+    //cout<<"SAMPLING PATH "<<endl;
     end_q = 2;
 
     q[0] = u;
