@@ -14,6 +14,7 @@
 #include "Probabilistic.h"
 
 extern char *optarg;
+
 static const std::string ERROR_HEADER = "ERROR: ";
 using namespace std;
 
@@ -25,6 +26,8 @@ char *graph_file;
 char *percolation_file;
 
 std::string output_file;
+std::string exact_file;
+bool sd_experiment = false;
 int64_t k = 0;
 double sampling_rate = 2.3;
 bool alpha_given = false;
@@ -33,11 +36,13 @@ bool m_hat_enabled = true;
 bool uniform = false;
 // mcrade
 int num_mc = 10;
+int window = 500;
 bool optimized = true;
 bool fixed_ss = false;
 uint32_t sample_size;
 bool vc_dim = false;
 int thread_number = 0;
+char *exactarg;
 /**
  * Print usage on stderr.
  */
@@ -45,7 +50,7 @@ void usage(const char *binary_name) {
     std::cerr << binary_name
         << ": compute percolation centrality approximations for all nodes"
         << std::endl;
-    std::cerr << "USAGE: " << binary_name << " [-fudhm] [-f vc_dimension ] [-u uniform sampling] [-v verbosity] [-k k_value] [-o output] [-a a_emp_peeling] [-s alpha]  [-g sample_size] [-b linear_sampler] [-t thread_number] epsilon delta percolation_states graph"
+    std::cerr << "USAGE: " << binary_name << " [-fudhm] [-f vc_dimension ] [-u uniform sampling] [-v verbosity] [-k k_value] [-e exact] [-w window] [-o output] [-a a_emp_peeling] [-s alpha]  [-g sample_size] [-b linear_sampler] [-t thread_number] epsilon delta percolation_states graph"
         << std::endl;
     std::cerr << "\t-f: use the vc dimension upper bound on the sample size" << std::endl;
     std::cerr << "\t-u: use uniform sampling for the approximation" << std::endl;
@@ -54,6 +59,8 @@ void usage(const char *binary_name) {
     std::cerr << "\t-h: print this help message" << std::endl;
     std::cerr << "\t-v: print additional messages (verbosity is the time in second between subsequent outputs)" << std::endl;
     std::cerr << "\t-o: path for the output file (if empty, do not write the output)" << std::endl;
+    std::cerr << "\t-e: path for the exact percolation file (can be empty)" << std::endl;
+    std::cerr << "\t-w: Sampling window (use only if -e)" << std::endl;
     std::cerr << "\t-a: parameter a for empirical peeling (def. = 2)" << std::endl;
     std::cerr << "\t-s: parameter alpha for sampling shortest paths (def. = 2.3)" << std::endl;
     std::cerr << "\t-m: disable the computation of m_hat" << std::endl;
@@ -72,7 +79,7 @@ void usage(const char *binary_name) {
  */
 int parse_command_line(int& argc, char *argv[]) {
     int opt;
-    while ((opt = getopt(argc, argv,"bfudhmk:o:s:a:v:g:t:")) != -1) {
+    while ((opt = getopt(argc, argv,"bfudhmk:o:e:w:s:a:v:g:t:")) != -1) {
         switch (opt) {
         case 'b':
             optimized = false;
@@ -97,9 +104,23 @@ int parse_command_line(int& argc, char *argv[]) {
             std::cerr << "Writing output to " << optarg << std::endl;
             output_file = optarg;
             break;
+        case 'e':
+            std::cerr << "Reading the exact percolation centrality from " << optarg << std::endl;
+            exact_file = optarg;
+            sd_experiment = true;
+            break;
         case 's':
             sampling_rate = std::strtod(optarg, NULL);
             alpha_given = true;
+            break;
+        case 'w':
+            window = std::strtod(optarg, NULL);
+            if (errno == ERANGE || window < 0 || window > INT_MAX) {
+                std::cerr << ERROR_HEADER
+                    << "The sampling window should be between 0 and 2^32-1."
+                    << std::endl;
+                return 1;
+            }
             break;
         case 'a':
             empirical_peeling_param = std::strtod(optarg, NULL);
@@ -215,12 +236,17 @@ int main(int argc, char *argv[]){
         usage(argv[0]);
         return correct_parse!=2;
     }
-    if (!fixed_ss){
-        Probabilistic G( graph_file,percolation_file, uniform,optimized, directed, verb , sampling_rate , alpha_given , empirical_peeling_param , m_hat_enabled , vc_dim, thread_number, output_file);
-        G.run((uint32_t) k, delta, err,uniform,optimized,vc_dim);
+    if (!sd_experiment){
+        if (!fixed_ss){
+            Probabilistic G( graph_file,percolation_file, uniform,optimized, directed, verb , sampling_rate , alpha_given , empirical_peeling_param , m_hat_enabled , vc_dim, thread_number, output_file);
+            G.run((uint32_t) k, delta, err,uniform,optimized,vc_dim);
+        }else{
+            Probabilistic G( graph_file,percolation_file,sample_size, uniform,optimized,directed, verb ,sampling_rate , alpha_given, empirical_peeling_param , m_hat_enabled, thread_number , output_file);
+            G.run_fixed_sample_size(k,delta,err,sample_size,uniform,optimized);
+        }   
     }else{
-        Probabilistic G( graph_file,percolation_file,sample_size, uniform,optimized,directed, verb ,sampling_rate , alpha_given, empirical_peeling_param , m_hat_enabled, thread_number , output_file);
-        G.run_fixed_sample_size(k,delta,err,sample_size,uniform,optimized);
+        Probabilistic G( graph_file,percolation_file,exact_file, uniform,optimized, directed, verb , sampling_rate , alpha_given , empirical_peeling_param , m_hat_enabled , thread_number, output_file);
+        G.run_SD_bound((uint32_t) k,delta, err,uniform,optimized,window);
     }
     std::cout << "run finished" << std::endl;
     return 0;
