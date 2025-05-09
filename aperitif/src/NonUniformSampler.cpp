@@ -159,3 +159,26 @@ std::pair<int, int> non_uniform_sampling_binary_search(const SamplingPreprocessi
 
     return {kernel.original_index_map[s], kernel.original_index_map[t]};
 }
+
+
+std::pair<int, int> non_uniform_sampling_linear(const SamplingPreprocessing& kernel,const int n,std::mt19937& rng) {
+    std::uniform_real_distribution<> dis(0.0, 1.0);
+    double u = dis(rng);
+    int s = 0,t = 0;
+    for (int j = 1; j<n+1;j++){
+        double k = (kernel.c_total-kernel.r[j+1])/kernel.c_total;
+        if (u <= k){
+            s = j;
+            break;
+        }
+    }
+    u = dis(rng);
+    for (int j = s; j<n+1;j++){
+        double k = ((j-s+1)*kernel.X[s] - kernel.w[s] + kernel.w[j+1])/((n-s+1)*kernel.X[s] - kernel.w[s]);
+        if (u <= k){
+            t = j;
+            break;
+        }
+    }
+    return {kernel.original_index_map[s], kernel.original_index_map[t]}; 
+}

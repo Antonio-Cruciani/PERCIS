@@ -957,15 +957,16 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool 
     if (!uniform){
       if (optimized_sampling ){
         cout<<"Using the binary search-based non Uniform Sampler"<<endl;
-        kernel = preprocessing(get_percolation_states());
+        //kernel = preprocessing(get_percolation_states());
         //kernel.optimized = true // By default is true
       }else{
         cout<<"Using the linear Non Uniform Sampler"<<endl;
-        kernel.weights = build_outgoing_weights(percolation_states);
+        //kernel.weights = build_outgoing_weights(percolation_states);
         kernel.optimized = false;
 
         //std::vector<double> weights = build_outgoing_weights(percolation_states);
       }
+      kernel = preprocessing(get_percolation_states());
     }
     double finish_time_kernel = get_time_sec();
     cout<<"Sampling Kernel Built in "<< finish_time_kernel - start_time_kernel<<" seconds "<<endl;
@@ -1392,15 +1393,17 @@ void Probabilistic::run_fixed_sample_size(uint32_t k, double delta, double err,u
     if (!uniform){
       if (optimized_sampling ){
         cout<<"Using the binary search-based non Uniform Sampler"<<endl;
-        kernel = preprocessing(get_percolation_states());
+        //kernel = preprocessing(get_percolation_states());
         //kernel.optimized = true // By default is true
       }else{
         cout<<"Using the linear Non Uniform Sampler"<<endl;
-        kernel.weights = build_outgoing_weights(percolation_states);
+        //kernel.weights = build_outgoing_weights(percolation_states);
         kernel.optimized = false;
 
         //std::vector<double> weights = build_outgoing_weights(percolation_states);
       }
+      kernel = preprocessing(get_percolation_states());
+
     }
   double finish_time_kernel = get_time_sec();
   cout<<"Sampling Kernel Built in "<< finish_time_kernel - start_time_kernel<<" seconds "<<endl;
@@ -1822,15 +1825,17 @@ void Probabilistic::run_SD_bound(uint32_t k, double delta, double err, bool unif
   if (!uniform){
     if (optimized_sampling ){
       cout<<"Using the binary search-based non Uniform Sampler"<<endl;
-      kernel = preprocessing(get_percolation_states());
+      //kernel = preprocessing(get_percolation_states());
       //kernel.optimized = true // By default is true
     }else{
       cout<<"Using the linear Non Uniform Sampler"<<endl;
-      kernel.weights = build_outgoing_weights(percolation_states);
+      //kernel.weights = build_outgoing_weights(percolation_states);
       kernel.optimized = false;
 
       //std::vector<double> weights = build_outgoing_weights(percolation_states);
     }
+    kernel = preprocessing(get_percolation_states());
+
   }
   double finish_time_kernel = get_time_sec();
   cout<<"Sampling Kernel Built in "<< finish_time_kernel - start_time_kernel<<" seconds "<<endl;
@@ -1931,8 +1936,9 @@ void Probabilistic::run_SD_bound(uint32_t k, double delta, double err, bool unif
   // start second phase
   cout << "Starting second phase... " << std::endl;
   double sd = 1.0;
-  last_stopping_samples = 100;
-  double last_output_check = get_time_sec();
+  last_stopping_samples = sample_window;
+  num_samples = 0;
+  //double last_output_check = get_time_sec();
   //int sample_window = 100;
   #pragma omp parallel
   {
@@ -1940,7 +1946,7 @@ void Probabilistic::run_SD_bound(uint32_t k, double delta, double err, bool unif
       Sp_sampler sp_sampler( this, random_seed[omp_get_thread_num()] ,total_sum,uniform,kernel);
       Status status(union_sample);
       status.n_pairs = 0;
-
+      
       while( !stop_mcrade ) {
           for (uint32_t i = 0; i <= 10; i++) {
               one_round(sp_sampler);
@@ -1962,19 +1968,20 @@ void Probabilistic::run_SD_bound(uint32_t k, double delta, double err, bool unif
               sd = compute_SD();
               if (sd <= err){
                 stop_mcrade = true;
-                cout<<"Converged!"<<endl;
-                cout<<"Overall Number of Samples "<<num_samples<<sd<<endl;
-                cout<<"Epsilon "<<err<<" Supremum Deviation "<<sd<<endl;
+                //cout<<"conv Num samples "<<num_samples<<" last stopping "<<last_stopping_samples<<endl;
+
               }else{
-                last_stopping_samples = num_samples + sample_window;
-                double current_time_check = get_time_sec();
+                //cout<<"Num samples "<<num_samples<<" last stopping "<<last_stopping_samples<<endl;
+
+                last_stopping_samples += sample_window;
+                /*double current_time_check = get_time_sec();
 
                 if(verbose > 0 && current_time_check - last_output_check > verbose){
                   cout<<"Not converged, Increasing sample size to "<<last_stopping_samples<<endl;
                   cout<<"Epsilon "<<err<<" Supremum Deviation "<<sd<<endl;
                   last_output_check = current_time_check;
 
-                }
+                }*/
               }
               
             }
@@ -1992,12 +1999,17 @@ void Probabilistic::run_SD_bound(uint32_t k, double delta, double err, bool unif
               {
                   if (current_time - last_output > verbose) {
                       last_output = current_time;
+                      cout<<"Not converged, Increasing sample size to "<<last_stopping_samples<<endl;
+                      cout<<"Epsilon "<<err<<" Supremum Deviation "<<sd<<endl;
                       print_status(&status);
                   }
               }
           }
       }
   }
+  cout<<"Converged!"<<endl;
+  cout<<"Overall Number of Samples "<<num_samples<<endl;
+  cout<<"Epsilon "<<err<<" Supremum Deviation "<<sd<<endl;
   cout << "out of second pass " << std::endl;
   std::cout << "time for second pass " << get_time_sec() - time_required_second_pass << std::endl;
   std::cout << "void_samples second pass " << void_samples << " (" << (double)void_samples/(double)num_samples << ")" << std::endl;

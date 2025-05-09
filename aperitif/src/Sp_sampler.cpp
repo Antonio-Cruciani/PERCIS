@@ -122,7 +122,9 @@ map<uint32_t, double>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_leng
             std::tie(u,v) = non_uniform_sampling_binary_search(sampling_kernel,g->get_nn(),rng);
 
         }else{
-            std::tie(u, v) = weighted_sample_kappa(g->get_percolation_states(),sampling_kernel.weights, rng);
+            std::tie(u, v) = non_uniform_sampling_linear(sampling_kernel,g->get_nn(),rng);
+
+            //std::tie(u, v) = weighted_sample_kappa(g->get_percolation_states(),sampling_kernel.weights, rng);
         }
  
         

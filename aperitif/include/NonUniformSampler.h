@@ -7,5 +7,6 @@
 
 SamplingPreprocessing preprocessing(const std::vector<double>& X);
 std::pair<int, int> non_uniform_sampling_binary_search(const SamplingPreprocessing& kernel,const int n,std::mt19937& rng);
+std::pair<int, int> non_uniform_sampling_linear(const SamplingPreprocessing& kernel,const int n,std::mt19937& rng);
 
 #endif // NON_UNIFORM_SAMPLER_H
