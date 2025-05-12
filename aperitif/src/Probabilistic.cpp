@@ -2009,7 +2009,8 @@ void Probabilistic::run_SD_bound(uint32_t k, double delta, double err, bool unif
   }
   cout<<"Converged!"<<endl;
   cout<<"Overall Number of Samples "<<num_samples<<endl;
-  cout<<"Epsilon "<<err<<" Supremum Deviation "<<sd<<endl;
+  cout<<"Epsilon "<<err<<endl;
+  cout<<"Final Supremum Deviation: "<<sd<<endl;
   cout << "out of second pass " << std::endl;
   std::cout << "time for second pass " << get_time_sec() - time_required_second_pass << std::endl;
   std::cout << "void_samples second pass " << void_samples << " (" << (double)void_samples/(double)num_samples << ")" << std::endl;
