@@ -74,6 +74,7 @@ exact_scores_path = "../../percolation_centrality/scores/"
 tn = 64
 directed = false
 output = ""
+#=
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -200,7 +201,7 @@ for eps in epsilon_list
 end
 
 
-
+=#
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Random Spread Experiment")
@@ -216,7 +217,7 @@ for eps in epsilon_list
         create_folder(ds_name)
         ps = percolation_path*ds_name*".txt"
         outpath = "../julia_scripts/scores/"*ds_name*"/"
-        es = exact_scores_path*ds_name*"/exact_target.txt"
+        es = exact_scores_path*ds_name*"/exact_target_e_log.txt"
         check_file_existence(gf)
         check_file_existence(ps)
         check_file_existence(es)
@@ -282,7 +283,7 @@ for eps in epsilon_list
         create_folder(ds_name)
         ps = percolation_path*ds_name*".txt"
         outpath = "../julia_scripts/scores/"*ds_name*"/"
-        es = exact_scores_path*ds_name*"/exact_target.txt"
+        es = exact_scores_path*ds_name*"/exact_target_e_log.txt"
         check_file_existence(gf)
         check_file_existence(ps)
         check_file_existence(es)
