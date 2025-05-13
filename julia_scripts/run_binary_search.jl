@@ -62,14 +62,18 @@ ss_save = [1,2,3,4,5]
 delta = 0.05
 epsilon = 0.1
 runs = 10
-graphs_path = "../julia_scripts/graphs/"
-percolation_path = "../julia_scripts/percolation_states/"
+#graphs_path = "../julia_scripts/graphs/"
+#percolation_path = "../julia_scripts/percolation_states/"
+graphs_path = "../../percolation_centrality/graphs/"
+percolation_path = "../../percolation_centrality/percolation_states/"
 tn = 64
 directed = false
 output = ""
 
-datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
+#datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 #datasets = ["02_email_enron.txt"]
+datasets = ["10_flickr.txt"]
+
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Random Initiator Experiment")
 # Undirected
@@ -129,7 +133,9 @@ end
 
 # Directed
 
-datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
+#datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
+datasets = ["08_web_berkstan.txt"]
+
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_rnd_init_50"
@@ -186,7 +192,8 @@ end
 @info("Running Experiments for Random Spread Experiment")
 
 
-datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
+#datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
+datasets = ["10_flickr.txt"]
 
 
 for ss in sample_size_list
@@ -242,8 +249,9 @@ end
 # Directed
 
 
-datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
+#datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
 
+datasets = ["08_web_berkstan.txt"]
 
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -300,7 +308,8 @@ end
 
 
 
-datasets = ["01_musae_facebook_edges_lcc_in_50.txt","02_email_enron_lcc_in_50.txt","03_ca_astroph_lcc_in_50.txt"]
+#datasets = ["01_musae_facebook_edges_lcc_in_50.txt","02_email_enron_lcc_in_50.txt","03_ca_astroph_lcc_in_50.txt"]
+datasets = ["10_flickr.txt"]
 
 
 for ss in sample_size_list
@@ -359,7 +368,8 @@ end
 
 # Directed
 
-datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
+#datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
+datasets = ["08_web_berkstan.txt"]
 
 for ss in sample_size_list
     for ds in datasets
