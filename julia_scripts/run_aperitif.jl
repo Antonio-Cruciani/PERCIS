@@ -64,8 +64,10 @@ delta = 0.05
 runs = 10
 #graphs_path = "../../percolation_centrality_via_non_uniform_sampling/julia_scripts/graphs/"
 #percolation_path = "../../percolation_centrality_via_non_uniform_sampling/julia_scripts/percolation_states/"
-graphs_path = "../../../percolation_centrality/graphs/"
-percolation_path = "../../../percolation_centrality/percolation_states/"
+#graphs_path = "../../../percolation_centrality/graphs/"
+percolation_path = "percolation_states/"
+graphs_path = "graphs/"
+percolation_path = "percolation_states/"
 
 tn = 64
 directed = false
@@ -740,11 +742,11 @@ datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.tx
 
 for eps in epsilon_list
     for ds in datasets
-        ds_name = string(split(ds,".txt")[1])
+        ds_name = string(split(ds,".txt")[1])*"_unif"
         gf = graphs_path*ds
         create_folder(ds_name)
-        ps = percolation_path*ds_name*"_unif.txt"
-        outpath = "../julia_scripts/scores/"*ds_name*"_unif/"
+        ps = percolation_path*ds_name*".txt"
+        outpath = "../julia_scripts/scores/"*ds_name*"/"
         check_file_existence(gf)
         check_file_existence(ps)
         @info("Input Graph Path: $gf")
@@ -767,7 +769,7 @@ for eps in epsilon_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 1 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -795,8 +797,8 @@ for eps in epsilon_list
         ds_name = string(split(ds,".txt")[1])
         gf = graphs_path*ds
         create_folder(ds_name)
-        ps = percolation_path*ds_name*"_unif.txt"
-        outpath = "../julia_scripts/scores/"*ds_name*"_unif/"
+        ps = percolation_path*ds_name*"_unif"
+        outpath = "../julia_scripts/scores/"*ds_name*"/"
         check_file_existence(gf)
         check_file_existence(ps)
         @info("Input Graph Path: $gf")
@@ -819,7 +821,7 @@ for eps in epsilon_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-f -v 1 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-f -v 10 -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -o $op -t $tn $eps $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -853,8 +855,8 @@ for eps in epsilon_list
         ds_name = string(split(ds,".txt")[1])
         gf = graphs_path*ds
         create_folder(ds_name)
-        ps = percolation_path*ds_name*"_unif.txt"
-        outpath = "../julia_scripts/scores/"*ds_name*"_unif/"
+        ps = percolation_path*ds_name*"_unif"
+        outpath = "../julia_scripts/scores/"*ds_name*"/"
         check_file_existence(gf)
         check_file_existence(ps)
         @info("Input Graph Path: $gf")
@@ -877,7 +879,7 @@ for eps in epsilon_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-d -v 1 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-d -v 10 -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -904,8 +906,8 @@ for eps in epsilon_list
         ds_name = string(split(ds,".txt")[1])
         gf = graphs_path*ds
         create_folder(ds_name)
-        ps = percolation_path*ds_name*"_unif.txt"
-        outpath = "../julia_scripts/scores/"*ds_name*"_unif/"
+        ps = percolation_path*ds_name*"_unif"
+        outpath = "../julia_scripts/scores/"*ds_name*"/"
         check_file_existence(gf)
         check_file_existence(ps)
         @info("Input Graph Path: $gf")
@@ -929,7 +931,7 @@ for eps in epsilon_list
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
             #args = `-v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
-            args = `-f -d -v 1 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-f -d -v 10 -o $op -t $tn $eps $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
             for line in eachline(`../aperitif/aperitif $args`)
