@@ -794,10 +794,10 @@ end
 global j = 1
 for eps in epsilon_list
     for ds in datasets
-        ds_name = string(split(ds,".txt")[1])
+        ds_name = string(split(ds,".txt")[1])*"_unif"
         gf = graphs_path*ds
         create_folder(ds_name)
-        ps = percolation_path*ds_name*"_unif"
+        ps = percolation_path*ds_name*".txt"
         outpath = "../julia_scripts/scores/"*ds_name*"/"
         check_file_existence(gf)
         check_file_existence(ps)
@@ -852,10 +852,10 @@ datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","1
 #datasets = ["08_web_berkstan.txt"]
 for eps in epsilon_list
     for ds in datasets
-        ds_name = string(split(ds,".txt")[1])
+        ds_name = string(split(ds,".txt")[1])*"_unif"
         gf = graphs_path*ds
         create_folder(ds_name)
-        ps = percolation_path*ds_name*"_unif"
+        ps = percolation_path*ds_name*".txt"
         outpath = "../julia_scripts/scores/"*ds_name*"/"
         check_file_existence(gf)
         check_file_existence(ps)
@@ -903,10 +903,10 @@ end
 global j = 1
 for eps in epsilon_list
     for ds in datasets
-        ds_name = string(split(ds,".txt")[1])
+        ds_name = string(split(ds,".txt")[1])*"_unif"
         gf = graphs_path*ds
         create_folder(ds_name)
-        ps = percolation_path*ds_name*"_unif"
+        ps = percolation_path*ds_name*".txt"
         outpath = "../julia_scripts/scores/"*ds_name*"/"
         check_file_existence(gf)
         check_file_existence(ps)
