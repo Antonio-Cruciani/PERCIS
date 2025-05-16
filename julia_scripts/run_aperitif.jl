@@ -62,10 +62,10 @@ ss_save = [1,2,3,4,5]
 delta = 0.05
 #epsilon = 0.1
 runs = 10
-graphs_path = "../../../percolation_centrality_via_non_uniform_sampling/julia_scripts/graphs/"
-percolation_path = "../../../percolation_centrality_via_non_uniform_sampling/julia_scripts/percolation_states/"
-#graphs_path = "../../../percolation_centrality/graphs/"
-#percolation_path = "percolation_states/"
+#graphs_path = "../../../percolation_centrality_via_non_uniform_sampling/julia_scripts/graphs/"
+#percolation_path = "../../../percolation_centrality_via_non_uniform_sampling/julia_scripts/percolation_states/"
+graphs_path = "../../../percolation_centrality/graphs/"
+percolation_path = "../../../percolation_states/"
 #graphs_path = "graphs/"
 #percolation_path = "percolation_states/"
 
