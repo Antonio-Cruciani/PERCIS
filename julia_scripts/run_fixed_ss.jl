@@ -55,7 +55,9 @@ function save_results(results,output_path,nn,fn)
     close(f)
 end
 
-sample_size_list = [1000,5000,10000,50000,100000]
+#sample_size_list = [1000,5000,10000,50000,100000]
+sample_size_list = [500000,1000000]
+
 #sample_size_list = [1000]
 
 ss_save = [1,2,3,4,5]
@@ -69,12 +71,13 @@ percolation_path = "../../percolation_centrality/percolation_states/"
 tn = 64
 directed = false
 output = ""
-#datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
+datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 #datasets = ["03_ca_astroph.txt"]
-datasets = ["10_flickr.txt"]
+#datasets = ["10_flickr.txt"]
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Random Initiator Experiment")
+
 # Undirected
 # Non Uniform 
 for ss in sample_size_list
@@ -106,7 +109,7 @@ for ss in sample_size_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 1 -g $ss -o $op -b -t $tn $epsilon $delta $ps $gf`
+            args = `-v 40 -g $ss -o $op -b -t $tn $epsilon $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -158,7 +161,7 @@ for ss in sample_size_list
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
             #args = `-v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
-            args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
+            args = `-u -v 40 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
             for line in eachline(`../aperitif/aperitif $args`)
@@ -179,8 +182,8 @@ end
 
 # Directed
 
-#datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
-datasets = ["08_web_berkstan.txt"]
+datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
+#datasets = ["08_web_berkstan.txt"]
 
 for ss in sample_size_list
     for ds in datasets
@@ -211,7 +214,7 @@ for ss in sample_size_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-d -v 1 -g $ss -o $op -b -t $tn $epsilon $delta $ps $gf`
+            args = `-d -v 40 -g $ss -o $op -b -t $tn $epsilon $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -263,7 +266,7 @@ for ss in sample_size_list
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
             #args = `-v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
-            args = `-d -u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
+            args = `-d -u -v 40 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
             for line in eachline(`../aperitif/aperitif $args`)
@@ -288,9 +291,9 @@ end
 @info("Running Experiments for Random Spread Experiment")
 
 
-#datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
+datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 
-datasets = ["10_flickr.txt"]
+#datasets = ["10_flickr.txt"]
 
 for ss in sample_size_list
     for ds in datasets
@@ -321,7 +324,7 @@ for ss in sample_size_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 1 -g $ss -o $op -b -t $tn $epsilon $delta $ps $gf`
+            args = `-v 40 -g $ss -o $op -b -t $tn $epsilon $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -372,7 +375,7 @@ for ss in sample_size_list
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
             #args = `-v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
-            args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
+            args = `-u -v 40 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
             for line in eachline(`../aperitif/aperitif $args`)
@@ -394,8 +397,8 @@ end
 # Directed
 
 
-#datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
-datasets = ["08_web_berkstan.txt"]
+datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
+#datasets = ["08_web_berkstan.txt"]
 
 
 
@@ -431,7 +434,7 @@ for ss in sample_size_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-d -v 1 -g $ss -o $op -b -t $tn $epsilon $delta $ps $gf`
+            args = `-d -v 40 -g $ss -o $op -b -t $tn $epsilon $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -482,7 +485,7 @@ for ss in sample_size_list
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
             #args = `-v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
-            args = `-u -d -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
+            args = `-u -d -v 40 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
             for line in eachline(`../aperitif/aperitif $args`)
@@ -503,8 +506,8 @@ end
 
 
 
-#datasets = ["01_musae_facebook_edges_lcc_in_50.txt","02_email_enron_lcc_in_50.txt","03_ca_astroph_lcc_in_50.txt"]
-datasets = ["10_flickr.txt"]
+datasets = ["01_musae_facebook_edges_lcc_in_50.txt","02_email_enron_lcc_in_50.txt","03_ca_astroph_lcc_in_50.txt"]
+#datasets = ["10_flickr.txt"]
 
 
 for ss in sample_size_list
@@ -536,7 +539,7 @@ for ss in sample_size_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 1 -g $ss -o $op -b -t $tn $epsilon $delta $ps $gf`
+            args = `-v 40 -g $ss -o $op -b -t $tn $epsilon $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -588,7 +591,7 @@ for ss in sample_size_list
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
             #args = `-v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
-            args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
+            args = `-u -v 40 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
             for line in eachline(`../aperitif/aperitif $args`)
@@ -612,8 +615,8 @@ end
 
 # Directed
 
-#datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
-datasets = ["08_web_berkstan.txt"]
+datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
+#datasets = ["08_web_berkstan.txt"]
 
 for ss in sample_size_list
     for ds in datasets
@@ -644,7 +647,7 @@ for ss in sample_size_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-d -v 1 -g $ss -o $op -b -t $tn $epsilon $delta $ps $gf`
+            args = `-d -v 40 -g $ss -o $op -b -t $tn $epsilon $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -695,7 +698,7 @@ for ss in sample_size_list
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
             #args = `-v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
-            args = `-u -d -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
+            args = `-u -d -v 40 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
             for line in eachline(`../aperitif/aperitif $args`)
