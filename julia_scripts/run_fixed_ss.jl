@@ -507,6 +507,9 @@ for ss in sample_size_list
 end
 
 
+graphs_path = "../../percolation_centrality/components/"
+
+
 
 datasets = ["01_musae_facebook_edges_lcc_in_50.txt","02_email_enron_lcc_in_50.txt","03_ca_astroph_lcc_in_50.txt"]
 #datasets = ["10_flickr.txt"]
