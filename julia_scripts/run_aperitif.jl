@@ -64,8 +64,8 @@ delta = 0.05
 runs = 10
 #graphs_path = "../../../percolation_centrality_via_non_uniform_sampling/julia_scripts/graphs/"
 #percolation_path = "../../../percolation_centrality_via_non_uniform_sampling/julia_scripts/percolation_states/"
-graphs_path = "../../../percolation_centrality/graphs/"
-percolation_path = "../../../percolation_centrality/percolation_states/"
+graphs_path = "../../percolation_centrality/graphs/"
+percolation_path = "../../percolation_centrality/percolation_states/"
 #graphs_path = "graphs/"
 #percolation_path = "percolation_states/"
 
