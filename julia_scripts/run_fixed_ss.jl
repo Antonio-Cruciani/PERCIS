@@ -73,6 +73,7 @@ percolation_path = "../../percolation_centrality/percolation_states/"
 tn = 64
 directed = false
 output = ""
+#=
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 #datasets = ["03_ca_astroph.txt"]
 #datasets = ["10_flickr.txt"]
@@ -505,7 +506,7 @@ for ss in sample_size_list
 
     end
 end
-
+=#
 
 graphs_path = "../../percolation_centrality/components/"
 
