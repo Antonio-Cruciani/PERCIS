@@ -365,6 +365,8 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
+            #args = `-v 10 -d -u -o $op -e $es -w $sampling_window -t $tn $eps $delta $ps $gf`
+
             args = `-v 10 -d -u -o $op -e $es -w $sampling_window -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")

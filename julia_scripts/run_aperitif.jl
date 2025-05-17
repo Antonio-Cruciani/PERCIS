@@ -372,9 +372,7 @@ for eps in epsilon_list
             results = Dict(
                 "total_time" =>0.0,
                 "d_max" => 0.0,
-                "kernel_bulding_time"=>0.0,
-                 "void_samples"=> 0.0,
-                 "time_bfs"=>0.0,
+                "kernel_bulding_time"=>0.0,14_p2p_gnutella31
                  "num_samples"=>0.0,
                  "run" => i
             )
@@ -401,12 +399,13 @@ for eps in epsilon_list
     end
     global j+=1
 end
-
+=#
 # Directed
 
 global  j = 1
 #datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
-datasets = ["08_web_berkstan.txt"]
+#datasets = ["08_web_berkstan.txt"]
+datasets = ["14_p2p_gnutella31.txt"]
 
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -512,7 +511,7 @@ for eps in epsilon_list
     end
     global j+=1
 end
-
+#=
 
 global j=1
 
@@ -730,7 +729,6 @@ for eps in epsilon_list
     global j+=1
 end
 
-=#
 
 # Uniform Percolation States
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -949,3 +947,5 @@ for eps in epsilon_list
     end
     global j+=1
 end
+
+=#

@@ -93,16 +93,18 @@ runs = 10
 #percolation_path = "../../percolation_centrality_via_non_uniform_sampling/julia_scripts/percolation_states/"
 #exact_scores_path = "../../percolation_centrality/scores/"
 epsilon_list = [0.0003]
-#graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/graphs/"
-#percolation_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/percolation_states/"
-#exact_scores_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/scores/"
-graphs_path = "../../percolation_centrality/graphs/"
-percolation_path = "../../percolation_centrality/percolation_states/"
-exact_scores_path = "../../percolation_centrality/scores/"
+graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/graphs/"
+percolation_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/percolation_states/"
+exact_scores_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/scores/"
+#graphs_path = "../../percolation_centrality/graphs/"
+#percolation_path = "../../percolation_centrality/percolation_states/"
+#exact_scores_path = "../../percolation_centrality/scores/"
 tn = 64
 directed = false
 output = ""
+fractional = [2,4,5,10]
 
+#=
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 
 #datasets = ["10_flickr.txt"]
@@ -113,7 +115,6 @@ datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.tx
 # Undirected
 # Non Uniform 
 global j = 1
-fractional = [2,4,5,10]
 for denom in fractional
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_rnd_init_50"
@@ -313,13 +314,13 @@ for denom in fractional
 end
 
 
-
+=#
 
 
 # Directed
 
 global  j = 1
-datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
+datasets = ["14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
 #datasets = ["08_web_berkstan.txt"]
 
 
