@@ -96,13 +96,14 @@ epsilon_list = [0.0003]
 #graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/graphs/"
 #percolation_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/percolation_states/"
 #exact_scores_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/scores/"
-graphs_path = "../../percolation_centrality/graphs/"
+graphs_path = "../../percolation_centrality/components/"
 percolation_path = "../../percolation_centrality/percolation_states/"
 exact_scores_path = "../../percolation_centrality/scores/"
 tn = 64
 directed = false
 output = ""
 max_ss = 10000000
+#=
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 
 #datasets = ["10_flickr.txt"]
@@ -527,7 +528,7 @@ for denom in fractional
     end
     global j+=1
 end
-
+=#
 #=
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Worst Case Experiment")
@@ -599,10 +600,11 @@ end
 =#
 
 global  j=1 
-#datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
-#=
-datasets = ["14_p2p_gnutella31_lcc_in_50.txt"]
-for eps in epsilon_list
+datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
+fractional = [2,4,5,10]
+
+#datasets = ["14_p2p_gnutella31_lcc_in_50.txt"]
+for denom in fractional
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])
         gf = graphs_path*ds
@@ -617,8 +619,13 @@ for eps in epsilon_list
         @info("Input Percolation States Path: $ps")
         @info("Input Exact Values Path: $es")
         @info("Running experiements for "*gf)
+        @info("Reading Centrality and setting ε = (1/2)⋅max p(v)")
+        perc_cent = read_centrality_values(es)
+        mp = maximum(perc_cent)
+        eps = mp/denom
+        @info("Maximum Exact Percolation = $mp , Target ε = $eps")
         for i in 1:runs
-            op = outpath *"non_uniform_bs_SD_ss_"*string(j)*"_run_"*string(i)*".txt"
+            op = outpath *"uniform_SD_ss_"*string(j)*"_run_"*string(i)*".txt"
             #op = outpath *"uniform_ss_"*string(ss)*"_run_"*string(i)*".txt"
 
             #@info("Running Run Number "*string(i))
@@ -637,7 +644,7 @@ for eps in epsilon_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 10 -d -o $op -e $es -w $sampling_window -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -d -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -646,7 +653,7 @@ for eps in epsilon_list
                 _catch_and_update!(line,results)      
                 flush(stderr)                        
             end
-            op_times = "non_uniform_bs_sd_"*string(j)*".txt"
+            op_times = "uniform_sd_"*string(j)*".txt"
             #op_times = "uniform_ss_"*string(ss)*".txt"
 
             save_results(results,"../julia_scripts/",ds_name,op_times)
@@ -657,7 +664,7 @@ for eps in epsilon_list
     end
     global j+=1
 end
-=#
+
 #=
 global  j=1 
 datasets = ["14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","15_cit_hepph_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
