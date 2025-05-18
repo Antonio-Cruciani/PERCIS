@@ -105,10 +105,10 @@ output = ""
 fractional = [2,4,5,10]
 
 
-#datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
+datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 
 #datasets = ["10_flickr.txt"]
-#=
+
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Supremum Deviation Experiment")
 @info("Running Experiments for Random Initiator Experiment")
@@ -527,7 +527,7 @@ for denom in fractional
     end
     global j+=1
 end
-=#
+
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Worst Case Experiment")
