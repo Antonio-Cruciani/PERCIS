@@ -102,7 +102,7 @@ exact_scores_path = "../../percolation_centrality/scores/"
 tn = 64
 directed = false
 output = ""
-
+max_ss = 10000000
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 
 #datasets = ["10_flickr.txt"]
@@ -135,8 +135,7 @@ for denom in fractional
         eps = mp/denom
         @info("Maximum Exact Percolation = $mp , Target ε = $eps")
         for i in 1:runs
-            op = outpath *"non_uniform_bs_SD_ss_"*string(j)*"_run_"*string(i)*".txt"
-            #op = outpath *"uniform_ss_"*string(ss)*"_run_"*string(i)*".txt"
+            op = outpath *"uniform_bs_SD_ss_"*string(j)*"_run_"*string(i)*".txt"
 
             #@info("Running Run Number "*string(i))
             results = Dict(
@@ -153,7 +152,7 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 10 -u -o $op -e $es -w $sampling_window -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -202,7 +201,7 @@ for denom in fractional
         eps = mp/denom
         @info("Maximum Exact Percolation = $mp , Target ε = $eps")
         for i in 1:runs
-            op = outpath *"non_uniform_bs_SD_ss_"*string(j)*"_run_"*string(i)*".txt"
+            op = outpath *"uniform_bs_SD_ss_"*string(j)*"_run_"*string(i)*".txt"
 
             #op = outpath *"uniform_ss_"*string(ss)*"_run_"*string(i)*".txt"
 
@@ -221,7 +220,7 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 10 -d -u -o $op -e $es -w $sampling_window -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -d -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -272,7 +271,7 @@ for denom in fractional
         eps = mp/denom
         @info("Maximum Exact Percolation = $mp , Target ε = $eps")
         for i in 1:runs
-            op = outpath *"non_uniform_bs_SD_ss_"*string(j)*"_run_"*string(i)*".txt"
+            op = outpath *"uniform_bs_SD_ss_"*string(j)*"_run_"*string(i)*".txt"
             #op = outpath *"uniform_ss_"*string(ss)*"_run_"*string(i)*".txt"
 
             #@info("Running Run Number "*string(i))
@@ -291,7 +290,7 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 10 -u -o $op -e $es -w $sampling_window -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -346,7 +345,7 @@ for denom in fractional
         eps = mp/denom
         @info("Maximum Exact Percolation = $mp , Target ε = $eps")
         for i in 1:runs
-            op = outpath *"non_uniform_bs_SD_ss_"*string(j)*"_run_"*string(i)*".txt"
+            op = outpath *"uniform_bs_SD_ss_"*string(j)*"_run_"*string(i)*".txt"
             #op = outpath *"uniform_ss_"*string(ss)*"_run_"*string(i)*".txt"
 
             #@info("Running Run Number "*string(i))
@@ -367,7 +366,7 @@ for denom in fractional
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
             #args = `-v 10 -d -u -o $op -e $es -w $sampling_window -t $tn $eps $delta $ps $gf`
 
-            args = `-v 10 -d -u -o $op -e $es -w $sampling_window -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -d -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -416,7 +415,7 @@ for denom in fractional
         eps = mp/denom
         @info("Maximum Exact Percolation = $mp , Target ε = $eps")
         for i in 1:runs
-            op = outpath *"non_uniform_bs_SD_ss_"*string(j)*"_run_"*string(i)*".txt"
+            op = outpath *"uniform_bs_SD_ss_"*string(j)*"_run_"*string(i)*".txt"
             #op = outpath *"uniform_ss_"*string(ss)*"_run_"*string(i)*".txt"
 
             #@info("Running Run Number "*string(i))
@@ -435,7 +434,7 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 10 -u -o $op -e $es -w $sampling_window -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -490,7 +489,7 @@ for denom in fractional
         eps = mp/denom
         @info("Maximum Exact Percolation = $mp , Target ε = $eps")
         for i in 1:runs
-            op = outpath *"non_uniform_bs_SD_ss_"*string(j)*"_run_"*string(i)*".txt"
+            op = outpath *"uniform_bs_SD_ss_"*string(j)*"_run_"*string(i)*".txt"
             #op = outpath *"uniform_ss_"*string(ss)*"_run_"*string(i)*".txt"
 
             #@info("Running Run Number "*string(i))
@@ -509,7 +508,7 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 10 -d -u -o $op -e $es -w $sampling_window -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -d -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")

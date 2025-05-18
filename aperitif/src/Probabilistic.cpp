@@ -140,7 +140,7 @@ Probabilistic::Probabilistic( const std::string &filename,const std::string &per
 // Creates the graph for running the approximation algorithm for the experiment in which we are given the exact percolation centralities 
 // and we have to sample until we achieve the desired SD
 // For more information see the graph class.
-Probabilistic::Probabilistic( const std::string &filename,const std::string &percolation_name,const std::string &centrality_name, const bool uniform , bool optimized_samplig ,bool directed,const double verb , const double sampling_rate_, const bool alpha_given_, const double empirical_peeling_param_ , const bool enable_m_hat_, const int thread_number ,const std::string output_file_): Graph( filename,percolation_name, directed ), verbose(verb) {
+Probabilistic::Probabilistic( const std::string &filename,const std::string &percolation_name,const std::string &centrality_name,const int sample_size, const bool uniform , bool optimized_samplig ,bool directed,const double verb , const double sampling_rate_, const bool alpha_given_, const double empirical_peeling_param_ , const bool enable_m_hat_, const int thread_number ,const std::string output_file_): Graph( filename,percolation_name, directed ), verbose(verb) {
   approx = (double *) calloc( get_nn(), sizeof(double) );
   approx_toadd = (double *) calloc( get_nn(), sizeof(double) );
   time_bfs = (double *) calloc( omp_get_max_threads(), sizeof(double) );
@@ -1799,12 +1799,17 @@ void Probabilistic::run_fixed_sample_size(uint32_t k, double delta, double err,u
 
 // WIP
 // WIP
-void Probabilistic::run_SD_bound(uint32_t k, double delta, double err, bool uniform,bool optimized_sampling,int sample_window) {
+void Probabilistic::run_SD_bound(uint32_t k, double delta, double err, bool uniform,bool optimized_sampling,int sample_window, int sample_size) {
 
   this->absolute = (k == 0);
   this->err = err;
   this->delta = delta;
   start_time = get_time_sec();
+  bool ub_sample_size = false;
+  int max_samples = sample_size;
+  if (sample_size != -1) {
+    ub_sample_size = true;
+  }
   cout<<"Using "<<thread_n<<" Threads"<<endl;
   omp_set_num_threads(thread_n);
   // Step 1: sort
@@ -1966,7 +1971,7 @@ void Probabilistic::run_SD_bound(uint32_t k, double delta, double err, bool unif
             #pragma omp critical(stopcond)
             {
               sd = compute_SD();
-              if (sd <= err){
+              if ((sd <= err) || ((int) num_samples >= max_samples && ub_sample_size)){
                 stop_mcrade = true;
                 //cout<<"conv Num samples "<<num_samples<<" last stopping "<<last_stopping_samples<<endl;
 

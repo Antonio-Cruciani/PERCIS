@@ -34,6 +34,7 @@ bool alpha_given = false;
 double empirical_peeling_param = 2.0;
 bool m_hat_enabled = true;
 bool uniform = false;
+int n_samples_ub = -1;
 // mcrade
 int num_mc = 10;
 int window = 500;
@@ -64,7 +65,7 @@ void usage(const char *binary_name) {
     std::cerr << "\t-a: parameter a for empirical peeling (def. = 2)" << std::endl;
     std::cerr << "\t-s: parameter alpha for sampling shortest paths (def. = 2.3)" << std::endl;
     std::cerr << "\t-m: disable the computation of m_hat" << std::endl;
-    std::cerr << "\t-g: sample size in case of fixed sample size" << std::endl;
+    std::cerr << "\t-g: sample size in case of fixed sample size (or upper bound on samples for -e)" << std::endl;
     std::cerr << "\t-b: use the linea(constr time non uniform sampler" << std::endl;
     std::cerr << "\t-t: set the thread number to use (max threads as default)" << std::endl;
     std::cerr << "\terr: accuracy (0 < epsilon < 1), relative accuracy if k > 0" << std::endl;
@@ -236,6 +237,10 @@ int main(int argc, char *argv[]){
         usage(argv[0]);
         return correct_parse!=2;
     }
+    if (sd_experiment && fixed_ss){
+        fixed_ss = false;
+        n_samples_ub = sample_size;
+    }
     if (!sd_experiment){
         if (!fixed_ss){
             Probabilistic G( graph_file,percolation_file, uniform,optimized, directed, verb , sampling_rate , alpha_given , empirical_peeling_param , m_hat_enabled , vc_dim, thread_number, output_file);
@@ -245,8 +250,8 @@ int main(int argc, char *argv[]){
             G.run_fixed_sample_size(k,delta,err,sample_size,uniform,optimized);
         }   
     }else{
-        Probabilistic G( graph_file,percolation_file,exact_file, uniform,optimized, directed, verb , sampling_rate , alpha_given , empirical_peeling_param , m_hat_enabled , thread_number, output_file);
-        G.run_SD_bound((uint32_t) k,delta, err,uniform,optimized,window);
+        Probabilistic G( graph_file,percolation_file,exact_file, n_samples_ub,uniform,optimized, directed, verb , sampling_rate , alpha_given , empirical_peeling_param , m_hat_enabled , thread_number, output_file);
+        G.run_SD_bound((uint32_t) k,delta, err,uniform,optimized,window,n_samples_ub);
     }
     std::cout << "run finished" << std::endl;
     return 0;
