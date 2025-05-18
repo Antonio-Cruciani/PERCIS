@@ -96,14 +96,14 @@ epsilon_list = [0.0003]
 #graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/graphs/"
 #percolation_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/percolation_states/"
 #exact_scores_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/scores/"
-graphs_path = "../../percolation_centrality/graphs/"
+graphs_path = "../../percolation_centrality/components/"
 percolation_path = "../../percolation_centrality/percolation_states/"
 exact_scores_path = "../../percolation_centrality/scores/"
 tn = 64
 directed = false
 output = ""
 max_ss = 10000000
-
+#=
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 
 #datasets = ["10_flickr.txt"]
@@ -528,7 +528,7 @@ for denom in fractional
     end
     global j+=1
 end
-
+=#
 #=
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Worst Case Experiment")
@@ -598,7 +598,8 @@ for eps in epsilon_list
     global j+=1
 end
 =#
-graphs_path = "../../percolation_centrality/graphs/"
+graphs_path = "../../percolation_centrality/components/"
+directed = true
 
 global  j=1 
 datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
