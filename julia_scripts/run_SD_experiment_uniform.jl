@@ -103,6 +103,8 @@ tn = 64
 directed = false
 output = ""
 max_ss = 10000000
+fractional = [2,4,5,10]
+
 #=
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 
