@@ -613,7 +613,7 @@ graphs_path = "../../percolation_centrality/components/"
 
 for denom in fractional
     for ds in datasets
-        ds_name = string(split(ds,".txt")[1])*"_rnd_init_50"
+        ds_name = string(split(ds,".txt")[1])
         gf = graphs_path*ds
         create_folder(ds_name)
         ps = percolation_path*ds_name*".txt"
