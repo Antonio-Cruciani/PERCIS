@@ -179,6 +179,7 @@ end
 # Directed
 
 #datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
+#=
 datasets = ["08_web_berkstan.txt"]
 
 global j = 1
@@ -245,7 +246,7 @@ end
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Random Spread Experiment")
-
+=#
 #=
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 #datasets = ["10_flickr.txt"]
@@ -318,7 +319,7 @@ end
 
 
 # Directed
-
+#=
 global  j = 1
 #datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
 datasets = ["08_web_berkstan.txt"]
@@ -388,6 +389,7 @@ end
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Uniform Distributed Percolation States Experiment")
+=#
 #=
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 #datasets = ["10_flickr.txt"]
@@ -460,7 +462,7 @@ end
 
 
 # Directed
-
+#=
 global  j = 1
 #datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
 datasets = ["08_web_berkstan.txt"]
@@ -535,7 +537,7 @@ end
 
 
 
-
+=#
 
 
 graphs_path = "../../percolation_centrality/components/"
@@ -607,10 +609,11 @@ global  j=1
 
 #datasets = ["14_p2p_gnutella31_lcc_in_50.txt"]
 datasets = ["08_web_berkstan_lcc_in_50.txt"]
+graphs_path = "../../percolation_centrality/components/"
 
-for eps in epsilon_list
+for denom in fractional
     for ds in datasets
-        ds_name = string(split(ds,".txt")[1])
+        ds_name = string(split(ds,".txt")[1])*"_rnd_init_50"
         gf = graphs_path*ds
         create_folder(ds_name)
         ps = percolation_path*ds_name*".txt"
@@ -623,6 +626,11 @@ for eps in epsilon_list
         @info("Input Percolation States Path: $ps")
         @info("Input Exact Values Path: $es")
         @info("Running experiements for "*gf)
+        @info("Reading Centrality and setting ε = (1/2)⋅max p(v)")
+        perc_cent = read_centrality_values(es)
+        mp = maximum(perc_cent)
+        eps = mp/denom
+        @info("Maximum Exact Percolation = $mp , Target ε = $eps")
         for i in 1:runs
             op = outpath *"non_uniform_bs_SD_ss_"*string(j)*"_run_"*string(i)*".txt"
             #op = outpath *"uniform_ss_"*string(ss)*"_run_"*string(i)*".txt"
