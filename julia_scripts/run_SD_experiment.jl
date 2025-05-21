@@ -93,18 +93,18 @@ runs = 10
 #percolation_path = "../../percolation_centrality_via_non_uniform_sampling/julia_scripts/percolation_states/"
 #exact_scores_path = "../../percolation_centrality/scores/"
 epsilon_list = [0.0003]
-graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/graphs/"
-percolation_path = "/home/antonio/Desktop/percolation_states/"
-exact_scores_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/scores/"
-#graphs_path = "../../percolation_centrality/graphs/"
-#percolation_path = "../../percolation_centrality/percolation_states/"
-#exact_scores_path = "../../percolation_centrality/scores/"
+#graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/graphs/"
+#percolation_path = "/home/antonio/Desktop/percolation_states/"
+#exact_scores_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/scores/"
+graphs_path = "../../percolation_centrality/graphs/"
+percolation_path = "../../percolation_centrality/percolation_states/"
+exact_scores_path = "../../percolation_centrality/scores/"
 tn = 64
 directed = false
 output = ""
 fractional = [2,4,5,10]
 
-#=
+
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 
 #datasets = ["10_flickr.txt"]
@@ -175,12 +175,12 @@ for denom in fractional
     global j+=1
 end
 
-=#
+
 # Directed
 
-#datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
-#=
-datasets = ["08_web_berkstan.txt"]
+datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
+
+#datasets = ["08_web_berkstan.txt"]
 
 global j = 1
 for denom in fractional
@@ -246,8 +246,8 @@ end
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Random Spread Experiment")
-=#
-#=
+
+
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 #datasets = ["10_flickr.txt"]
 
@@ -313,16 +313,16 @@ for denom in fractional
     end
     global j+=1
 end
-=#
+
 
 
 
 
 # Directed
-#=
+
 global  j = 1
-#datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
-datasets = ["08_web_berkstan.txt"]
+datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
+#datasets = ["08_web_berkstan.txt"]
 
 
 
@@ -389,8 +389,8 @@ end
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Uniform Distributed Percolation States Experiment")
-=#
-#=
+
+
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 #datasets = ["10_flickr.txt"]
 
@@ -456,7 +456,7 @@ for denom in fractional
     end
     global j+=1
 end
-=#
+
 
 
 
@@ -600,14 +600,14 @@ for eps in epsilon_list
     end
     global j+=1
 end
-
+=#
 
 global  j=1
 
-#datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
+datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
 
 #datasets = ["14_p2p_gnutella31_lcc_in_50.txt"]
-datasets = ["08_web_berkstan_lcc_in_50.txt"]
+#datasets = ["08_web_berkstan_lcc_in_50.txt"]
 graphs_path = "../../percolation_centrality/components/"
 
 for denom in fractional
@@ -734,4 +734,3 @@ for denom in fractional
     end
     global j+=1
 end
-=#
