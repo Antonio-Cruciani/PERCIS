@@ -224,7 +224,7 @@ for denom in fractional
         gf = graphs_path*ds
         create_folder(ds_name)
         ps = percolation_path*ds_name*".txt"
-outpath = "../julia_scripts/scores/"*ds_name*"/"
+        outpath = "../julia_scripts/scores/"*ds_name*"/"
         es = exact_scores_path*ds_name*"/exact_target.txt"
         check_file_existence(gf)
         check_file_existence(ps)
@@ -339,7 +339,7 @@ datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.tx
 
 global j = 1
 
-for eps in epsilon_list
+for denom in fractional
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_e_log"
         gf = graphs_path*ds
