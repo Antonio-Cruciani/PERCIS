@@ -105,7 +105,7 @@ output = ""
 max_ss = 10000000
 fractional = [2,4,5,10]
 
-#=
+
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 
 #datasets = ["10_flickr.txt"]
@@ -175,12 +175,12 @@ for denom in fractional
     end
     global j+=1
 end
-=#
+
 
 # Directed
 
-#datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
-datasets = ["08_web_berkstan.txt"]
+datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
+#datasets = ["08_web_berkstan.txt"]
 
 global j = 1
 for denom in fractional
@@ -247,7 +247,7 @@ end
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Random Spread Experiment")
 
-#=
+
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 #datasets = ["10_flickr.txt"]
 
@@ -260,7 +260,7 @@ for denom in fractional
         create_folder(ds_name)
         ps = percolation_path*ds_name*".txt"
         outpath = "../julia_scripts/scores/"*ds_name*"/"
-        es = exact_scores_path*ds_name*"/exact_target_e_log.txt"
+        es = exact_scores_path*ds_name*"/exact_target.txt"
         check_file_existence(gf)
         check_file_existence(ps)
         check_file_existence(es)
@@ -315,14 +315,14 @@ for denom in fractional
 end
 
 
-=#
+
 
 
 # Directed
 
 global  j = 1
-#datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
-datasets = ["08_web_berkstan.txt"]
+datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
+#datasets = ["08_web_berkstan.txt"]
 
 
 
@@ -334,7 +334,7 @@ for denom in fractional
         create_folder(ds_name)
         ps = percolation_path*ds_name*".txt"
         outpath = "../julia_scripts/scores/"*ds_name*"/"
-        es = exact_scores_path*ds_name*"/exact_target_e_log.txt"
+        es = exact_scores_path*ds_name*"/exact_target.txt"
         check_file_existence(gf)
         check_file_existence(ps)
         check_file_existence(es)
@@ -391,7 +391,7 @@ end
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Uniform Distributed Percolation States Experiment")
-#=
+
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 #datasets = ["10_flickr.txt"]
 
@@ -460,13 +460,13 @@ end
 
 
 
-=#
+
 
 # Directed
 
 global  j = 1
-#datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
-datasets = ["08_web_berkstan.txt"]
+datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
+#datasets = ["08_web_berkstan.txt"]
 
 
 
@@ -604,9 +604,9 @@ graphs_path = "../../percolation_centrality/components/"
 directed = true
 #sampling_window = 10000
 global  j=1 
-#datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
+datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
 fractional = [2,4,5,10]
-datasets = ["08_web_berkstan_lcc_in_50.txt"]
+#datasets = ["08_web_berkstan_lcc_in_50.txt"]
 
 #datasets = ["14_p2p_gnutella31_lcc_in_50.txt"]
 for denom in fractional

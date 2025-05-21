@@ -260,7 +260,7 @@ for denom in fractional
         create_folder(ds_name)
         ps = percolation_path*ds_name*".txt"
         outpath = "../julia_scripts/scores/"*ds_name*"/"
-        es = exact_scores_path*ds_name*"/exact_target_e_log.txt"
+        es = exact_scores_path*ds_name*"/exact_target.txt"
         check_file_existence(gf)
         check_file_existence(ps)
         check_file_existence(es)
@@ -334,7 +334,7 @@ for denom in fractional
         create_folder(ds_name)
         ps = percolation_path*ds_name*".txt"
         outpath = "../julia_scripts/scores/"*ds_name*"/"
-        es = exact_scores_path*ds_name*"/exact_target_e_log.txt"
+        es = exact_scores_path*ds_name*"/exact_target.txt"
         check_file_existence(gf)
         check_file_existence(ps)
         check_file_existence(es)
