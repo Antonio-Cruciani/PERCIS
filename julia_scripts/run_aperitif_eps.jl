@@ -264,7 +264,7 @@ outpath = "../julia_scripts/scores/"*ds_name*"/"
                 _catch_and_update!(line,results)      
                 flush(stderr)                        
             end
-            op_times = "non_uniform_rho_ss_"*string(j)*".txt"
+            op_times = "non_uniform_rho_eps_ss_"*string(j)*".txt"
             #op_times = "uniform_ss_"*string(ss)*".txt"
 
             save_results(results,"../julia_scripts/",ds_name,op_times)
@@ -385,7 +385,7 @@ for eps in epsilon_list
                 _catch_and_update!(line,results)      
                 flush(stderr)                        
             end
-            op_times = "non_uniform_rho_ss_"*string(j)*".txt"
+            op_times = "non_uniform_rho_eps_ss_"*string(j)*".txt"
             #op_times = "uniform_ss_"*string(ss)*".txt"
 
             save_results(results,"../julia_scripts/",ds_name,op_times)
@@ -502,7 +502,7 @@ for denom in fractional
                 _catch_and_update!(line,results)   
                 flush(stderr)                           
             end
-            op_times = "non_uniform_rho_ss_"*string(j)*".txt"
+            op_times = "non_uniform_rho_eps_ss_"*string(j)*".txt"
             #op_times = "uniform_ss_"*string(ss)*".txt"
 
             save_results(results,"../julia_scripts/",ds_name,op_times)
@@ -621,7 +621,7 @@ for denom in fractional
                 _catch_and_update!(line,results)         
                 flush(stderr)                     
             end
-            op_times = "non_uniform_rho_ss_"*string(j)*".txt"
+            op_times = "non_uniform_rho_eps_ss_"*string(j)*".txt"
             #op_times = "uniform_ss_"*string(ss)*".txt"
 
             save_results(results,"../julia_scripts/",ds_name,op_times)
@@ -739,7 +739,7 @@ for denom in fractional
                 @info("$line")
                 _catch_and_update!(line,results)                
             end
-            op_times = "non_uniform_rho_ss_"*string(j)*".txt"
+            op_times = "non_uniform_rho_eps_ss_"*string(j)*".txt"
             #op_times = "uniform_ss_"*string(ss)*".txt"
 
             save_results(results,"../julia_scripts/",ds_name,op_times)
@@ -861,7 +861,7 @@ for denom in fractional
                 _catch_and_update!(line,results)         
                 flush(stderr)                     
             end
-            op_times = "non_uniform_rho_ss_"*string(j)*".txt"
+            op_times = "non_uniform_rho_eps_ss_"*string(j)*".txt"
             #op_times = "uniform_ss_"*string(ss)*".txt"
 
             save_results(results,"../julia_scripts/",ds_name,op_times)
@@ -978,7 +978,7 @@ for denom in fractional
                 @info("$line")
                 _catch_and_update!(line,results)                
             end
-            op_times = "non_uniform_rho_ss_"*string(j)*".txt"
+            op_times = "non_uniform_rho_eps_ss_"*string(j)*".txt"
             #op_times = "uniform_ss_"*string(ss)*".txt"
 
             save_results(results,"../julia_scripts/",ds_name,op_times)
