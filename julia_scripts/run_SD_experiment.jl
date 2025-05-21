@@ -93,12 +93,12 @@ runs = 10
 #percolation_path = "../../percolation_centrality_via_non_uniform_sampling/julia_scripts/percolation_states/"
 #exact_scores_path = "../../percolation_centrality/scores/"
 epsilon_list = [0.0003]
-#graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/graphs/"
-#percolation_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/percolation_states/"
-#exact_scores_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/scores/"
-graphs_path = "../../percolation_centrality/graphs/"
-percolation_path = "../../percolation_centrality/percolation_states/"
-exact_scores_path = "../../percolation_centrality/scores/"
+graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/graphs/"
+percolation_path = "/home/antonio/Desktop/percolation_states/"
+exact_scores_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/scores/"
+#graphs_path = "../../percolation_centrality/graphs/"
+#percolation_path = "../../percolation_centrality/percolation_states/"
+#exact_scores_path = "../../percolation_centrality/scores/"
 tn = 64
 directed = false
 output = ""
@@ -465,7 +465,7 @@ end
 
 global  j = 1
 datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
-datasets = ["08_web_berkstan.txt"]
+#datasets = ["08_web_berkstan.txt"]
 
 
 
