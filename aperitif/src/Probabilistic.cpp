@@ -968,6 +968,14 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool 
       }
       kernel = preprocessing(get_percolation_states());
     }
+    if (uniform){
+      std::vector<double> flattened_map(get_nn() , 0.0);
+
+    for (uint32_t i = 0; i < get_nn(); i++){
+      flattened_map[i] = minus_sum[i];
+    }
+    kernel.uniform_denominator = flattened_map;
+  }
     double finish_time_kernel = get_time_sec();
     cout<<"Sampling Kernel Built in "<< finish_time_kernel - start_time_kernel<<" seconds "<<endl;
 
@@ -1405,6 +1413,14 @@ void Probabilistic::run_fixed_sample_size(uint32_t k, double delta, double err,u
       kernel = preprocessing(get_percolation_states());
 
     }
+  if (uniform){
+      std::vector<double> flattened_map(get_nn() , 0.0);
+
+    for (uint32_t i = 0; i <get_nn(); i++){
+      flattened_map[i] = minus_sum[i];
+    }
+    kernel.uniform_denominator = flattened_map;
+  }
   double finish_time_kernel = get_time_sec();
   cout<<"Sampling Kernel Built in "<< finish_time_kernel - start_time_kernel<<" seconds "<<endl;
 
@@ -1841,6 +1857,14 @@ void Probabilistic::run_SD_bound(uint32_t k, double delta, double err, bool unif
     }
     kernel = preprocessing(get_percolation_states());
 
+  }
+  if (uniform){
+      std::vector<double> flattened_map(get_nn() , 0.0);
+
+    for (uint32_t i = 0; i <get_nn(); i++){
+      flattened_map[i] = minus_sum[i];
+    }
+    kernel.uniform_denominator = flattened_map;
   }
   double finish_time_kernel = get_time_sec();
   cout<<"Sampling Kernel Built in "<< finish_time_kernel - start_time_kernel<<" seconds "<<endl;

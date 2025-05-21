@@ -60,6 +60,7 @@ end
 
 #sample_size_list = [1000]
 sample_size_list = [1000,5000,10000,50000,100000,500000,1000000]
+
 ss_save = [1,2,3,4,5,6,7]
 delta = 0.05
 epsilon = 0.1

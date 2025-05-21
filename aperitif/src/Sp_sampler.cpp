@@ -272,7 +272,7 @@ map<uint32_t, double>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_leng
         target = v;
         for(uint32_t u:path){
             if (uniform){
-                path_map[u] =  path_map[u] + 1.0*g->get_nn()*(g->get_nn()-1)* max(0.0,percolation_states[source]-percolation_states[target])/denominator_kernel;
+                path_map[u] =  path_map[u] + 1.0*g->get_nn()*(g->get_nn()-1)* max(0.0,percolation_states[source]-percolation_states[target])/sampling_kernel.uniform_denominator[u];
             }else{
                 path_map[u] = path_map[u]+1;
             }

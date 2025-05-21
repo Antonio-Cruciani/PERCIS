@@ -462,9 +462,9 @@ end
 
 
 # Directed
-#=
+
 global  j = 1
-#datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
+datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
 datasets = ["08_web_berkstan.txt"]
 
 
@@ -537,7 +537,6 @@ end
 
 
 
-=#
 
 
 graphs_path = "../../percolation_centrality/components/"
@@ -601,7 +600,7 @@ for eps in epsilon_list
     end
     global j+=1
 end
-=#
+
 
 global  j=1
 
@@ -672,7 +671,6 @@ for denom in fractional
     global j+=1
 end
 
-#=
 global  j=1 
 datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
 fractional = [2,4,5,10]

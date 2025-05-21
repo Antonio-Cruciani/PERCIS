@@ -22,6 +22,7 @@ struct SamplingPreprocessing {
     //Weights is used in case on linear non uniform sampling
     std::vector<double> weights;
     bool optimized = true;
+    std::vector<double> uniform_denominator;
     //std::vector<TieRange> tie_ranges;
 };
 
