@@ -570,7 +570,7 @@ end
 =#
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Worst Case Setting")
-graphs_path = "../../percolation_centrality/components/"
+graphs_path = "../../../percolation_centrality/components/"
 
 
 global j=1
