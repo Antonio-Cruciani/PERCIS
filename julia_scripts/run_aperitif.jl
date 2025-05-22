@@ -181,7 +181,7 @@ for eps in epsilon_list
     end
     global j+=1
 end
-=#
+
 # Directed
 
 #datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
@@ -295,7 +295,7 @@ end
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Random Spread Experiment")
 
-#=
+
 #datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 datasets = ["10_flickr.txt"]
 
@@ -399,7 +399,7 @@ for eps in epsilon_list
     end
     global j+=1
 end
-=#
+
 # Directed
 
 global  j = 1
@@ -513,7 +513,7 @@ end
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Worst Case Setting")
-#=
+
 
 global j=1
 
@@ -623,7 +623,7 @@ for eps in epsilon_list
     global j+=1
 end
 
-=#
+
 
 
 # Directed
@@ -739,7 +739,7 @@ graphs_path = "../../percolation_centrality/graphs/"
 # Uniform Percolation States
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Uniform Percolation States")
-#=
+
 global j=1
 
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
@@ -848,7 +848,7 @@ for eps in epsilon_list
 end
 
 
-=#
+
 
 # Directed
 
@@ -955,3 +955,114 @@ for eps in epsilon_list
     global j+=1
 end
 
+=#
+
+@info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+@info("Running Experiments for Real-World Instances Experiment")
+
+datasets = ["24_uselections.txt","23_twitter_pol.txt","22_obamacare.txt","21_brexit.txt","20_abortion.txt"]
+
+# Undirected
+# Non Uniform 
+global j = 1
+for eps in epsilon_list
+    for ds in datasets
+        ds_name = string(split(ds,".txt")[1])
+        gf = graphs_path*ds
+        create_folder(ds_name)
+        ps = percolation_path*ds_name*".txt"
+        outpath = "../julia_scripts/scores/"*ds_name*"/"
+        check_file_existence(gf)
+        check_file_existence(ps)
+        @info("Input Graph Path: $gf")
+        @info("Input Percolation States Path: $ps")
+        @info("Running experiements for "*gf)
+        for i in 1:runs
+            op = outpath *"non_uniform_rho_ss_"*string(j)*"_run_"*string(i)*".txt"
+            #op = outpath *"uniform_ss_"*string(ss)*"_run_"*string(i)*".txt"
+
+            #@info("Running Run Number "*string(i))
+            results = Dict(
+                "total_time" =>0.0,
+                "d_max" => 0.0,
+                "kernel_bulding_time"=>0.0,
+                 "void_samples"=> 0.0,
+                 "time_bfs"=>0.0,
+                 "num_samples"=>0.0,
+                 "run" => i
+            )
+            
+            #println(ps)
+            #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
+            args = `-v 10 -o $op -t $tn $eps $delta $ps $gf`
+            #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
+            @info("----------------------------------------------------------------------------------")
+            @info("Run Number $i")
+            for line in eachline(`../aperitif/aperitif $args`)
+                @info("$line")
+                _catch_and_update!(line,results)  
+                flush(stderr)              
+            end
+            op_times = "non_uniform_rho_ss_"*string(j)*".txt"
+            #op_times = "uniform_ss_"*string(ss)*".txt"
+
+            save_results(results,"../julia_scripts/",ds_name,op_times)
+            @info("Completed")
+            flush(stderr)
+        end
+
+    end
+    global j+=1
+end
+
+
+global j = 1
+for eps in epsilon_list
+    for ds in datasets
+        ds_name = string(split(ds,".txt")[1])
+        gf = graphs_path*ds
+        create_folder(ds_name)
+        ps = percolation_path*ds_name*".txt"
+        outpath = "../julia_scripts/scores/"*ds_name*"/"
+        check_file_existence(gf)
+        check_file_existence(ps)
+        @info("Input Graph Path: $gf")
+        @info("Input Percolation States Path: $ps")
+        @info("Running experiements for "*gf)
+        for i in 1:runs
+            op = outpath *"non_uniform_vc_ss_"*string(j)*"_run_"*string(i)*".txt"
+            #op = outpath *"uniform_ss_"*string(j)*"_run_"*string(i)*".txt"
+
+            #@info("Running Run Number "*string(i))
+            results = Dict(
+                "total_time" =>0.0,
+                "d_max" => 0.0,
+                "kernel_bulding_time"=>0.0,
+                 "void_samples"=> 0.0,
+                 "time_bfs"=>0.0,
+                 "num_samples"=>0.0,
+                 "run" => i
+            )
+            
+            #println(ps)
+            #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
+            #args = `-v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
+            args = `-f -v 10 -o $op -t $tn $eps $delta $ps $gf`
+            @info("----------------------------------------------------------------------------------")
+            @info("Run Number $i")
+            for line in eachline(`../aperitif/aperitif $args`)
+                @info("$line")
+                _catch_and_update!(line,results)       
+                flush(stderr)                       
+            end
+            op_times = "non_uniform_vc_ss_"*string(j)*".txt"
+            #op_times = "uniform_ss_"*string(j)*".txt"
+
+            save_results(results,"../julia_scripts/",ds_name,op_times)
+            @info("Completed")
+            flush(stderr)
+        end
+
+    end
+    global j+=1
+end
