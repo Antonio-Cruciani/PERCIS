@@ -964,6 +964,7 @@ datasets = ["24_uselections.txt","23_twitter_pol.txt","22_obamacare.txt","21_bre
 
 # Undirected
 # Non Uniform 
+#=
 global j = 1
 for eps in epsilon_list
     for ds in datasets
@@ -1014,9 +1015,12 @@ for eps in epsilon_list
     end
     global j+=1
 end
+=#
+epsilon_list = [0.05,0.01,0.005,0.001,0.0005]
+epsilon_list = [0.0005]
 
-
-global j = 1
+ss_save = [1,2,3,4,5]
+global j = 5
 for eps in epsilon_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])
