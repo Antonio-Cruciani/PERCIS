@@ -95,6 +95,7 @@ output = ""
 #graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/graphs/"
 #percolation_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/percolation_states/"
 #exact_scores_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/scores/"
+#=
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 #datasets = ["10_flickr.txt"]
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -159,7 +160,7 @@ for denom in fractional
     end
     global j+=1
 end
-
+=#
 #=
 global j = 1
 for eps in epsilon_list
@@ -213,7 +214,7 @@ for eps in epsilon_list
 end
 =#
 # Directed
-
+#=
 datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
 #datasets = ["08_web_berkstan.txt"]
 
@@ -275,7 +276,7 @@ for denom in fractional
     end
     global j+=1
 end
-
+=#
 #=
 global j = 1
 for eps in epsilon_list
@@ -328,7 +329,7 @@ for eps in epsilon_list
     global j+=1
 end
 =#
-
+#=
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Random Spread Experiment")
@@ -396,6 +397,7 @@ for denom in fractional
     end
     global j+=1
 end
+=#
 #=
 global j = 1
 for eps in epsilon_list
@@ -447,7 +449,7 @@ for eps in epsilon_list
 end
 =#
 # Directed
-
+#=
 global  j = 1
 datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
 #datasets = ["08_web_berkstan.txt"]
@@ -513,6 +515,7 @@ for denom in fractional
     end
     global j+=1
 end
+=#
 #=
 global j = 1
 for eps in epsilon_list
@@ -567,6 +570,7 @@ end
 =#
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Worst Case Setting")
+graphs_path = "../../percolation_centrality/components/"
 
 
 global j=1
@@ -689,7 +693,6 @@ end
 
 
 # Directed
-graphs_path = "../../percolation_centrality/components/"
 
 global  j=1 
 datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
