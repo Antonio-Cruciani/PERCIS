@@ -104,7 +104,7 @@ directed = false
 output = ""
 fractional = [2,4,5,10]
 
-
+#=
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 
 #datasets = ["10_flickr.txt"]
@@ -540,6 +540,7 @@ end
 
 
 graphs_path = "../../percolation_centrality/components/"
+=#
 #graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/components/"
 #=
 datasets = ["01_musae_facebook_edges_lcc_in_50.txt","02_email_enron_lcc_in_50.txt","03_ca_astroph_lcc_in_50.txt"]
@@ -601,7 +602,7 @@ for eps in epsilon_list
     global j+=1
 end
 =#
-
+#=
 global  j=1
 
 datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
@@ -674,6 +675,73 @@ end
 global  j=1 
 datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
 fractional = [2,4,5,10]
+for denom in fractional
+    for ds in datasets
+            ds_name = string(split(ds,".txt")[1])
+            gf = graphs_path*ds
+            create_folder(ds_name)
+            ps = percolation_path*ds_name*".txt"
+            outpath = "../julia_scripts/scores/"*ds_name*"/"
+            es = exact_scores_path*ds_name*"/exact_target.txt"
+            check_file_existence(gf)
+            check_file_existence(ps)
+            check_file_existence(es)
+            @info("Input Graph Path: $gf")
+            @info("Input Percolation States Path: $ps")
+            @info("Input Exact Values Path: $es")
+            @info("Running experiements for "*gf)
+            @info("Reading Centrality and setting ε = (1/2)⋅max p(v)")
+            perc_cent = read_centrality_values(es)
+            mp = maximum(perc_cent)
+            eps = mp/denom
+            @info("Maximum Exact Percolation = $mp , Target ε = $eps")
+            for i in 1:runs
+                op = outpath *"non_uniform_bs_SD_ss_"*string(j)*"_run_"*string(i)*".txt"
+                #op = outpath *"uniform_ss_"*string(ss)*"_run_"*string(i)*".txt"
+
+                #@info("Running Run Number "*string(i))
+                results = Dict(
+                    "total_time" =>0.0,
+                    "d_max" => 0.0,
+                    "kernel_bulding_time"=>0.0,
+                    "void_samples"=> 0.0,
+                    "time_bfs"=>0.0,
+                    "num_samples"=>0.0,
+                    "sd" => 0.0,
+                    "run" => i,
+                    "epsilon"=>eps
+                )
+                
+                
+                #println(ps)
+                #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
+                args = `-v 10 -d -o $op -e $es -w $sampling_window -t $tn $eps $delta $ps $gf`
+                #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
+                @info("----------------------------------------------------------------------------------")
+                @info("Run Number $i")
+                for line in eachline(`../aperitif/aperitif $args`)
+                    @info("$line")
+                    _catch_and_update!(line,results)      
+                    flush(stderr)                        
+                end
+                op_times = "non_uniform_bs_sd_"*string(j)*".txt"
+                #op_times = "uniform_ss_"*string(ss)*".txt"
+
+                save_results(results,"../julia_scripts/",ds_name,op_times)
+                @info("Completed")
+                flush(stderr)
+            end
+
+    end
+    global j+=1
+end
+=#
+
+@info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+@info("Running Experiments for Real-World Instances Experiment")
+
+datasets = ["24_uselections.txt","23_twitter_pol.txt","22_obamacare.txt","21_brexit.txt","20_abortion.txt"]
+
 for denom in fractional
     for ds in datasets
             ds_name = string(split(ds,".txt")[1])
