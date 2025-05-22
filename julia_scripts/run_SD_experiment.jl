@@ -741,6 +741,7 @@ end
 @info("Running Experiments for Real-World Instances Experiment")
 
 datasets = ["24_uselections.txt","23_twitter_pol.txt","22_obamacare.txt","21_brexit.txt","20_abortion.txt"]
+global j = 1
 
 for denom in fractional
     for ds in datasets
