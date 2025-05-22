@@ -74,12 +74,12 @@ percolation_path = "../../percolation_centrality/percolation_states/"
 tn = 64
 directed = false
 output = ""
-
+#=
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Random Initiator Experiment")
-#=
+
 # Undirected
 # Non Uniform 
 for ss in sample_size_list
@@ -130,7 +130,7 @@ for ss in sample_size_list
 
     end
 end
-=#
+
 
 
 
@@ -186,7 +186,7 @@ end
 # Directed
 
 datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
-#=
+
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_rnd_init_50"
@@ -235,7 +235,7 @@ for ss in sample_size_list
 
     end
 end
-=#
+
 
 
 for ss in sample_size_list
@@ -295,7 +295,7 @@ end
 
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 
-#=
+
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_e_log"
@@ -344,7 +344,7 @@ for ss in sample_size_list
 
     end
 end
-=#
+
 
 for ss in sample_size_list
     for ds in datasets
@@ -403,7 +403,7 @@ datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","1
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 #@info("Running Experiments for Worst Case Setting")
-#=
+
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_e_log"
@@ -452,7 +452,7 @@ for ss in sample_size_list
 
     end
 end
-=#
+
 
 for ss in sample_size_list
     for ds in datasets
@@ -510,7 +510,7 @@ graphs_path = "../../percolation_centrality/components/"
 
 datasets = ["01_musae_facebook_edges_lcc_in_50.txt","02_email_enron_lcc_in_50.txt","03_ca_astroph_lcc_in_50.txt"]
 #datasets = ["10_flickr.txt"]
-#=
+
 
 for ss in sample_size_list
     for ds in datasets
@@ -561,7 +561,7 @@ for ss in sample_size_list
     end
 end
 
-=#
+
 
 for ss in sample_size_list
     for ds in datasets
@@ -621,7 +621,7 @@ datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_
 graphs_path = "../../percolation_centrality/components/"
 
 #datasets = ["08_web_berkstan_lcc_in_50.txt"]
-#=
+
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])
@@ -669,7 +669,7 @@ for ss in sample_size_list
 
     end
 end
-=#
+
 
 
 for ss in sample_size_list
@@ -719,8 +719,8 @@ for ss in sample_size_list
 
     end
 end
-
-
+=#
+#=
 sample_size_list = [1000,5000,10000,50000,100000,500000,1000000]
 graphs_path = "../../percolation_centrality/graphs/"
 
@@ -731,7 +731,7 @@ graphs_path = "../../percolation_centrality/graphs/"
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 #datasets = ["10_flickr.txt"]
 
-#=
+
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_unif"
@@ -782,7 +782,7 @@ for ss in sample_size_list
 end
 =#
 
-
+#=
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_unif"
@@ -831,15 +831,15 @@ for ss in sample_size_list
 
     end
 end
-
+=#
 
 
 
 # Directed
-
+#=
 datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
 #datasets = ["08_web_berkstan.txt"]
-#=
+
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_unif"
@@ -889,7 +889,7 @@ for ss in sample_size_list
 end
 
 =#
-
+#=
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_unif"
@@ -926,6 +926,116 @@ for ss in sample_size_list
             for line in eachline(`../aperitif/aperitif $args`)
                 @info("$line")
                 _catch_and_update!(line,results)                
+            end
+            #op_times = "non_uniform_ss_"*string(ss)*".txt"
+            op_times = "uniform_ss_"*string(ss)*".txt"
+
+            save_results(results,"../julia_scripts/",ds_name,op_times)
+            @info("Completed")
+            flush(stderr)
+        end
+
+    end
+end
+
+=#
+
+
+@info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+@info("Running Experiments for Real-World Instances Experiment")
+
+datasets = ["24_uselections.txt","23_tiwitter_pol.txt","22_obamacare.txt","21_brexit.it","20_abortion.txt"]
+# Undirected
+# Non Uniform 
+for ss in sample_size_list
+    for ds in datasets
+        ds_name = string(split(ds,".txt")[1])
+        gf = graphs_path*ds
+        create_folder(ds_name)
+        ps = percolation_path*ds_name*".txt"
+        outpath = "../julia_scripts/scores/"*ds_name*"/"
+        check_file_existence(gf)
+        check_file_existence(ps)
+        @info("Input Graph Path: $gf")
+        @info("Input Percolation States Path: $ps")
+        @info("Running experiements for "*gf)
+        for i in 1:runs
+            op = outpath *"non_uniform_ss_"*string(ss)*"_run_"*string(i)*".txt"
+            #op = outpath *"uniform_ss_"*string(ss)*"_run_"*string(i)*".txt"
+
+            #@info("Running Run Number "*string(i))
+            results = Dict(
+                "total_time" =>0.0,
+                "d_max" => 0.0,
+                "kernel_bulding_time"=>0.0,
+                 "void_samples"=> 0.0,
+                 "time_bfs"=>0.0,
+                 "num_samples"=>0.0,
+                 "run" => i
+            )
+            
+            #println(ps)
+            #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
+            args = `-v 10 -g $ss -o $op -b -t $tn $epsilon $delta $ps $gf`
+            #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
+            @info("----------------------------------------------------------------------------------")
+            @info("Run Number $i")
+            for line in eachline(`../aperitif/aperitif $args`)
+                @info("$line")
+                _catch_and_update!(line,results)  
+                flush(stderr)              
+            end
+            op_times = "non_uniform_ss_"*string(ss)*".txt"
+            #op_times = "uniform_ss_"*string(ss)*".txt"
+
+            save_results(results,"../julia_scripts/",ds_name,op_times)
+            @info("Completed")
+            flush(stderr)
+        end
+
+    end
+end
+
+
+
+
+for ss in sample_size_list
+    for ds in datasets
+        ds_name = string(split(ds,".txt")[1])
+        gf = graphs_path*ds
+        create_folder(ds_name)
+        ps = percolation_path*ds_name*".txt"
+        outpath = "../julia_scripts/scores/"*ds_name*"/"
+        check_file_existence(gf)
+        check_file_existence(ps)
+        @info("Input Graph Path: $gf")
+        @info("Input Percolation States Path: $ps")
+        @info("Running experiements for "*gf)
+        for i in 1:runs
+            #op = outpath *"non_uniform_ss_"*string(ss)*"_run_"*string(i)*".txt"
+            op = outpath *"uniform_ss_"*string(ss)*"_run_"*string(i)*".txt"
+
+            #@info("Running Run Number "*string(i))
+            results = Dict(
+                "total_time" =>0.0,
+                "d_max" => 0.0,
+                "kernel_bulding_time"=>0.0,
+                 "void_samples"=> 0.0,
+                 "time_bfs"=>0.0,
+                 "num_samples"=>0.0,
+                 "run" => i
+            )
+            
+            #println(ps)
+            #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
+            #args = `-v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
+            args = `-u -v 10 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
+            @info("----------------------------------------------------------------------------------")
+            @info("Run Number $i")
+            for line in eachline(`../aperitif/aperitif $args`)
+                @info("$line")
+                _catch_and_update!(line,results)       
+                flush(stderr)                       
             end
             #op_times = "non_uniform_ss_"*string(ss)*".txt"
             op_times = "uniform_ss_"*string(ss)*".txt"
