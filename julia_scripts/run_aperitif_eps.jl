@@ -95,7 +95,7 @@ output = ""
 #graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/graphs/"
 #percolation_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/percolation_states/"
 #exact_scores_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/scores/"
-#=
+
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 #datasets = ["10_flickr.txt"]
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -140,7 +140,7 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 1 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -160,7 +160,7 @@ for denom in fractional
     end
     global j+=1
 end
-=#
+
 #=
 global j = 1
 for eps in epsilon_list
@@ -214,7 +214,7 @@ for eps in epsilon_list
 end
 =#
 # Directed
-#=
+
 datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
 #datasets = ["08_web_berkstan.txt"]
 
@@ -276,7 +276,7 @@ for denom in fractional
     end
     global j+=1
 end
-=#
+
 #=
 global j = 1
 for eps in epsilon_list
@@ -329,7 +329,7 @@ for eps in epsilon_list
     global j+=1
 end
 =#
-#=
+
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Random Spread Experiment")
@@ -397,7 +397,7 @@ for denom in fractional
     end
     global j+=1
 end
-=#
+
 #=
 global j = 1
 for eps in epsilon_list
@@ -449,7 +449,7 @@ for eps in epsilon_list
 end
 =#
 # Directed
-#=
+
 global  j = 1
 datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
 #datasets = ["08_web_berkstan.txt"]
@@ -515,7 +515,7 @@ for denom in fractional
     end
     global j+=1
 end
-=#
+
 #=
 global j = 1
 for eps in epsilon_list
@@ -568,7 +568,7 @@ for eps in epsilon_list
     global j+=1
 end
 =#
-#=
+
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Worst Case Setting")
 graphs_path = "../../../percolation_centrality/components/"
@@ -617,7 +617,7 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 1 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -637,7 +637,7 @@ for denom in fractional
     end
     global j+=1
 end
-=#
+
 #=
 global j = 1
 for eps in epsilon_list
@@ -691,10 +691,13 @@ for eps in epsilon_list
 end
 
 =#
+@info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+@info("Running Experiments for Worst Case Setting")
+graphs_path = "../../../percolation_centrality/components/"
 
 
 # Directed
-#=
+
 global  j=1 
 datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
 #datasets = ["08_web_berkstan_lcc_in_50.txt"]
@@ -754,7 +757,7 @@ for denom in fractional
     end
     global j+=1
 end
-=#
+
 #=
 global j = 1
 for eps in epsilon_list
@@ -807,7 +810,7 @@ for eps in epsilon_list
 end
 
 =#
-#=
+
 graphs_path = "../../../percolation_centrality/graphs/"
 
 # Uniform Percolation States
@@ -876,7 +879,7 @@ for denom in fractional
     end
     global j+=1
 end
-=#
+
 #=
 global j = 1
 for eps in epsilon_list
@@ -931,7 +934,7 @@ end
 
 
 =#
-#=
+
 # Directed
 
 global  j=1 
@@ -993,7 +996,7 @@ for denom in fractional
     end
     global j+=1
 end
-=#
+
 #=
 global j = 1
 for eps in epsilon_list
