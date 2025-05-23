@@ -73,7 +73,7 @@ percolation_path = "../../percolation_centrality/percolation_states/"
 tn = 64
 directed = false
 output = ""
-#=
+
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 #datasets = ["02_email_enron.txt"]
 #datasets = ["10_flickr.txt"]
@@ -137,8 +137,8 @@ end
 
 # Directed
 
-#datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
-datasets = ["08_web_berkstan.txt"]
+datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
+#datasets = ["08_web_berkstan.txt"]
 
 for ss in sample_size_list
     for ds in datasets
@@ -253,10 +253,10 @@ end
 # Directed
 
 
-#datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
+datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
 #datasets = ["14_p2p_gnutella31.txt"]
 
-datasets = ["08_web_berkstan.txt"]
+#datasets = ["08_web_berkstan.txt"]
 
 
 
@@ -374,8 +374,8 @@ end
 
 # Directed
 
-#datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
-datasets = ["08_web_berkstan_lcc_in_50.txt"]
+datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
+#datasets = ["08_web_berkstan_lcc_in_50.txt"]
 
 for ss in sample_size_list
     for ds in datasets
@@ -425,10 +425,11 @@ for ss in sample_size_list
     end
 end
 
-=#
 
 
-#=
+graphs_path = "../../percolation_centrality/graphs/"
+
+
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Uniform Percolation States")
@@ -490,8 +491,9 @@ end
 
 # Directed
 graphs_path = "../../percolation_centrality/graphs/"
+datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
 
-datasets = ["04_web_notredame.txt" ]
+#datasets = ["04_web_notredame.txt" ]
 #datasets = ["08_web_berkstan.txt"]
 
 for ss in sample_size_list
@@ -543,7 +545,7 @@ for ss in sample_size_list
     end
 end
 
-=#
+
 datasets = ["24_uselections.txt","23_twitter_pol.txt","22_obamacare.txt","21_brexit.txt","20_abortion.txt"]
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Real-World Instances Experiment")
