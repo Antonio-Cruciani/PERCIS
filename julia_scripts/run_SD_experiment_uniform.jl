@@ -106,7 +106,7 @@ max_ss = 10000000
 max_ss = 10^11
 fractional = [2,4,5,10]
 
-#=
+
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 
 #datasets = ["10_flickr.txt"]
@@ -531,7 +531,7 @@ for denom in fractional
     end
     global j+=1
 end
-=#
+
 #=
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Worst Case Experiment")
@@ -671,12 +671,13 @@ for denom in fractional
     end
     global j+=1
 end
-=#
+
 graphs_path = "../../percolation_centrality/components/"
 
 global  j=1 
 datasets = ["14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","15_cit_hepph_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
 fractional = [2,4,5,10]
+=#
 #=
 for denom in fractional
     for ds in datasets
@@ -739,8 +740,9 @@ for denom in fractional
     global j+=1
 end
 global  j=1 
-=#
+
 #for eps in epsilon_list
+global  j=1 
 for denom in fractional
 
     for ds in datasets
@@ -804,8 +806,8 @@ for denom in fractional
 #end
 end
 
+=#
 
-#=
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Real-World Instances Experiment")
@@ -874,5 +876,3 @@ for denom in fractional
     global j+=1
 end
 
-
-=#
