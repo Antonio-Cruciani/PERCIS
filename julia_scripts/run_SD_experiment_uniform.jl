@@ -103,6 +103,7 @@ tn = 64
 directed = false
 output = ""
 max_ss = 10000000
+max_ss = 10^11
 fractional = [2,4,5,10]
 
 #=
@@ -671,10 +672,11 @@ for denom in fractional
     global j+=1
 end
 =#
-#=
+
 global  j=1 
 datasets = ["14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","15_cit_hepph_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
 fractional = [2,4,5,10]
+#=
 for denom in fractional
     for ds in datasets
             ds_name = string(split(ds,".txt")[1])
@@ -736,7 +738,7 @@ for denom in fractional
     global j+=1
 end
 global  j=1 
-
+=#
 #for eps in epsilon_list
 for denom in fractional
 
@@ -801,8 +803,8 @@ for denom in fractional
 #end
 end
 
-=#
 
+#=
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Real-World Instances Experiment")
@@ -872,3 +874,4 @@ for denom in fractional
 end
 
 
+=#

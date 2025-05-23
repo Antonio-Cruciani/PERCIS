@@ -502,11 +502,11 @@ for ss in sample_size_list
 
     end
 end
-
+=#
 
 graphs_path = "../../percolation_centrality/components/"
 
-
+#=
 
 datasets = ["01_musae_facebook_edges_lcc_in_50.txt","02_email_enron_lcc_in_50.txt","03_ca_astroph_lcc_in_50.txt"]
 #datasets = ["10_flickr.txt"]
@@ -560,7 +560,7 @@ for ss in sample_size_list
 
     end
 end
-
+=#
 
 
 for ss in sample_size_list
@@ -621,7 +621,7 @@ datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_
 graphs_path = "../../percolation_centrality/components/"
 
 #datasets = ["08_web_berkstan_lcc_in_50.txt"]
-
+#=
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])
@@ -669,7 +669,7 @@ for ss in sample_size_list
 
     end
 end
-
+=#
 
 
 for ss in sample_size_list
@@ -719,7 +719,7 @@ for ss in sample_size_list
 
     end
 end
-=#
+
 #=
 sample_size_list = [1000,5000,10000,50000,100000,500000,1000000]
 graphs_path = "../../percolation_centrality/graphs/"
@@ -940,7 +940,7 @@ end
 
 =#
 
-
+#=
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Real-World Instances Experiment")
 
@@ -1047,3 +1047,5 @@ for ss in sample_size_list
 
     end
 end
+
+=#
