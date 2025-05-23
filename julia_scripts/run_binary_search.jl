@@ -64,6 +64,7 @@ ss_save = [1,2,3,4,5,6,7]
 delta = 0.05
 epsilon = 0.1
 runs = 10
+
 #graphs_path = "../julia_scripts/graphs/"
 #percolation_path = "../julia_scripts/percolation_states/"
 graphs_path = "../../percolation_centrality/graphs/"
