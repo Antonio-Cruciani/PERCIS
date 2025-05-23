@@ -103,7 +103,7 @@ tn = 64
 directed = false
 output = ""
 max_ss = 10000000
-max_ss = 10^11
+max_ss = 10^8
 fractional = [2,4,5,10]
 
 
@@ -116,6 +116,7 @@ datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.tx
 @info("Running Experiments for Random Initiator Experiment")
 # Undirected
 # Non Uniform 
+
 global j = 1
 fractional = [2,4,5,10]
 for denom in fractional
@@ -156,7 +157,9 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
+            println("THREAD NUMBER $tn")
             args = `-v 10 -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
+            println("ARGS ",args)
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -224,6 +227,11 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
+            println(es)
+            println("WING ",sampling_window)
+            println("MAX SS ",max_ss)
+            println("DELTA ",delta)
+            println("EPS ",eps)
             args = `-v 10 -d -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
@@ -601,7 +609,7 @@ for eps in epsilon_list
     global j+=1
 end
 =#
-#=
+
 graphs_path = "../../percolation_centrality/components/"
 directed = true
 #sampling_window = 10000
@@ -677,7 +685,7 @@ graphs_path = "../../percolation_centrality/components/"
 global  j=1 
 datasets = ["14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","15_cit_hepph_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
 fractional = [2,4,5,10]
-=#
+
 #=
 for denom in fractional
     for ds in datasets
@@ -808,6 +816,7 @@ end
 
 =#
 
+graphs_path = "../../percolation_centrality/graphs/"
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Real-World Instances Experiment")
