@@ -82,6 +82,8 @@ ss_save = [1,2,3,4,5]
 delta = 0.05
 #epsilon = 0.1
 runs = 10
+#sampling_rate_ = 2.3
+sampling_rate_ = 0.0
 #graphs_path = "../../../percolation_centrality_via_non_uniform_sampling/julia_scripts/graphs/"
 #percolation_path = "../../../percolation_centrality_via_non_uniform_sampling/julia_scripts/percolation_states/"
 #graphs_path = "graphs/"
@@ -140,7 +142,8 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 10 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
+
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -256,7 +259,7 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-d -v 10 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-d -v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -377,7 +380,7 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 1 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -495,7 +498,7 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-d -v 10 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-d -v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -617,7 +620,7 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 10 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -738,7 +741,7 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-d -v 10 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-d -v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -859,7 +862,7 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 10 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -977,7 +980,7 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-d -v 10 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-d -v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -1097,7 +1100,7 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 1 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
