@@ -99,6 +99,8 @@ epsilon_list = [0.0003]
 graphs_path = "../../percolation_centrality/graphs/"
 percolation_path = "../../percolation_centrality/percolation_states/"
 exact_scores_path = "../../percolation_centrality/scores/"
+#sampling_rate_ = 2.3
+sampling_rate_ = 0.0
 tn = 64
 directed = false
 output = ""
@@ -157,9 +159,9 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            println("THREAD NUMBER $tn")
-            args = `-v 10 -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
-            println("ARGS ",args)
+            #println("THREAD NUMBER $tn")
+            args = `-v 10 -s $sampling_rate_ -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
+            #println("ARGS ",args)
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -228,11 +230,8 @@ for denom in fractional
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
             println(es)
-            println("WING ",sampling_window)
-            println("MAX SS ",max_ss)
-            println("DELTA ",delta)
-            println("EPS ",eps)
-            args = `-v 10 -d -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
+           
+            args = `-v 10 -s $sampling_rate_ -d -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -302,7 +301,7 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 10 -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -s $sampling_rate_ -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -378,7 +377,7 @@ for denom in fractional
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
             #args = `-v 10 -d -u -o $op -e $es -w $sampling_window -t $tn $eps $delta $ps $gf`
 
-            args = `-v 10 -d -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -s $sampling_rate_ -d -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -446,7 +445,7 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 10 -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -s $sampling_rate_ -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -520,7 +519,7 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 10 -d -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -s $sampling_rate_ -d -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -659,7 +658,7 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 10 -d -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -s $sampling_rate_ -d -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -864,7 +863,7 @@ for denom in fractional
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 10 -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -s $sampling_rate_ -u -o $op -e $es -w $sampling_window -g $max_ss -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
