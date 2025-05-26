@@ -68,11 +68,12 @@ graphs_path = "../../../percolation_centrality/graphs/"
 percolation_path = "../../../percolation_centrality/percolation_states/"
 #graphs_path = "graphs/"
 #percolation_path = "percolation_states/"
-
+#sampling_rate_ = 2.3
+sampling_rate_ = 0.0
 tn = 64
 directed = false
 output = ""
-#=
+
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 #datasets = ["10_flickr.txt"]
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -109,7 +110,7 @@ for eps in epsilon_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 10 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -129,8 +130,8 @@ for eps in epsilon_list
     end
     global j+=1
 end
-=#
-#=
+
+
 global j = 1
 for eps in epsilon_list
     for ds in datasets
@@ -162,7 +163,7 @@ for eps in epsilon_list
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
             #args = `-v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
-            args = `-f -v 1 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-f -v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
             for line in eachline(`../aperitif/aperitif $args`)
@@ -181,9 +182,9 @@ for eps in epsilon_list
     end
     global j+=1
 end
-=#
+
 # Directed
-#=
+
 datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
 #datasets = ["08_web_berkstan.txt"]
 
@@ -217,7 +218,7 @@ for eps in epsilon_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-d -v 10 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-d -v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -237,8 +238,8 @@ for eps in epsilon_list
     end
     global j+=1
 end
-=#
-#=
+
+
 global j = 1
 for eps in epsilon_list
     for ds in datasets
@@ -269,7 +270,7 @@ for eps in epsilon_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-f -d -v 10 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-f -d -v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-d -u -v 1 -o $op -t $tn $eps $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -291,8 +292,8 @@ for eps in epsilon_list
 end
 
 
-=#
-#=
+
+
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Random Spread Experiment")
 
@@ -331,7 +332,7 @@ for eps in epsilon_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 10 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -351,8 +352,8 @@ for eps in epsilon_list
     end
     global j+=1
 end
-=#
-#=
+
+
 
 global j = 1
 for eps in epsilon_list
@@ -375,14 +376,14 @@ for eps in epsilon_list
             results = Dict(
                 "total_time" =>0.0,
                 "d_max" => 0.0,
-                "kernel_bulding_time"=>0.0,14_p2p_gnutella31
+                "kernel_bulding_time"=>0.0,
                  "num_samples"=>0.0,
                  "run" => i
             )
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-f -v 1 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-f -v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -o $op -t $tn $eps $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -402,9 +403,9 @@ for eps in epsilon_list
     end
     global j+=1
 end
-=#
+
 # Directed
-#=
+
 global  j = 1
 datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
 #datasets = ["08_web_berkstan.txt"]
@@ -442,7 +443,7 @@ for eps in epsilon_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-d -v 10 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-d -v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -462,8 +463,8 @@ for eps in epsilon_list
     end
     global j+=1
 end
-=#
-#=
+
+
 global j = 1
 for eps in epsilon_list
     for ds in datasets
@@ -494,7 +495,7 @@ for eps in epsilon_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-f -d -v 10 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-f -d -v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -d -v 1 -o $op -t $tn $eps $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -514,7 +515,7 @@ for eps in epsilon_list
     end
     global j+=1
 end
-=#
+
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Worst Case Setting")
 graphs_path = "../../../percolation_centrality/components/"
@@ -555,7 +556,7 @@ for eps in epsilon_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 10 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -576,7 +577,7 @@ for eps in epsilon_list
     global j+=1
 end
 
-#=
+
 global j = 1
 for eps in epsilon_list
     for ds in datasets
@@ -607,7 +608,7 @@ for eps in epsilon_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-f -v 1 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-f -v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -o $op -t $tn $eps $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -627,7 +628,7 @@ for eps in epsilon_list
     end
     global j+=1
 end
-=#
+
 
 
 
@@ -666,7 +667,7 @@ for eps in epsilon_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-d -v 10 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-d -v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -686,7 +687,7 @@ for eps in epsilon_list
     global j+=1
 end
 
-#=
+
 global j = 1
 for eps in epsilon_list
     for ds in datasets
@@ -718,7 +719,7 @@ for eps in epsilon_list
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
             #args = `-v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
-            args = `-f -d -v 10 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-f -d -v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
             for line in eachline(`../aperitif/aperitif $args`)
@@ -738,7 +739,7 @@ for eps in epsilon_list
 end
 
 
-=#
+
 graphs_path = "../../../percolation_centrality/graphs/"
 
 # Uniform Percolation States
@@ -779,7 +780,7 @@ for eps in epsilon_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 10 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -799,7 +800,7 @@ for eps in epsilon_list
     end
     global j+=1
 end
-#=
+
 
 global j = 1
 for eps in epsilon_list
@@ -831,7 +832,7 @@ for eps in epsilon_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-f -v 10 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-f -v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -o $op -t $tn $eps $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -853,7 +854,7 @@ for eps in epsilon_list
 end
 
 
-=#
+
 
 # Directed
 
@@ -889,7 +890,7 @@ for eps in epsilon_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-d -v 10 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-d -v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -909,7 +910,7 @@ for eps in epsilon_list
     global j+=1
 end
 
-#=
+
 global j = 1
 for eps in epsilon_list
     for ds in datasets
@@ -941,7 +942,7 @@ for eps in epsilon_list
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
             #args = `-v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
-            args = `-f -d -v 10 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-f -d -v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
             for line in eachline(`../aperitif/aperitif $args`)
@@ -960,7 +961,7 @@ for eps in epsilon_list
     global j+=1
 end
 
-=#
+
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Real-World Instances Experiment")
@@ -1000,7 +1001,7 @@ for eps in epsilon_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 10 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
@@ -1020,12 +1021,12 @@ for eps in epsilon_list
     end
     global j+=1
 end
-#=
+
 epsilon_list = [0.05,0.01,0.005,0.001,0.0005]
 epsilon_list = [0.0005]
 
 ss_save = [1,2,3,4,5]
-global j = 5
+global j = 1
 for eps in epsilon_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])
@@ -1056,7 +1057,7 @@ for eps in epsilon_list
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
             #args = `-v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
-            args = `-f -v 10 -o $op -t $tn $eps $delta $ps $gf`
+            args = `-f -v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")
             for line in eachline(`../aperitif/aperitif $args`)
@@ -1075,4 +1076,3 @@ for eps in epsilon_list
     end
     global j+=1
 end
-=#
