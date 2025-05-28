@@ -129,8 +129,8 @@ map<uint32_t, double>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_leng
  
         
     }
-    //cout<<"HERETTO"<<endl;
-    if (percolation_states[u]<= percolation_states[v]){
+    
+    if ((percolation_states[u]<= percolation_states[v]) && (!uniform)){
         return std::map<uint32_t,double>();//vector<uint32_t>();
     }
 
