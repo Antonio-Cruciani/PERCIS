@@ -129,25 +129,26 @@ map<uint32_t, double>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_leng
  
         
     }
-    
+
     if ((percolation_states[u]<= percolation_states[v]) && (!uniform)){
         return std::map<uint32_t,double>();//vector<uint32_t>();
     }
 
     bool guess_void = false;
-    if(g->directed){
-      if(g->cc[u] < g->cc[v]){
-        guess_void = true;
-        return std::map<uint32_t,double>();//vector<uint32_t>();
-      }
+    if (!uniform){
+        if(g->directed){
+        if(g->cc[u] < g->cc[v]){
+            guess_void = true;
+            return std::map<uint32_t,double>();//vector<uint32_t>();
+        }
+        }
+        else{
+        if(g->cc[u] != g->cc[v]){
+            guess_void = true;
+            return std::map<uint32_t,double>();//vector<uint32_t>();
+        }
+        }
     }
-    else{
-      if(g->cc[u] != g->cc[v]){
-        guess_void = true;
-        return std::map<uint32_t,double>();//vector<uint32_t>();
-      }
-    }
-    
     //cout<<"SAMPLING PATH "<<endl;
     end_q = 2;
 

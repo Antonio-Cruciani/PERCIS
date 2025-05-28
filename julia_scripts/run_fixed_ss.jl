@@ -69,10 +69,10 @@ runs = 10
 #percolation_path = "../julia_scripts/percolation_states/"
 #graphs_path = "../../../percolation_centrality/graphs/"
 #percolation_path = "../../../percolation_centrality/percolation_states/"
-graphs_path = "../../percolation_centrality/graphs/"
-percolation_path = "../../percolation_centrality/percolation_states/"
-sampling_rate_ = 2.3
-#sampling_rate_ = 0.0
+graphs_path = "../../../percolation_centrality/graphs/"
+percolation_path = "../../../percolation_centrality/percolation_states/"
+#sampling_rate_ = 2.3
+sampling_rate_ = 0.0
 tn = 64
 directed = false
 output = ""
@@ -509,7 +509,7 @@ end
 
 
 
-graphs_path = "../../percolation_centrality/components/"
+graphs_path = "../../../percolation_centrality/components/"
 
 
 
@@ -624,7 +624,7 @@ end
 # Directed
 
 datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
-graphs_path = "../../percolation_centrality/components/"
+graphs_path = "../../../percolation_centrality/components/"
 
 #datasets = ["08_web_berkstan_lcc_in_50.txt"]
 #=
@@ -728,7 +728,7 @@ end
 
 
 sample_size_list = [1000,5000,10000,50000,100000,500000,1000000]
-graphs_path = "../../percolation_centrality/graphs/"
+graphs_path = "../../../percolation_centrality/graphs/"
 
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
