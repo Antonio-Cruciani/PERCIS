@@ -212,6 +212,8 @@ double Probabilistic::compute_SD(){
   double tmp = 0.0;
   double diff = 0.0;
   int n = get_nn();
+  int idx = 0;
+  int v_idx = 0;
   for (int i = 0;i<n;i++){
     diff = (double) approx[i]/(double)(num_samples) - (double) exact_percolation_centrality[i];
     tmp = (double) abs(diff);
@@ -2030,6 +2032,7 @@ void Probabilistic::run_SD_bound(uint32_t k, double delta, double err, bool unif
                       last_output = current_time;
                       cout<<"Not converged, Increasing sample size to "<<last_stopping_samples<<endl;
                       cout<<"Epsilon "<<err<<" Supremum Deviation "<<sd<<endl;
+                      cout<<"Void samples so far "<<void_samples<<endl;
                       print_status(&status);
                   }
               }

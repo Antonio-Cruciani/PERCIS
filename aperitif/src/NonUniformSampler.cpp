@@ -48,11 +48,7 @@ SamplingPreprocessing preprocessing(const std::vector<double>& X) {
     for (int i = 0; i < n; ++i) {
         value_index_pairs.emplace_back(X[i], i);
     }
-    // This is a technical trick, in case of very skewed distribution of X we need to shuffle the indices before sorting them
-    // This shuffles the ties and allows the binary search not to fall on the same element of the skewed group.
-    // If you do not shuffle, in very skewed scenarios you might pick always the same s and obtain a bit of bias. 
-    //std::shuffle(value_index_pairs.begin(), value_index_pairs.end(), rng);
-    // Useless shuffle, removed
+
 
     std::sort(value_index_pairs.begin(), value_index_pairs.end(),
               [](const auto& a, const auto& b) { return a.first > b.first; });
@@ -156,7 +152,7 @@ std::pair<int, int> non_uniform_sampling_binary_search(const SamplingPreprocessi
     //std::cout<<"Len map "<<kernel.original_index_map.size()<<std::endl;
     //S.emplace_back(kernel.original_index_map[s], kernel.original_index_map[t]);
     
-
+    
     return {kernel.original_index_map[s], kernel.original_index_map[t]};
 }
 

@@ -66,6 +66,8 @@ runs = 10
 #percolation_path = "../../../percolation_centrality_via_non_uniform_sampling/julia_scripts/percolation_states/"
 graphs_path = "../../../percolation_centrality/graphs/"
 percolation_path = "../../../percolation_centrality/percolation_states/"
+graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/components/"
+percolation_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/percolation_states/"
 #graphs_path = "graphs/"
 #percolation_path = "percolation_states/"
 #sampling_rate_ = 2.3
@@ -73,7 +75,7 @@ sampling_rate_ = 0.0
 tn = 64
 directed = false
 output = ""
-
+#=
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 #datasets = ["10_flickr.txt"]
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -515,14 +517,14 @@ for eps in epsilon_list
     end
     global j+=1
 end
-
+=#
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Worst Case Setting")
-graphs_path = "../../../percolation_centrality/components/"
+#graphs_path = "../../../percolation_centrality/components/"
 
 
 global j=1
-graphs_path = "../../../percolation_centrality/components/"
+#graphs_path = "../../../percolation_centrality/components/"
 datasets = ["01_musae_facebook_edges_lcc_in_50.txt","02_email_enron_lcc_in_50.txt","03_ca_astroph_lcc_in_50.txt"]
 #datasets = ["10_flickr.txt"]
 
@@ -633,7 +635,7 @@ end
 
 
 # Directed
-graphs_path = "../../../percolation_centrality/components/"
+#graphs_path = "../../../percolation_centrality/components/"
 
 global  j=1 
 datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
@@ -737,7 +739,7 @@ for eps in epsilon_list
     end
     global j+=1
 end
-
+#=
 
 
 graphs_path = "../../../percolation_centrality/graphs/"
@@ -1076,3 +1078,4 @@ for eps in epsilon_list
     end
     global j+=1
 end
+=#

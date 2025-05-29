@@ -69,14 +69,14 @@ runs = 10
 #percolation_path = "../julia_scripts/percolation_states/"
 graphs_path = "../../percolation_centrality/graphs/"
 percolation_path = "../../percolation_centrality/percolation_states/"
-#graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/graphs/"
-#percolation_path = "/home/antonio/Desktop/percolation_states/"
+graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/graphs/"
+percolation_path = "/home/antonio/Desktop/percolation_states/"
 #sampling_rate_ = 2.3
 sampling_rate_ = 0.0
 tn = 64
 directed = false
 output = ""
-
+#=
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 #datasets = ["02_email_enron.txt"]
 #datasets = ["10_flickr.txt"]
@@ -144,7 +144,7 @@ datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","1
 #datasets = ["08_web_berkstan.txt"]
 
 for ss in sample_size_list
-    for ds in datasets
+    for dsimportance_sampling in datasets
         ds_name = string(split(ds,".txt")[1])*"_rnd_init_50"
         gf = graphs_path*ds
         create_folder(ds_name)
@@ -210,7 +210,7 @@ for ss in sample_size_list
         create_folder(ds_name)
         ps = percolation_path*ds_name*".txt"
         outpath = "../julia_scripts/scores/"*ds_name*"/"
-        check_file_existence(gf)
+        chimportance_samplingeck_file_existence(gf)
         check_file_existence(ps)
         @info("Input Graph Path: $gf")
         @info("Input Percolation States Path: $ps")
@@ -255,7 +255,7 @@ end
 
 # Directed
 
-
+importance_sampling
 datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
 #datasets = ["14_p2p_gnutella31.txt"]
 
@@ -276,7 +276,7 @@ for ss in sample_size_list
         @info("Input Percolation States Path: $ps")
         @info("Running experiements for "*gf)
         for i in 1:runs
-            op = outpath *"non_uniform_bs_ss_"*string(ss)*"_run_"*string(i)*".txt"
+          importance_sampling  op = outpath *"non_uniform_bs_ss_"*string(ss)*"_run_"*string(i)*".txt"
             #op = outpath *"uniform_ss_"*string(ss)*"_run_"*string(i)*".txt"
 
             #@info("Running Run Number "*string(i))
@@ -490,15 +490,17 @@ for ss in sample_size_list
 end
 
 
-
+=#
 
 # Directed
-graphs_path = "../../percolation_centrality/graphs/"
-datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
+#graphs_path = "../../percolation_centrality/graphs/"
+
+#datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
+datasets = ["04_web_notredame.txt","06_web_google.txt"]
 
 #datasets = ["04_web_notredame.txt" ]
 #datasets = ["08_web_berkstan.txt"]
-
+#=
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_unif"
@@ -547,9 +549,13 @@ for ss in sample_size_list
 
     end
 end
+=#
 
 
-datasets = ["24_uselections.txt","23_twitter_pol.txt","22_obamacare.txt","21_brexit.txt","20_abortion.txt"]
+#datasets = ["24_uselections.txt","23_twitter_pol.txt","22_obamacare.txt","21_brexit.txt","20_abortion.txt"]
+datasets = ["20_abortion.txt"]
+graphs_path = "../../percolation_centrality/new_graphs/"
+percolation_path = "../../percolation_centrality/new_states/"
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Real-World Instances Experiment")
 # Undirected
