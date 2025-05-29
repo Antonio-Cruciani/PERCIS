@@ -69,8 +69,8 @@ runs = 10
 #percolation_path = "../julia_scripts/percolation_states/"
 graphs_path = "../../percolation_centrality/graphs/"
 percolation_path = "../../percolation_centrality/percolation_states/"
-graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/graphs/"
-percolation_path = "/home/antonio/Desktop/percolation_states/"
+#graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/graphs/"
+#percolation_path = "/home/antonio/Desktop/percolation_states/"
 #sampling_rate_ = 2.3
 sampling_rate_ = 0.0
 tn = 64
@@ -312,7 +312,7 @@ for ss in sample_size_list
     end
 end
 
-
+=#
 graphs_path = "../../percolation_centrality/components/"
 
 
@@ -371,7 +371,7 @@ for ss in sample_size_list
     end
 end
 
-
+#=
 
 
 
@@ -549,7 +549,7 @@ for ss in sample_size_list
 
     end
 end
-=#
+
 
 
 #datasets = ["24_uselections.txt","23_twitter_pol.txt","22_obamacare.txt","21_brexit.txt","20_abortion.txt"]
@@ -609,3 +609,4 @@ for ss in sample_size_list
 
     end
 end
+=#
