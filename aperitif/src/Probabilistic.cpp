@@ -212,13 +212,14 @@ double Probabilistic::compute_SD(){
   double tmp = 0.0;
   double diff = 0.0;
   int n = get_nn();
-  int idx = 0;
-  int v_idx = 0;
   for (int i = 0;i<n;i++){
     diff = (double) approx[i]/(double)(num_samples) - (double) exact_percolation_centrality[i];
     tmp = (double) abs(diff);
     //cout<<" apx "<<(double) approx[i]/(double)(num_samples)<<" Exact "<<exact_percolation_centrality[i]<<endl;
-    if (tmp > sd) sd = tmp;
+    if (tmp > sd){ 
+
+      sd = tmp;
+    }
   }
   return (double) sd;
 }
