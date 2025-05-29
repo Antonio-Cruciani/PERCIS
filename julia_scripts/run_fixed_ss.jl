@@ -69,8 +69,8 @@ runs = 10
 #percolation_path = "../julia_scripts/percolation_states/"
 #graphs_path = "../../../percolation_centrality/graphs/"
 #percolation_path = "../../../percolation_centrality/percolation_states/"
-graphs_path = "../../../percolation_centrality/graphs/"
-percolation_path = "../../../percolation_centrality/percolation_states/"
+graphs_path = "../../percolation_centrality/graphs/"
+percolation_path = "../../percolation_centrality/percolation_states/"
 #sampling_rate_ = 2.3
 sampling_rate_ = 0.0
 tn = 64
@@ -509,7 +509,7 @@ end
 =#
 
 
-graphs_path = "../../../percolation_centrality/components/"
+graphs_path = "../../percolation_centrality/components/"
 
 
 
