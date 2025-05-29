@@ -76,7 +76,7 @@ sampling_rate_ = 0.0
 tn = 64
 directed = false
 output = ""
-
+#=
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -84,7 +84,7 @@ datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.tx
 
 # Undirected
 # Non Uniform 
-#=
+
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_rnd_init_50"
@@ -133,7 +133,7 @@ for ss in sample_size_list
 
     end
 end
-=#
+
 
 
 
@@ -190,7 +190,7 @@ end
 # Directed
 
 datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
-#=
+
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_rnd_init_50"
@@ -239,7 +239,7 @@ for ss in sample_size_list
 
     end
 end
-=#
+
 
 
 for ss in sample_size_list
@@ -299,7 +299,7 @@ end
 
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 
-#=
+
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_e_log"
@@ -348,7 +348,7 @@ for ss in sample_size_list
 
     end
 end
-=#
+
 
 for ss in sample_size_list
     for ds in datasets
@@ -407,7 +407,7 @@ datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","1
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 #@info("Running Experiments for Worst Case Setting")
-#=
+
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_e_log"
@@ -456,7 +456,7 @@ for ss in sample_size_list
 
     end
 end
-=#
+
 
 for ss in sample_size_list
     for ds in datasets
@@ -506,7 +506,7 @@ for ss in sample_size_list
 
     end
 end
-
+=#
 
 
 graphs_path = "../../../percolation_centrality/components/"
@@ -516,7 +516,7 @@ graphs_path = "../../../percolation_centrality/components/"
 datasets = ["01_musae_facebook_edges_lcc_in_50.txt","02_email_enron_lcc_in_50.txt","03_ca_astroph_lcc_in_50.txt"]
 #datasets = ["10_flickr.txt"]
 
-#=
+
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])
@@ -565,7 +565,7 @@ for ss in sample_size_list
 
     end
 end
-=#
+
 
 
 
@@ -622,12 +622,12 @@ end
 
 
 # Directed
-
+#=
 datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
 graphs_path = "../../../percolation_centrality/components/"
 
 #datasets = ["08_web_berkstan_lcc_in_50.txt"]
-#=
+
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])
@@ -675,7 +675,7 @@ for ss in sample_size_list
 
     end
 end
-=#
+
 
 
 for ss in sample_size_list
@@ -737,7 +737,7 @@ graphs_path = "../../../percolation_centrality/graphs/"
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 #datasets = ["10_flickr.txt"]
 
-#=
+
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_unif"
@@ -786,7 +786,7 @@ for ss in sample_size_list
 
     end
 end
-=#
+
 
 
 for ss in sample_size_list
@@ -845,7 +845,7 @@ end
 
 datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
 #datasets = ["08_web_berkstan.txt"]
-#=
+
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_unif"
@@ -893,7 +893,6 @@ for ss in sample_size_list
 
     end
 end
-=#
 
 
 for ss in sample_size_list
@@ -953,7 +952,7 @@ end
 datasets = ["24_uselections.txt","23_twitter_pol.txt","22_obamacare.txt","21_brexit.txt","20_abortion.txt"]
 # Undirected
 # Non Uniform 
-#=
+
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])
@@ -1002,7 +1001,7 @@ for ss in sample_size_list
 
     end
 end
-=#
+
 
 
 
@@ -1055,3 +1054,4 @@ for ss in sample_size_list
     end
 end
 
+=#
