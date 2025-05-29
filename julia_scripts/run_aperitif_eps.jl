@@ -88,9 +88,9 @@ sampling_rate_ = 0.0
 #percolation_path = "../../../percolation_centrality_via_non_uniform_sampling/julia_scripts/percolation_states/"
 #graphs_path = "graphs/"
 #percolation_path = "percolation_states/"
-graphs_path = "../../../percolation_centrality/graphs/"
-percolation_path = "../../../percolation_centrality/percolation_states/"
-exact_scores_path = "../../../percolation_centrality/scores/"
+graphs_path = "../../percolation_centrality/graphs/"
+percolation_path = "../../percolation_centrality/percolation_states/"
+exact_scores_path = "../../percolation_centrality/scores/"
 tn = 64
 directed = false
 output = ""
@@ -98,6 +98,7 @@ output = ""
 #percolation_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/percolation_states/"
 #exact_scores_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/scores/"
 
+#=
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 #datasets = ["10_flickr.txt"]
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -164,7 +165,6 @@ for denom in fractional
     global j+=1
 end
 
-#=
 global j = 1
 for eps in epsilon_list
     for ds in datasets
@@ -215,7 +215,7 @@ for eps in epsilon_list
     end
     global j+=1
 end
-=#
+
 # Directed
 
 datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
@@ -279,7 +279,7 @@ for denom in fractional
     end
     global j+=1
 end
-
+=#
 #=
 global j = 1
 for eps in epsilon_list
@@ -331,7 +331,6 @@ for eps in epsilon_list
     end
     global j+=1
 end
-=#
 
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -400,6 +399,7 @@ for denom in fractional
     end
     global j+=1
 end
+=#
 
 #=
 global j = 1
@@ -450,7 +450,7 @@ for eps in epsilon_list
     end
     global j+=1
 end
-=#
+
 # Directed
 
 global  j = 1
@@ -518,7 +518,7 @@ for denom in fractional
     end
     global j+=1
 end
-
+=#
 #=
 global j = 1
 for eps in epsilon_list
@@ -574,7 +574,7 @@ end
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Worst Case Setting")
-graphs_path = "../../../percolation_centrality/components/"
+graphs_path = "../../percolation_centrality/components/"
 
 
 global j=1
@@ -693,7 +693,7 @@ for eps in epsilon_list
     global j+=1
 end
 
-=#
+
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Worst Case Setting")
 graphs_path = "../../../percolation_centrality/components/"
@@ -761,7 +761,7 @@ for denom in fractional
     global j+=1
 end
 
-#=
+
 global j = 1
 for eps in epsilon_list
     for ds in datasets
@@ -812,7 +812,7 @@ for eps in epsilon_list
     global j+=1
 end
 
-=#
+
 
 graphs_path = "../../../percolation_centrality/graphs/"
 
@@ -883,7 +883,7 @@ for denom in fractional
     global j+=1
 end
 
-#=
+
 global j = 1
 for eps in epsilon_list
     for ds in datasets
@@ -936,7 +936,7 @@ for eps in epsilon_list
 end
 
 
-=#
+
 
 # Directed
 
@@ -1000,7 +1000,7 @@ for denom in fractional
     global j+=1
 end
 
-#=
+
 global j = 1
 for eps in epsilon_list
     for ds in datasets
@@ -1051,7 +1051,6 @@ for eps in epsilon_list
     global j+=1
 end
 
-=#
 
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -1120,3 +1119,4 @@ for denom in fractional
     end
     global j+=1
 end
+=#

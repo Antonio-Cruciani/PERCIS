@@ -64,10 +64,10 @@ delta = 0.05
 runs = 10
 #graphs_path = "../../../percolation_centrality_via_non_uniform_sampling/julia_scripts/graphs/"
 #percolation_path = "../../../percolation_centrality_via_non_uniform_sampling/julia_scripts/percolation_states/"
-graphs_path = "../../../percolation_centrality/graphs/"
-percolation_path = "../../../percolation_centrality/percolation_states/"
-graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/components/"
-percolation_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/percolation_states/"
+graphs_path = "../../percolation_centrality/graphs/"
+percolation_path = "../../percolation_centrality/percolation_states/"
+#graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/components/"
+#percolation_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/percolation_states/"
 #graphs_path = "graphs/"
 #percolation_path = "percolation_states/"
 #sampling_rate_ = 2.3
@@ -524,7 +524,7 @@ end
 
 
 global j=1
-#graphs_path = "../../../percolation_centrality/components/"
+graphs_path = "../../percolation_centrality/components/"
 datasets = ["01_musae_facebook_edges_lcc_in_50.txt","02_email_enron_lcc_in_50.txt","03_ca_astroph_lcc_in_50.txt"]
 #datasets = ["10_flickr.txt"]
 
@@ -632,6 +632,7 @@ for eps in epsilon_list
 end
 
 
+#=
 
 
 # Directed
@@ -739,7 +740,6 @@ for eps in epsilon_list
     end
     global j+=1
 end
-#=
 
 
 graphs_path = "../../../percolation_centrality/graphs/"
