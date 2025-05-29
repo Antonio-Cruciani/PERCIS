@@ -73,7 +73,7 @@ sampling_rate_ = 0.0
 tn = 64
 directed = false
 output = ""
-#=
+
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 #datasets = ["10_flickr.txt"]
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -961,7 +961,7 @@ for eps in epsilon_list
     global j+=1
 end
 
-=#
+
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Real-World Instances Experiment")
@@ -972,7 +972,7 @@ datasets = ["24_uselections.txt","23_twitter_pol.txt","22_obamacare.txt","21_bre
 # Non Uniform 
 
 global j = 1
-#=
+
 for eps in epsilon_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])
@@ -1022,7 +1022,7 @@ for eps in epsilon_list
     end
     global j+=1
 end
-=#
+
 epsilon_list = [0.05,0.01,0.005,0.001,0.0005]
 
 ss_save = [1,2,3,4,5]
