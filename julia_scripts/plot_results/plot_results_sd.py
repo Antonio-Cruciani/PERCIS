@@ -128,7 +128,11 @@ graph_name_map = {}
 lg.info("Plotting SD and times for IC Setting")
 
 
-graph_name_lists = [ "11_soc_epinions_lcc_in_50",
+graph_name_lists = [ 
+    "01_musae_facebook_edges_lcc_in_50" , 
+                    "02_email_enron_lcc_in_50",
+                    "03_ca_astroph_lcc_in_50",
+    "11_soc_epinions_lcc_in_50",
      "12_soc_slashdot_lcc_in_50",
       "14_p2p_gnutella31_lcc_in_50",
 "04_web_notredame_lcc_in_50"    ,     "15_cit_hepph_lcc_in_50",
@@ -148,7 +152,7 @@ results_ss_SD = mod.compute_sample_sizes_SD(path_sd,ss_sd,graph_name_lists,False
 exper = "comp"
 
 
-mod.plot_sample_size_comparison_SD(sorted(graph_name_lists),results_ss_SD,exper,experiments,graph_name_map,True)
+mod.plot_sample_size_comparison_SD(sorted(graph_name_lists),results_ss_SD,exper,experiments,graph_name_map,False)
 
 
 

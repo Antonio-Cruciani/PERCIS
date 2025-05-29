@@ -12,7 +12,7 @@ experiments = {"rnd_init":"Random Initiators","spread":"Influence Spreading","co
 
 path = "/home/antonio/Desktop/RES_PERCOLATION/results_aperitif/times/"
 
-path = "/home/antonio/Desktop/RES_PERCOLATION/tmp/FINAL_EXPERIMENTS/aperitif/times/"
+#path = "/home/antonio/Desktop/RES_PERCOLATION/tmp/FINAL_EXPERIMENTS/aperitif/times/"
 # Rnd Initiators
 
 lg.info("Plotting SD and times for RI Setting")
