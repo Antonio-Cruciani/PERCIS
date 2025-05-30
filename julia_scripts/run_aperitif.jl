@@ -200,7 +200,7 @@ for eps in epsilon_list
         @info("Input Percolation States Path: $ps")
         @info("Running experiements for "*gf)
         for i in 1:runs
-            op = outpath *"non_uniform_vc_ss_"*string(j)*"_run_"*string(i)*".txt"
+            op = outpath *"non_uniform_di_ss_"*string(j)*"_run_"*string(i)*".txt"
             #op = outpath *"uniform_ss_"*string(j)*"_run_"*string(i)*".txt"
 
             #@info("Running Run Number "*string(i))
@@ -360,7 +360,7 @@ for eps in epsilon_list
         @info("Input Percolation States Path: $ps")
         @info("Running experiements for "*gf)
         for i in 1:runs
-            op = outpath *"non_uniform_vc_ss_"*string(j)*"_run_"*string(i)*".txt"
+            op = outpath *"non_uniform_di_ss_"*string(j)*"_run_"*string(i)*".txt"
             #op = outpath *"uniform_ss_"*string(j)*"_run_"*string(i)*".txt"
 
             #@info("Running Run Number "*string(i))
@@ -523,7 +523,7 @@ for eps in epsilon_list
         @info("Input Percolation States Path: $ps")
         @info("Running experiements for "*gf)
         for i in 1:runs
-            op = outpath *"non_uniform_vc_ss_"*string(j)*"_run_"*string(i)*".txt"
+            op = outpath *"non_uniform_di_ss_"*string(j)*"_run_"*string(i)*".txt"
             #op = outpath *"uniform_ss_"*string(j)*"_run_"*string(i)*".txt"
 
             #@info("Running Run Number "*string(i))
@@ -683,7 +683,7 @@ for eps in epsilon_list
         @info("Input Percolation States Path: $ps")
         @info("Running experiements for "*gf)
         for i in 1:runs
-            op = outpath *"non_uniform_vc_ss_"*string(j)*"_run_"*string(i)*".txt"
+            op = outpath *"non_uniform_di_ss_"*string(j)*"_run_"*string(i)*".txt"
             #op = outpath *"uniform_ss_"*string(j)*"_run_"*string(i)*".txt"
 
             #@info("Running Run Number "*string(i))
@@ -848,7 +848,7 @@ for eps in epsilon_list
         @info("Input Percolation States Path: $ps")
         @info("Running experiements for "*gf)
         for i in 1:runs
-            op = outpath *"non_uniform_vc_ss_"*string(j)*"_run_"*string(i)*".txt"
+            op = outpath *"non_uniform_di_ss_"*string(j)*"_run_"*string(i)*".txt"
             #op = outpath *"uniform_ss_"*string(j)*"_run_"*string(i)*".txt"
 
             #@info("Running Run Number "*string(i))
@@ -1010,7 +1010,7 @@ for eps in epsilon_list
         @info("Running experiements for "*gf)
         for i in 1:runs
             #op = outpath *"non_uniform_ss_"*string(ss)*"_run_"*string(i)*".txt"
-            op = outpath *"non_uniform_vc_ss_"*string(j)*"_run_"*string(i)*".txt"
+            op = outpath *"non_uniform_di_ss_"*string(j)*"_run_"*string(i)*".txt"
 
             #@info("Running Run Number "*string(i))
             results = Dict(
@@ -1173,7 +1173,7 @@ for eps in epsilon_list
         @info("Input Percolation States Path: $ps")
         @info("Running experiements for "*gf)
         for i in 1:runs
-            op = outpath *"non_uniform_vc_ss_"*string(j)*"_run_"*string(i)*".txt"
+            op = outpath *"non_uniform_di_ss_"*string(j)*"_run_"*string(i)*".txt"
             #op = outpath *"uniform_ss_"*string(j)*"_run_"*string(i)*".txt"
 
             #@info("Running Run Number "*string(i))
@@ -1335,7 +1335,7 @@ for eps in epsilon_list
         @info("Running experiements for "*gf)
         for i in 1:runs
             #op = outpath *"non_uniform_ss_"*string(ss)*"_run_"*string(i)*".txt"
-            op = outpath *"non_uniform_vc_ss_"*string(j)*"_run_"*string(i)*".txt"
+            op = outpath *"non_uniform_di_ss_"*string(j)*"_run_"*string(i)*".txt"
 
             #@info("Running Run Number "*string(i))
             results = Dict(
@@ -1500,7 +1500,7 @@ for eps in epsilon_list
         @info("Input Percolation States Path: $ps")
         @info("Running experiements for "*gf)
         for i in 1:runs
-            op = outpath *"non_uniform_vc_ss_"*string(j)*"_run_"*string(i)*".txt"
+            op = outpath *"non_uniform_di_ss_"*string(j)*"_run_"*string(i)*".txt"
             #op = outpath *"uniform_ss_"*string(j)*"_run_"*string(i)*".txt"
 
             #@info("Running Run Number "*string(i))
@@ -1664,7 +1664,7 @@ for eps in epsilon_list
         @info("Input Percolation States Path: $ps")
         @info("Running experiements for "*gf)
         for i in 1:runs
-            op = outpath *"non_uniform_vc_ss_"*string(j)*"_run_"*string(i)*".txt"
+            op = outpath *"non_uniform_di_ss_"*string(j)*"_run_"*string(i)*".txt"
             #op = outpath *"uniform_ss_"*string(j)*"_run_"*string(i)*".txt"
 
             #@info("Running Run Number "*string(i))
