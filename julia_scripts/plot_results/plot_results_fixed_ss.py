@@ -10,13 +10,13 @@ experiments = {"rnd_init":"Random Initiators","spread":"Influence Spreading","co
 
 # Fixed Sample Size Experiments
 # Paths,
-path_exact = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/scores/"
-path_unif = "/home/antonio/Desktop/RES_PERCOLATION/tmp/FINAL_EXPERIMENTS/single_sp_estimator/fixed_ss/scores/"
-path_non_unif = "/home/antonio/Desktop/RES_PERCOLATION/tmp/FINAL_EXPERIMENTS/single_sp_estimator/fixed_ss/scores/"
+path_exact = "/home/antonio/Desktop/experiments_to_plot/exact/scores/"
+path_unif = "/home/antonio/Desktop/experiments_to_plot/fixed_ss/scores/"
+path_non_unif = "/home/antonio/Desktop/experiments_to_plot/fixed_ss/scores/"
 
 # Paths for times
-path_unif_t = "/home/antonio/Desktop/RES_PERCOLATION/tmp/FINAL_EXPERIMENTS/single_sp_estimator/fixed_ss/uniform_not_optimized/times/"
-path_non_unif_t = "/home/antonio/Desktop/RES_PERCOLATION/tmp/FINAL_EXPERIMENTS/single_sp_estimator/fixed_ss/times/"
+path_unif_t = "/home/antonio/Desktop/experiments_to_plot/fixed_ss/uniform_not_optimized/times/"
+path_non_unif_t = "//home/antonio/Desktop/experiments_to_plot/fixed_ss/times/"
 bs = True
 # Rnd Initiators
 

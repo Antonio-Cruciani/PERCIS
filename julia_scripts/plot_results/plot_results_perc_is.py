@@ -10,7 +10,7 @@ experiments = {"rnd_init":"Random Initiators","spread":"Influence Spreading","co
 
 # Upper bound on sample size Experiments
 
-path = "/home/antonio/Desktop/RES_PERCOLATION/results_aperitif/times/"
+path = "/home/antonio/Desktop/experiments_to_plot/upper_bound_ss/times/"
 
 #path = "/home/antonio/Desktop/RES_PERCOLATION/tmp/FINAL_EXPERIMENTS/aperitif/times/"
 # Rnd Initiators

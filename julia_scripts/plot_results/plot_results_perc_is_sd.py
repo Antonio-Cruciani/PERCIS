@@ -10,9 +10,9 @@ experiments = {"rnd_init":"Random Initiators","spread":"Influence Spreading","co
 
 # Upper bound on sample size Experiments
 # Path PercIS-rho
-path_a = "/home/antonio/Desktop/RES_PERCOLATION/tmp/FINAL_EXPERIMENTS/single_sp_estimator/aperitif/times/"
+path_a = "/home/antonio/Desktop/experiments_to_plot/aperitif/times/"
 # Path non uniform with LB on SD
-path_sd = "/home/antonio/Desktop/RES_PERCOLATION/tmp/FINAL_EXPERIMENTS/single_sp_estimator/SD/times/"
+path_sd = "/home/antonio/Desktop/experiments_to_plot/SD/times/"
 # Rnd Initiators
 
 lg.info("Plotting SD and times for RI Setting")
