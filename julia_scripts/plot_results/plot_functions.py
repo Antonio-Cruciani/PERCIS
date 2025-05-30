@@ -617,7 +617,7 @@ def plot_times_comparison(graph_list,results,experiment,experiments,graph_name_m
         label = graph_name_map[gn] 
         ax.plot(x, y, marker=markers[i],  markersize=4,label=f"{label}",color=color) 
         #ax.errorbar(x, y, xerr=e_x, yerr=e_y, fmt='none', capsize=3, elinewidth=1, label="_nolegend_")
-        ax.errorbar(x, y, yerr=e_y, fmt='none', capsize=0, elinewidth=0.8, color =color, label="_nolegend_")
+        ax.errorbar(x, y,xerr=e_x, yerr=e_y, fmt='none', capsize=0, elinewidth=0.8, color =color, label="_nolegend_")
 
         #ax.plot(x,y,label=label, marker=markers[i])
         i+=1

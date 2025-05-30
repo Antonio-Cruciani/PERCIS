@@ -41,7 +41,6 @@ Sp_sampler::Sp_sampler( const Graph *g, const uint32_t seed, const double sum_pe
     n_paths = (uint64_t*) malloc( n*sizeof(uint64_t));
     this->g = g;
     
-    
 }
 
 
@@ -112,6 +111,7 @@ map<uint32_t, double>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_leng
     //std::mt19937 rng(rd());
     uint32_t source, target;
     // to finish
+    //time_sampling[omp_get_thread_num()] -= get_time_sec();
     if (uniform){
         while (u == v) {
             v = random_node();
@@ -129,6 +129,8 @@ map<uint32_t, double>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_leng
  
         
     }
+    //time_sampling[omp_get_thread_num()] += get_time_sec();
+
 
     if ((percolation_states[u]<= percolation_states[v]) && (!uniform)){
         return std::map<uint32_t,double>();//vector<uint32_t>();

@@ -71,6 +71,8 @@ runs = 10
 #percolation_path = "../../../percolation_centrality/percolation_states/"
 graphs_path = "../../percolation_centrality/graphs/"
 percolation_path = "../../percolation_centrality/percolation_states/"
+graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/graphs/"
+percolation_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/percolation_states/"
 #sampling_rate_ = 2.3
 sampling_rate_ = 0.0
 tn = 64
@@ -409,7 +411,7 @@ datasets = ["04_web_notredame.txt"]
 
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 #@info("Running Experiments for Worst Case Setting")
-
+#=
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_e_log"
@@ -458,6 +460,7 @@ for ss in sample_size_list
 
     end
 end
+=#
 
 
 for ss in sample_size_list

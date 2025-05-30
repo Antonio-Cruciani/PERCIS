@@ -42,6 +42,7 @@ bool optimized = true;
 bool fixed_ss = false;
 uint32_t sample_size;
 bool vc_dim = false;
+bool data_i = false;
 int thread_number = 0;
 char *exactarg;
 /**
@@ -51,9 +52,10 @@ void usage(const char *binary_name) {
     std::cerr << binary_name
         << ": compute percolation centrality approximations for all nodes"
         << std::endl;
-    std::cerr << "USAGE: " << binary_name << " [-fudhm] [-f vc_dimension ] [-u uniform sampling] [-v verbosity] [-k k_value] [-e exact] [-w window] [-o output] [-a a_emp_peeling] [-s alpha]  [-g sample_size] [-b linear_sampler] [-t thread_number] epsilon delta percolation_states graph"
+    std::cerr << "USAGE: " << binary_name << " [-fudhm] [-f vc_dimension ] [-i data independent] [-u uniform sampling] [-v verbosity] [-k k_value] [-e exact] [-w window] [-o output] [-a a_emp_peeling] [-s alpha]  [-g sample_size] [-b linear_sampler] [-t thread_number] epsilon delta percolation_states graph"
         << std::endl;
     std::cerr << "\t-f: use the vc dimension upper bound on the sample size" << std::endl;
+    std::cerr << "\t-i: use the data independent upper bound on the sample size" << std::endl;
     std::cerr << "\t-u: use uniform sampling for the approximation" << std::endl;
     std::cerr << "\t-d: consider the graph as directed" << std::endl;
     std::cerr << "\t-k: compute the top-k betweenness centralities (if 0, compute all of them with absolute error) " << std::endl;
@@ -80,13 +82,17 @@ void usage(const char *binary_name) {
  */
 int parse_command_line(int& argc, char *argv[]) {
     int opt;
-    while ((opt = getopt(argc, argv,"bfudhmk:o:e:w:s:a:v:g:t:")) != -1) {
+    while ((opt = getopt(argc, argv,"bfiudhmk:o:e:w:s:a:v:g:t:")) != -1) {
         switch (opt) {
         case 'b':
             optimized = false;
             break;
         case 'f':
             vc_dim = true;
+            break;
+        case 'i':
+            vc_dim = false;
+            data_i= true;
             break;
         case 'u':
             uniform = true;
@@ -244,7 +250,7 @@ int main(int argc, char *argv[]){
     if (!sd_experiment){
         if (!fixed_ss){
             Probabilistic G( graph_file,percolation_file, uniform,optimized, directed, verb , sampling_rate , alpha_given , empirical_peeling_param , m_hat_enabled , vc_dim, thread_number, output_file);
-            G.run((uint32_t) k, delta, err,uniform,optimized,vc_dim);
+            G.run((uint32_t) k, delta, err,uniform,optimized,vc_dim,data_i);
         }else{
             Probabilistic G( graph_file,percolation_file,sample_size, uniform,optimized,directed, verb ,sampling_rate , alpha_given, empirical_peeling_param , m_hat_enabled, thread_number , output_file);
             G.run_fixed_sample_size(k,delta,err,sample_size,uniform,optimized);

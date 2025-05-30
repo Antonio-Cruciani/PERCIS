@@ -19,7 +19,7 @@ path_unif_t = "/home/antonio/Desktop/experiments_to_plot/fixed_ss/uniform_not_op
 path_non_unif_t = "//home/antonio/Desktop/experiments_to_plot/fixed_ss/times/"
 bs = True
 # Rnd Initiators
-
+'''
 lg.info("Plotting SD and times for RI Setting")
 graph_name_lists = ["01_musae_facebook_edges_rnd_init_50" , "11_soc_epinions_rnd_init_50",
 "02_email_enron_rnd_init_50"      ,     "12_soc_slashdot_rnd_init_50",
@@ -56,42 +56,35 @@ lg.info("Completed")
 lg.info("------------------------------------------------------------")
 graph_name_map = {}
 
-
+'''
 # Random Spreading
 lg.info("Plotting SD and times for IS Setting")
 
 
-graph_name_lists = ["01_musae_facebook_edges_e_log" , 
-                    "02_email_enron_e_log",
-                    "03_ca_astroph_e_log",
-                    "04_web_notredame_e_log",  
-                    "06_web_google_e_log",
-                    "11_soc_epinions_e_log",
-                    "12_soc_slashdot_e_log",
-                    "14_p2p_gnutella31_e_log",
-                    "15_cit_hepph_e_log"
+graph_name_lists = [
+                    "04_web_notredame_e_log"
                    ]
 # Create mapping
 graph_name_map = {original: mod.clean_graph_name(original) for original in graph_name_lists}
 
 
 
-
+'''
 results = mod.compute_absolute_approximation(path_exact,path_unif,path_non_unif,sample_sizes,graph_name_lists,runs,bs)
-
+'''
 running_times = mod.compute_times(path_unif_t,path_non_unif_t,sample_sizes,graph_name_lists,False,False)
 
 
 exper = "spread"
 
-
+'''
 mod.plot_absolute_apx(sorted(graph_name_lists),results,exper,experiments,graph_name_map)
 
 
 
 mod.plot_average_error_apx(sorted(graph_name_lists),results,exper,experiments,graph_name_map)
 
-
+'''
 mod.plot_times_comparison(sorted(graph_name_lists),running_times,exper,experiments,graph_name_map)
 
 lg.info("Completed")
@@ -99,7 +92,7 @@ lg.info("------------------------------------------------------------")
 
 graph_name_map = {}
 
-
+'''
 # Uniform Percolation States
 lg.info("Plotting SD and times for UN Setting")
 
@@ -216,3 +209,4 @@ mod.plot_times_comparison(sorted(graph_name_lists),running_times,exper,experimen
 
 lg.info("Completed")
 lg.info("------------------------------------------------------------")
+'''

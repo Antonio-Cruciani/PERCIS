@@ -935,7 +935,7 @@ double Probabilistic::getUpperBoundAvgDiameter(double delta , bool verbose){
 // are approximated with absolute error); delta is the probabilistic guarantee; err is the
 // maximum error allowed; union_sample and start_factor are parameters of the algorithm
 // that are automatically chosen.
-void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool optimized_sampling,const bool vc_dim,uint32_t union_sample, uint32_t start_factor) {
+void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool optimized_sampling,const bool vc_dim,const bool data_i,uint32_t union_sample, uint32_t start_factor) {
     this->absolute = (k == 0);
     this->err = err;
     this->delta = delta;
@@ -984,7 +984,6 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool 
 
     //std::vector<double> weights = build_outgoing_weights(percolation_states);
     //SamplingPreprocessing kernel = preprocessing(get_percolation_states());
-    
    
     //SamplingPreprocessing preprocessed_weights = compute_sampling_preprocessing(sorted_X);
     //this->sampling_kernel =  compute_sampling_preprocessing(sorted_X);
@@ -993,7 +992,7 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool 
     std::cout << "estimated diameter of the graph: " << graph_diameter << std::endl;
     std::cout << "time for estimating diameter " << get_time_sec() - start_time << std::endl;
     uint32_t tau = max(1. / err * (log(1. / delta)) , 1000.);
-    if (!vc_dim){
+    if (!vc_dim && !data_i){
       tau = max((double)tau , 2 * graph_diameter * (log(1. / delta)) );
       std::cout << "Starting first pass. Tentative number of samples: " << tau << std::endl;
     }
@@ -1033,7 +1032,7 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool 
     int samples_per_step = 10;
 
     // first phase sampling
-    if (!vc_dim){
+    if (!vc_dim && !data_i){
       bool stop_first_pass = false;
       #pragma omp parallel
       {
@@ -1122,9 +1121,16 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool 
 
     // for the absolute approximation, compute upper bound to number of samples
     if(absolute && !vc_dim){
-
+      double avg_diam_upperbound = graph_diameter +1;
+      double top1bc_upperbound = 1.;
+      double wimpy_var_upperbound  = (double) 1./4.;
+      if (!data_i){
+          avg_diam_upperbound = getUpperBoundAvgDiameter(delta/8. , true);
+          top1bc_upperbound = getUpperBoundTop1BC(sup_bcest/(double)num_samples , delta/8.);
+          wimpy_var_upperbound = getUpperBoundTop1BC(sup_emp_wimpy_var/(double)num_samples , delta/8.);
+      }
       // compute upper bound on average shortest path length
-      double avg_diam_upperbound = getUpperBoundAvgDiameter(delta/8. , true);
+      //double avg_diam_upperbound = getUpperBoundAvgDiameter(delta/8. , true);
 
       // reset counters of shortest path lengths
       for( int i=0; i <= graph_diameter; i++ ){
@@ -1132,8 +1138,8 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool 
       }
 
       // compute upper bound on top-1 bc
-      double top1bc_upperbound = getUpperBoundTop1BC(sup_bcest/(double)num_samples , delta/8.);
-      double wimpy_var_upperbound = getUpperBoundTop1BC(sup_emp_wimpy_var/(double)num_samples , delta/8.);
+      //double top1bc_upperbound = getUpperBoundTop1BC(sup_bcest/(double)num_samples , delta/8.);
+      //double wimpy_var_upperbound = getUpperBoundTop1BC(sup_emp_wimpy_var/(double)num_samples , delta/8.);
 
       if(alpha_sp_given == false && wimpy_var_upperbound > 0.9 * top1bc_upperbound){
         alpha_sp_sampling = -1.;
@@ -1149,14 +1155,25 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool 
 
       // number of samples with VC dim bound
       double VC_bound = 0.5 / err / err * (log2(graph_diameter-1) + 1 + log(2. / delta));
-   
-      std::cout << "sup_bcest: " << sup_bcest/(double)num_samples << endl;
-      std::cout << "sup_emp_wimpy_var: " << sup_emp_wimpy_var/(double)num_samples << std::endl;
-      std::cout << "top1bc_upperbound: " << top1bc_upperbound << std::endl;
-      std::cout << "wimpy_var_upperbound: " << wimpy_var_upperbound << std::endl;
-      std::cout << "max_num_samples: " << max_num_samples << std::endl;
-      std::cout << "VC_bound: " << VC_bound << std::endl;
-      std::cout << "alpha_sp_sampling: " << alpha_sp_sampling << std::endl;
+      if (!data_i){
+        std::cout << "sup_bcest: " << sup_bcest/(double)num_samples << endl;
+        std::cout << "sup_emp_wimpy_var: " << sup_emp_wimpy_var/(double)num_samples << std::endl;
+        std::cout << "top1bc_upperbound: " << top1bc_upperbound << std::endl;
+        std::cout << "wimpy_var_upperbound: " << wimpy_var_upperbound << std::endl;
+        std::cout << "max_num_samples: " << max_num_samples << std::endl;
+        std::cout << "VC_bound: " << VC_bound << std::endl;
+        std::cout << "alpha_sp_sampling: " << alpha_sp_sampling << std::endl;
+    }else{
+        std::cout << "Data Independent Bound " << endl;
+
+        std::cout << "sup_bcest: " << sup_bcest << endl;
+        std::cout << "sup_emp_wimpy_var: " << sup_emp_wimpy_var << std::endl;
+        std::cout << "top1bc_upperbound: " << top1bc_upperbound << std::endl;
+        std::cout << "wimpy_var_upperbound: " << wimpy_var_upperbound << std::endl;
+        std::cout << "max_num_samples: " << max_num_samples << std::endl;
+        std::cout << "VC_bound: " << VC_bound << std::endl;
+        std::cout << "alpha_sp_sampling: " << alpha_sp_sampling << std::endl;
+    }
     }
     if (vc_dim){
       double VC_bound = 0.5 / err / err * (log2(graph_diameter-1) + 1 + log(2. / delta));
