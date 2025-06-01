@@ -59,8 +59,8 @@ epsilon_list = [0.05,0.01,0.005,0.001,0.0005]
 ss_save = [1,2,3,4,5]
 delta = 0.05
 runs = 10
-graphs_path = "../../../percolation_centrality/graphs/"
-graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/graphs/"
+graphs_path = "../../percolation_centrality/graphs/"
+#graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/graphs/"
 
 #sampling_rate_ = 2.3
 sampling_rate_ = 0.0
