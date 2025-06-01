@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <cassert>
 #include "NonUniformSampler.h"
+#include "utilities.h"
 
 //#include <cmath>
 using namespace std;
@@ -91,7 +92,7 @@ inline uint32_t Sp_sampler::random_node() const {
 // in the path. The list of these vertices is not necessarily ordered.
 // We do not return the vector by reference, because the compiler optimizations
 // avoid to copy the whole vector before returning it.
-map<uint32_t, double>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_length , int &num_paths , double alpha_sp_sampling) {
+map<uint32_t, double>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_length , int &num_paths , double alpha_sp_sampling,double &sampling_time,double &traversal_time) {
     // Sample sp
     uint32_t end_q = 0;
     uint64_t tot_weight = 0, cur_edge = 0;
@@ -111,6 +112,7 @@ map<uint32_t, double>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_leng
     //std::mt19937 rng(rd());
     uint32_t source, target;
     // to finish
+    double start_time_sampling = get_time_sec();
     //time_sampling[omp_get_thread_num()] -= get_time_sec();
     if (uniform){
         while (u == v) {
@@ -129,6 +131,7 @@ map<uint32_t, double>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_leng
  
         
     }
+    sampling_time =  get_time_sec() - start_time_sampling;
     //time_sampling[omp_get_thread_num()] += get_time_sec();
 
 
@@ -149,7 +152,7 @@ map<uint32_t, double>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_leng
         return std::map<uint32_t,double>();//vector<uint32_t>();
     }
     }
-    
+    double start_time_bfs = get_time_sec();
     //cout<<"SAMPLING PATH "<<endl;
     end_q = 2;
 
@@ -320,6 +323,7 @@ map<uint32_t, double>/*vector<uint32_t>*/ Sp_sampler::random_path(int &path_leng
       std::cout << "Error: guess void true, path.size() > 0 " << std::endl;
       std::cout << "   cc[u] " << g->cc[u] << " cc[v] " << g->cc[v] << std::endl;
     }
+    traversal_time = get_time_sec() - start_time_bfs;
     //return path;
     return path_map;
 }

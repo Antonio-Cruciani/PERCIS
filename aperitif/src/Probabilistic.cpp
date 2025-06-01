@@ -88,6 +88,8 @@ Probabilistic::Probabilistic( const std::string &filename,const std::string &per
     }else{
       thread_n = thread_number;
     }
+    total_traversal_time = 0.0;
+    total_sampling_time = 0.0;
 }
 
 
@@ -136,6 +138,8 @@ Probabilistic::Probabilistic( const std::string &filename,const std::string &per
   }else{
     thread_n = thread_number;
   }
+  total_traversal_time = 0.0;
+  total_sampling_time = 0.0;
 }
 // Creates the graph for running the approximation algorithm for the experiment in which we are given the exact percolation centralities 
 // and we have to sample until we achieve the desired SD
@@ -184,6 +188,8 @@ Probabilistic::Probabilistic( const std::string &filename,const std::string &per
     thread_n = thread_number;
   }
   read_centrality(get_nn(),centrality_name);
+  total_traversal_time = 0.0;
+  total_sampling_time = 0.0;
 }
 
 
@@ -615,8 +621,10 @@ void Probabilistic::print_status(Status *status, const bool full) const {
 void Probabilistic::one_round(Sp_sampler &sp_sampler) {
     int path_length = 0;
     int num_paths = 0;
+    double sampling_time = 0.0;
+    double traversal_time = 0.0;
     time_bfs[omp_get_thread_num()] -= get_time_sec();
-    map<uint32_t, double>/*vector<uint32_t>*/ path = sp_sampler.random_path(path_length , num_paths , alpha_sp_sampling);
+    map<uint32_t, double>/*vector<uint32_t>*/ path = sp_sampler.random_path(path_length , num_paths , alpha_sp_sampling,sampling_time,traversal_time);
     time_bfs[omp_get_thread_num()] += get_time_sec();
     //cout<<"Outside random path"<<endl;
 
@@ -625,6 +633,8 @@ void Probabilistic::one_round(Sp_sampler &sp_sampler) {
     if(path_length > 0){
       #pragma omp critical
       {
+          total_traversal_time += traversal_time;
+          total_sampling_time += sampling_time;
           //cout<<"Thread "<<omp_get_thread_num()<<" a lavoro"<<endl;
           n_pairs++;
           vis_edges += sp_sampler.vis_edges;
@@ -1352,7 +1362,8 @@ void Probabilistic::run(uint32_t k, double delta, double err, bool uniform,bool 
     cout << "out of second pass " << std::endl;
     std::cout << "time for second pass " << get_time_sec() - time_required_second_pass << std::endl;
     std::cout << "void_samples second pass " << void_samples << " (" << (double)void_samples/(double)num_samples << ")" << std::endl;
-
+    cout<<"Total Traversal Time: "<<total_traversal_time<<endl;
+    cout<<"Total Sampling Time: "<<total_sampling_time<<endl;
     if (verbose > 0) {
       /*
         if(!absolute){
@@ -1796,7 +1807,8 @@ void Probabilistic::run_fixed_sample_size(uint32_t k, double delta, double err,u
   cout << "out of the sampling phase " << std::endl;
   std::cout << "time for fampling phase " << get_time_sec() - time_required_second_pass << std::endl;
   std::cout << "void_samples sampling phase pass " << void_samples << " (" << (double)void_samples/(double)num_samples << ")" << std::endl;
-
+  cout<<"Total Traversal Time: "<<total_traversal_time<<endl;
+  cout<<"Total Sampling Time: "<<total_sampling_time<<endl;
   if (verbose > 0) {
     /*
       if(!absolute){
@@ -2064,7 +2076,8 @@ void Probabilistic::run_SD_bound(uint32_t k, double delta, double err, bool unif
   cout << "out of second pass " << std::endl;
   std::cout << "time for second pass " << get_time_sec() - time_required_second_pass << std::endl;
   std::cout << "void_samples second pass " << void_samples << " (" << (double)void_samples/(double)num_samples << ")" << std::endl;
-
+  cout<<"Total Traversal Time: "<<total_traversal_time<<endl;
+  cout<<"Total Sampling Time: "<<total_sampling_time<<endl;
   if (verbose > 0) {
     /*
       if(!absolute){

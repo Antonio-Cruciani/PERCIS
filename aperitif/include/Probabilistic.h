@@ -131,7 +131,8 @@ class Probabilistic : public Graph
         SamplingPreprocessing sampling_kernel;
         int thread_n;
         std::vector<double> exact_percolation_centrality;
-
+        double total_traversal_time;
+        double total_sampling_time;
 
 };
 

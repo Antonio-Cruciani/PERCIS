@@ -16,7 +16,7 @@ class Sp_sampler
     public:
         Sp_sampler( const Graph *g, const uint32_t seed ,const double sum_perc, const bool uniform,const SamplingPreprocessing& sampling_kernel);
         virtual ~Sp_sampler();
-        std::map<uint32_t, double>/*vector<uint32_t>*/ random_path(int &path_length , int &num_paths , double alpha_sp_sampling);
+        std::map<uint32_t, double>/*vector<uint32_t>*/ random_path(int &path_length , int &num_paths , double alpha_sp_sampling,double &sampling_time,double &traversal_time);
         
         uint64_t vis_edges;
         std::vector<double> percolation_states;

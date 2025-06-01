@@ -36,6 +36,16 @@ function _catch_and_update!(line,results)
         total_time = parse(Float64, m.captures[1])
         results["total_time"] = total_time
     end
+    m = match(r"Total Traversal Time:\s+([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)", line)
+    if m !== nothing
+        total_time_traversal = parse(Float64, m.captures[1])
+        results["total_traversal_time"] = total_time_traversal
+    end
+    m = match(r"Total Sampling Time:\s+([-+]?\d*\.?\d+(?:[eE][-+]?\d+)?)", line)
+    if m !== nothing
+        total_time_sampling = parse(Float64, m.captures[1])
+        results["total_sampling_time"] = total_time_sampling
+    end
     return nothing
 end
 
@@ -47,11 +57,11 @@ function save_results(results,output_path,nn,fn)
     end
     open(output_path*"times/"*nn*"/"*fn,"a") do file
         if header
-            write(file,"total_time num_samples kernel_bulding_time void_samples d_max run\n")
+            write(file,"total_time num_samples kernel_bulding_time void_samples d_max traversal_time sampling_time run\n")
         end
     end
     f = open(output_path*"times/" * nn * "/"*fn, "a")
-    write(f, string(results["total_time"]) * " " * string(results["num_samples"]) *" "*string(results["kernel_bulding_time"])*" "*string(results["void_samples"])*" "*string(results["d_max"])*" "*string(results["run"])   *"\n")
+    write(f, string(results["total_time"]) * " " * string(results["num_samples"]) *" "*string(results["kernel_bulding_time"])*" "*string(results["void_samples"])*" "*string(results["d_max"])*" "*string(results["total_traversal_time"])*" "*string(results["total_sampling_time"])*" "*string(results["run"])   *"\n")
     close(f)
 end
 
@@ -69,8 +79,8 @@ runs = 10
 #percolation_path = "../julia_scripts/percolation_states/"
 graphs_path = "../../percolation_centrality/graphs/"
 percolation_path = "../../percolation_centrality/percolation_states/"
-graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/graphs/"
-percolation_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/percolation_states/"
+#graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/graphs/"
+#percolation_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/percolation_states/"
 #graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/graphs/"
 #percolation_path = "/home/antonio/Desktop/percolation_states/"
 #sampling_rate_ = 2.3
@@ -78,7 +88,7 @@ sampling_rate_ = 0.0
 tn = 64
 directed = false
 output = ""
-#=
+
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 #datasets = ["02_email_enron.txt"]
 #datasets = ["10_flickr.txt"]
@@ -112,6 +122,8 @@ for ss in sample_size_list
                  "void_samples"=> 0.0,
                  "time_bfs"=>0.0,
                  "num_samples"=>0.0,
+                 "total_traversal_time" => 0.0,
+                 "total_sampling_time" => 0.0,
                  "run" => i
             )
             
@@ -169,6 +181,8 @@ for ss in sample_size_list
                  "void_samples"=> 0.0,
                  "time_bfs"=>0.0,
                  "num_samples"=>0.0,
+                 "total_traversal_time" => 0.0,
+                 "total_sampling_time" => 0.0,
                  "run" => i
             )
             
@@ -229,6 +243,8 @@ for ss in sample_size_list
                  "void_samples"=> 0.0,
                  "time_bfs"=>0.0,
                  "num_samples"=>0.0,
+                 "total_traversal_time" => 0.0,
+                 "total_sampling_time" => 0.0,
                  "run" => i
             )
             
@@ -253,13 +269,13 @@ for ss in sample_size_list
 
     end
 end
-=#
+
 
 # Directed
 
 #importance_sampling
-#datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
-datasets = ["04_web_notredame.txt"]
+datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
+#datasets = ["04_web_notredame.txt"]
 
 #datasets = ["14_p2p_gnutella31.txt"]
 
@@ -291,6 +307,8 @@ for ss in sample_size_list
                  "void_samples"=> 0.0,
                  "time_bfs"=>0.0,
                  "num_samples"=>0.0,
+                 "total_traversal_time" => 0.0,
+                 "total_sampling_time" => 0.0,
                  "run" => i
             )
             
@@ -316,7 +334,7 @@ for ss in sample_size_list
     end
 end
 
-#=
+
 graphs_path = "../../percolation_centrality/components/"
 
 
@@ -350,6 +368,8 @@ for ss in sample_size_list
                  "void_samples"=> 0.0,
                  "time_bfs"=>0.0,
                  "num_samples"=>0.0,
+                 "total_traversal_time" => 0.0,
+                 "total_sampling_time" => 0.0,
                  "run" => i
             )
             
@@ -408,6 +428,8 @@ for ss in sample_size_list
                  "void_samples"=> 0.0,
                  "time_bfs"=>0.0,
                  "num_samples"=>0.0,
+                 "total_traversal_time" => 0.0,
+                 "total_sampling_time" => 0.0,
                  "run" => i
             )
             
@@ -468,6 +490,8 @@ for ss in sample_size_list
                  "void_samples"=> 0.0,
                  "time_bfs"=>0.0,
                  "num_samples"=>0.0,
+                 "total_traversal_time" => 0.0,
+                 "total_sampling_time" => 0.0,
                  "run" => i
             )
             
@@ -494,17 +518,17 @@ for ss in sample_size_list
 end
 
 
-=#
+
 
 # Directed
 #graphs_path = "../../percolation_centrality/graphs/"
 
-#datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
-datasets = ["04_web_notredame.txt","06_web_google.txt"]
+datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
+#datasets = ["04_web_notredame.txt","06_web_google.txt"]
 
 #datasets = ["04_web_notredame.txt" ]
 #datasets = ["08_web_berkstan.txt"]
-#=
+
 for ss in sample_size_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_unif"
@@ -529,6 +553,8 @@ for ss in sample_size_list
                  "void_samples"=> 0.0,
                  "time_bfs"=>0.0,
                  "num_samples"=>0.0,
+                 "total_traversal_time" => 0.0,
+                 "total_sampling_time" => 0.0,
                  "run" => i
             )
             
@@ -556,10 +582,10 @@ end
 
 
 
-#datasets = ["24_uselections.txt","23_twitter_pol.txt","22_obamacare.txt","21_brexit.txt","20_abortion.txt"]
-datasets = ["20_abortion.txt"]
-graphs_path = "../../percolation_centrality/new_graphs/"
-percolation_path = "../../percolation_centrality/new_states/"
+datasets = ["24_uselections.txt","23_twitter_pol.txt","22_obamacare.txt","21_brexit.txt","20_abortion.txt","youtube_10000_edges.txt"]
+#datasets = ["20_abortion.txt"]
+#graphs_path = "../../percolation_centrality/new_graphs/"
+#percolation_path = "../../percolation_centrality/new_states/"
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Real-World Instances Experiment")
 # Undirected
@@ -589,6 +615,8 @@ for ss in sample_size_list
                  "void_samples"=> 0.0,
                  "time_bfs"=>0.0,
                  "num_samples"=>0.0,
+                 "total_traversal_time" => 0.0,
+                 "total_sampling_time" => 0.0,
                  "run" => i
             )
             
@@ -613,4 +641,3 @@ for ss in sample_size_list
 
     end
 end
-=#
