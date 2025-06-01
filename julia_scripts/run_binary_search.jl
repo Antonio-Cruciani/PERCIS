@@ -226,7 +226,7 @@ for ss in sample_size_list
         create_folder(ds_name)
         ps = percolation_path*ds_name*".txt"
         outpath = "../julia_scripts/scores/"*ds_name*"/"
-        chimportance_samplingeck_file_existence(gf)
+        check_file_existence(gf)
         check_file_existence(ps)
         @info("Input Graph Path: $gf")
         @info("Input Percolation States Path: $ps")
