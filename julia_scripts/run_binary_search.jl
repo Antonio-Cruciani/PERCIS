@@ -158,7 +158,7 @@ datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","1
 #datasets = ["08_web_berkstan.txt"]
 
 for ss in sample_size_list
-    for dsimportance_sampling in datasets
+    for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_rnd_init_50"
         gf = graphs_path*ds
         create_folder(ds_name)
