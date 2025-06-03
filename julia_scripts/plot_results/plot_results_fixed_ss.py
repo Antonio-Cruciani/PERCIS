@@ -19,7 +19,7 @@ path_unif_t = "/home/antonio/Desktop/experiments_to_plot/fixed_ss/uniform_not_op
 path_non_unif_t = "//home/antonio/Desktop/experiments_to_plot/fixed_ss/times/"
 bs = True
 # Rnd Initiators
-'''
+
 lg.info("Plotting SD and times for RI Setting")
 graph_name_lists = ["01_musae_facebook_edges_rnd_init_50" , "11_soc_epinions_rnd_init_50",
 "02_email_enron_rnd_init_50"      ,     "12_soc_slashdot_rnd_init_50",
@@ -56,7 +56,7 @@ lg.info("Completed")
 lg.info("------------------------------------------------------------")
 graph_name_map = {}
 
-'''
+
 # Random Spreading
 lg.info("Plotting SD and times for IS Setting")
 

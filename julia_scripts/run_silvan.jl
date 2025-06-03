@@ -55,8 +55,8 @@ function save_results(results,output_path,nn,fn)
     close(f)
 end
 
-epsilon_list = [0.05,0.01,0.005,0.001,0.0005]
-ss_save = [1,2,3,4,5]
+epsilon_list = [0.0001]
+ss_save = [6]
 delta = 0.05
 runs = 10
 graphs_path = "../../percolation_centrality/graphs/"
@@ -72,7 +72,7 @@ output = ""
 @info("Running Experiments for SILVAN on Labeled Graphs")
 
 
-datasets = ["24_uselections.txt","23_twitter_pol.txt","22_obamacare.txt","21_brexit.txt","20_abortion.txt","youtube_10000_edges.txt" ]
+datasets = ["25_combined_edges.txt","26_combined_edges.txt","27_guncontrol_edges.txt","28_guncontrol_edges.txt"]
 
 
 

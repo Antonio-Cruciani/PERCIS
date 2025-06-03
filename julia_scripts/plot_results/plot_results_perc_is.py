@@ -11,7 +11,8 @@ experiments = {"rnd_init":"Random Initiators","spread":"Influence Spreading","co
 # Upper bound on sample size Experiments
 
 path = "/home/antonio/Desktop/experiments_to_plot/upper_bound_ss/times/"
-
+path_vc = ""
+path_di = "/home/antonio/Desktop/experiments_to_plot/aperitif_DI/times/"
 #path = "/home/antonio/Desktop/RES_PERCOLATION/tmp/FINAL_EXPERIMENTS/aperitif/times/"
 # Rnd Initiators
 
@@ -31,7 +32,7 @@ mod.plot_legend([graph_name_map[gn] for gn in sorted(graph_name_lists)])
 
 bs = True
 
-results_ss = mod.compute_sample_sizes(path,ss_vc_rho,graph_name_lists,False,False)
+results_ss = mod.compute_sample_sizes(path,path_di,ss_vc_rho,graph_name_lists,False,False)
 
 exper = "rnd_init"
 
@@ -68,7 +69,7 @@ graph_name_map = {original: mod.clean_graph_name(original) for original in graph
 
 
 
-results_ss = mod.compute_sample_sizes(path,ss_vc_rho,graph_name_lists,False,False)
+results_ss = mod.compute_sample_sizes(path,path_di,ss_vc_rho,graph_name_lists,False,False)
 
 
 
@@ -108,7 +109,7 @@ graph_name_map = {original: mod.clean_graph_name(original) for original in graph
 
 
 
-results_ss = mod.compute_sample_sizes(path,ss_vc_rho,graph_name_lists,False,False)
+results_ss = mod.compute_sample_sizes(path,path_di,ss_vc_rho,graph_name_lists,False,False)
 
 
 
@@ -145,7 +146,7 @@ graph_name_map = {original: mod.clean_graph_name(original) for original in graph
 
 
 
-results_ss = mod.compute_sample_sizes(path,ss_vc_rho,graph_name_lists,False,False)
+results_ss = mod.compute_sample_sizes(path,path_di,ss_vc_rho,graph_name_lists,False,False)
 
 
 
@@ -178,7 +179,7 @@ mod.plot_legend([graph_name_map[gn] for gn in sorted(graph_name_lists)])
 
 
 
-results_ss = mod.compute_sample_sizes(path,ss_vc_rho,graph_name_lists,False,False)
+results_ss = mod.compute_sample_sizes(path,path_di,ss_vc_rho,graph_name_lists,False,False)
 
 
 
