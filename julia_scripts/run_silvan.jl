@@ -73,7 +73,7 @@ output = ""
 @info("Running Experiments for SILVAN on Labeled Graphs")
 
 
-datasets = ["25_combined_edges.txt","26_combined_edges.txt","27_guncontrol_edges.txt","28_guncontrol_edges.txt"]
+datasets = ["29_youtube_edges.txt"]
 
 
 

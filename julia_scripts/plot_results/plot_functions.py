@@ -383,17 +383,16 @@ def compute_absolute_approximation(path,path_u,path_nu,sample_sizes,graph_name_l
             print("Completed for "+graph_name)
     return abs_error        
 
-def compute_top_k_betweenness_vs_percolation(path_exact,path_pc,path_bc,sample_sizes,graph_name_list,runs,verbose = False):
+def compute_top_k_betweenness_vs_percolation(path_states,path_pc,path_bc,sample_sizes,graph_name_list,runs,verbose = False):
     abs_error = {} 
     for graph_name in graph_name_list:
         if verbose:
             print("Computing stats for "+graph_name)
         exact_path = ""
-        exact_path = path_exact+graph_name+"/exact_target.txt"
+        exact_path = path_states+graph_name+".txt"
         exact_scores = read_scores(exact_path)
         n = len(exact_scores)
-        max_pc = max(exact_scores)
-        abs_error[graph_name] = {"max_pc":max_pc}
+        abs_error[graph_name] = {}
         for ss in sample_sizes:
             abs_error[graph_name][ss] = {"betweenness":[],"percolation":[]}
             apx_silvan = read_scores_silvan(path_bc+graph_name+"/",ss,runs)
@@ -726,7 +725,7 @@ def plot_absolute_apx(graph_list,results,experiment,experiments,graph_name_map):
 
     #ax.legend()
     ax.grid(True, which='both', linestyle=':', linewidth=0.4, alpha=0.7)
-    ax.set_title("Supremum Deviation "+experiments[experiment])
+    ax.set_title("Max. Error Fixed Sample Size - "+experiments[experiment])
     plt.tight_layout()
     plt.savefig("avg_SD_"+experiment+".pdf")
 
@@ -854,7 +853,7 @@ def plot_top_k_values_betweenness_percolation(graph_list,results,k,ss,experiment
     ax.grid(True, which='both', linestyle=':', linewidth=0.4, alpha=0.7)
     ax.set_title("comparis "+experiments[experiment])
     plt.tight_layout()
-    plt.savefig("bc_pc"+experiment+".png",dpi=300)
+    plt.savefig("bc_pc"+experiment+".png",dpi=500)
 
 
 
@@ -1045,7 +1044,7 @@ def plot_sample_size_comparison_SD(graph_list,results,experiment,experiments,gra
 
     #ax.grid(True, which="both", linestyle="--", linewidth=0.5)
     ax.grid(True, which='both', linestyle=':', linewidth=0.4, alpha=0.7)
-    ax.set_title("Sample Sizes for "+experiments[experiment])
+    ax.set_title("Sample Sizes for Target Max. Error - "+experiments[experiment])
     #ax.set_title("Sample Sizes VC Dimension vs Variance Aware ("+experiments[experiment]+")")
     plt.tight_layout()
     plt.savefig("ss_sd_u_nu"+experiment+".pdf")
@@ -1126,9 +1125,9 @@ def plot_sd_epsilon(graph_list,results,epsilons,experiment,experiments,graph_nam
         ax.errorbar(x, y,  yerr=e_y, fmt='none', capsize=0, elinewidth=0.8, color =color, label="_nolegend_")
         # Special marker for values equal to zero
         max_pc = results[gn]["max_pc"]
-        for xi, yi in zip(x, y):
-            if yi == max_pc:
-                ax.scatter(xi, yi, color='black', marker='x', s=50, zorder=5)
+        #for xi, yi in zip(x, y):
+        #    if yi == max_pc:
+        #        ax.scatter(xi, yi, color='black', marker='x', s=50, zorder=5)
 
         #ax.plot(x,y,label=label, marker=markers[i])
         i+=1
@@ -1148,14 +1147,17 @@ def plot_sd_epsilon(graph_list,results,epsilons,experiment,experiments,graph_nam
     ax.set_xticklabels([str(e) for e in sorted(epsilons)], rotation=90, fontsize=8)
     #ax.get_xaxis().set_major_formatter(mpl.ticker.ScalarFormatter())
     ax.set_xlabel(r'$\varepsilon$',fontsize=10)
-    ax.set_ylabel("Uniform Sampling (PD)",fontsize=10)
+    ax.set_ylabel("Maximum Error",fontsize=10)
     ax.tick_params(labelsize=8)
     #ax.legend(fontsize=8)
     #ax.legend()
 
     #ax.grid(True, which="both", linestyle="--", linewidth=0.5)
     ax.grid(True, which='both', linestyle=':', linewidth=0.4, alpha=0.7)
-    ax.set_title("Supremum Deviation for "+experiments[experiment])
+    ax.set_xlim(2.5e-4, 0.07)
+    ax.set_xlim(0.00001, 1)
+
+    ax.set_title("Max. Error of Uniform Sampling -  "+experiments[experiment])
     #ax.set_title("Sample Sizes VC Dimension vs Variance Aware ("+experiments[experiment]+")")
     plt.tight_layout()
     plt.savefig("sd_eps_pd_u_"+experiment+".pdf")
@@ -1393,7 +1395,7 @@ def plot_average_miss(graph_list,results,experiment,graph_name_map):
 
 def plot_times_bfs_sampling(graph_list,results,sample_size_index,ss,experiment,experiments,graph_name_map,simplified_map):
     #fig, ax = plt.subplots(1,1, figsize=(10, 7),dpi =120) 
-    fig, ax = plt.subplots(figsize=(3.5, 2.8), dpi=150) 
+    fig, ax = plt.subplots(figsize=(4, 3), dpi=150) 
     markers = ['o', 's', '^', 'D', 'v', 'P', '*', 'X', '<', '>', 'H']
     i = 0
     
@@ -1416,19 +1418,19 @@ def plot_times_bfs_sampling(graph_list,results,sample_size_index,ss,experiment,e
     # Add labels, title, and legend
     ax.set_yscale('log')
  
-    ax.set_xlabel('Graphs',fontsize=14)
-    ax.set_ylabel('Time (seconds)',fontsize=14)
+    ax.set_xlabel('Graphs',fontsize=20)
+    ax.set_ylabel('Time (seconds)',fontsize=20)
         
     ax.tick_params(labelsize=12)
 
-    ax.set_title('BFS and Sampling Times for non-uniform sampling on '+experiments[experiment]+' ('+str(ss)+' samples)',fontsize=16)
+    ax.set_title('BFS and Sampling Times for non-uniform sampling on '+experiments[experiment],fontsize=20)
     ax.grid(True, which='both', linestyle=':', linewidth=0.4, alpha=0.7)
 
     ax.set_xticks(x)
-    ax.set_xticklabels([simplified_map[graph_name_map[g]] for g in graph_list],fontsize=12)
+    ax.set_xticklabels([simplified_map[graph_name_map[g]] for g in graph_list],fontsize=20)
     ax.legend(fontsize=12)
 
     plt.tight_layout()
-    plt.savefig("bar_plot_times_"+experiment+".pdf")
+    plt.savefig("bar_plot_times_"+experiment+".pdf",dpi = 300)
 
     

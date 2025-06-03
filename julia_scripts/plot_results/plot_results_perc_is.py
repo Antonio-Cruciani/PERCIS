@@ -5,7 +5,7 @@ lg.basicConfig(format="%(levelname)s:%(name)s:%(message)s", level=lg.INFO)
 ss_vc_rho = [1,2,3,4,5]
 runs = 10
 
-experiments = {"rnd_init":"Random Initiators","spread":"Influence Spreading","comp":"Infected Component","unif":"Uniform P. States","real":"Real-World"}
+experiments = {"rnd_init":"RI","spread":"IS","comp":"IC","unif":"UN","real":"LA"}
 
 
 # Upper bound on sample size Experiments
