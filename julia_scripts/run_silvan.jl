@@ -58,7 +58,8 @@ end
 epsilon_list = [0.0001]
 ss_save = [6]
 delta = 0.05
-runs = 10
+#runs = 10
+runs = 2
 graphs_path = "../../percolation_centrality/graphs/"
 #graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/graphs/"
 
