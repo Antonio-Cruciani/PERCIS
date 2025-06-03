@@ -64,8 +64,10 @@ delta = 0.05
 runs = 10
 #graphs_path = "../../../percolation_centrality_via_non_uniform_sampling/julia_scripts/graphs/"
 #percolation_path = "../../../percolation_centrality_via_non_uniform_sampling/julia_scripts/percolation_states/"
-graphs_path = "../../../percolation_centrality/graphs/"
-percolation_path = "../../../percolation_centrality/percolation_states/"
+#graphs_path = "../../../percolation_centrality/graphs/"
+#percolation_path = "../../../percolation_centrality/percolation_states/"
+graphs_path = "../../percolation_centrality/graphs/"
+percolation_path = "../../percolation_centrality/percolation_states/"
 #graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/components/"
 #percolation_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/percolation_states/"
 #graphs_path = "graphs/"
@@ -75,11 +77,12 @@ sampling_rate_ = 0.0
 tn = 64
 directed = false
 output = ""
-
+#=
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 #datasets = ["10_flickr.txt"]
 @info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
 @info("Running Experiments for Random Initiator Experiment")
+=#
 # Undirected
 # Non Uniform 
 #=
@@ -186,6 +189,7 @@ for eps in epsilon_list
     global j+=1
 end
 =#
+#=
 global j = 1
 for eps in epsilon_list
     for ds in datasets
@@ -239,6 +243,7 @@ end
 # Directed
 
 datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
+=#
 #datasets = ["08_web_berkstan.txt"]
 #=
 global j = 1
@@ -345,7 +350,7 @@ for eps in epsilon_list
 end
 =#
 
-
+#=
 global j = 1
 for eps in epsilon_list
     for ds in datasets
@@ -403,6 +408,7 @@ end
 
 
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
+=#
 #datasets = ["10_flickr.txt"]
 #=
 global j = 1
@@ -508,7 +514,7 @@ for eps in epsilon_list
     global j+=1
 end
 =#
-
+#=
 global j = 1
 for eps in epsilon_list
     for ds in datasets
@@ -561,6 +567,7 @@ end
 # Directed
 global  j = 1
 datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
+=#
 #datasets = ["08_web_berkstan.txt"]
 #datasets = ["14_p2p_gnutella31.txt"]
 
@@ -669,6 +676,7 @@ for eps in epsilon_list
     global j+=1
 end
 =#
+#=
 global j = 1
 for eps in epsilon_list
     for ds in datasets
@@ -728,6 +736,7 @@ end
 global j=1
 graphs_path = "../../../percolation_centrality/components/"
 datasets = ["01_musae_facebook_edges_lcc_in_50.txt","02_email_enron_lcc_in_50.txt","03_ca_astroph_lcc_in_50.txt"]
+=#
 #datasets = ["10_flickr.txt"]
 
 #=
@@ -833,7 +842,7 @@ for eps in epsilon_list
     global j+=1
 end
 =#
-
+#=
 global j = 1
 for eps in epsilon_list
     for ds in datasets
@@ -892,6 +901,7 @@ end
 
 global  j=1 
 datasets = ["15_cit_hepph_lcc_in_50.txt" ,"14_p2p_gnutella31_lcc_in_50.txt","11_soc_epinions_lcc_in_50.txt","12_soc_slashdot_lcc_in_50.txt","04_web_notredame_lcc_in_50.txt","06_web_google_lcc_in_50.txt"]
+=#
 #datasets = ["08_web_berkstan_lcc_in_50.txt"]
 #=
 for eps in epsilon_list
@@ -994,7 +1004,7 @@ for eps in epsilon_list
     global j+=1
 end
 =#
-
+#=
 global j = 1
 for eps in epsilon_list
     for ds in datasets
@@ -1055,7 +1065,7 @@ graphs_path = "../../../percolation_centrality/graphs/"
 global j=1
 
 datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
-
+=#
 #=
 for eps in epsilon_list
     for ds in datasets
@@ -1159,6 +1169,7 @@ for eps in epsilon_list
     global j+=1
 end
 =#
+#=
 global j = 1
 for eps in epsilon_list
     for ds in datasets
@@ -1217,6 +1228,7 @@ end
 
 global  j=1 
 datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
+=#
 #datasets = ["08_web_berkstan.txt"]
 #=
 for eps in epsilon_list
@@ -1276,7 +1288,8 @@ for eps in epsilon_list
         gf = graphs_path*ds
         create_folder(ds_name)
         ps = percolation_path*ds_name*".txt"
-        outpath = "../julia_scripts/scores/"*ds_name*"/"
+        outpath = "../julia_scridatasets = ["25_combined_edges.txt","26_combined_edges.txt","27_guncontrol_edges.txt","28_guncontrol_edges.txt"]
+pts/scores/"*ds_name*"/"
         check_file_existence(gf)
         check_file_existence(ps)
         @info("Input Graph Path: $gf")
@@ -1319,7 +1332,7 @@ for eps in epsilon_list
     global j+=1
 end
 =#
-
+#=
 global j = 1
 for eps in epsilon_list
     for ds in datasets
@@ -1375,7 +1388,7 @@ end
 @info("Running Experiments for Real-World Instances Experiment")
 
 datasets = ["24_uselections.txt","23_twitter_pol.txt","22_obamacare.txt","21_brexit.txt","20_abortion.txt"]
-
+=#
 # Undirected
 # Non Uniform 
 
@@ -1485,6 +1498,7 @@ for eps in epsilon_list
     global j+=1
 end
 =#
+#=
 
 global j = 1
 for eps in epsilon_list
@@ -1541,6 +1555,12 @@ end
 datasets = [
 "youtube_10000_edges.txt" 
 ]
+=#
+
+epsilon_list = [0.0001]
+
+ss_save = [6]
+datasets = ["25_combined_edges.txt","26_combined_edges.txt","27_guncontrol_edges.txt","28_guncontrol_edges.txt"]
 
 
 global j = 1
@@ -1594,7 +1614,7 @@ for eps in epsilon_list
     end
     global j+=1
 end
-
+#=
 epsilon_list = [0.05,0.01,0.005,0.001,0.0005]
 
 ss_save = [1,2,3,4,5]
@@ -1700,3 +1720,4 @@ for eps in epsilon_list
     end
     global j+=1
 end
+=#
