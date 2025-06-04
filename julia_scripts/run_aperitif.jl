@@ -1236,6 +1236,8 @@ epsilon_list = [0.0001]
 
 ss_save = [6]
 datasets = ["25_combined_edges.txt","27_guncontrol_edges.txt","29_youtube_edges.txt"]
+global j = 1
+
 for eps in epsilon_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_unif"
