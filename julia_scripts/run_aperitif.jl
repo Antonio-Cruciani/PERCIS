@@ -1230,7 +1230,12 @@ global  j=1
 datasets = ["15_cit_hepph.txt" ,"14_p2p_gnutella31.txt","11_soc_epinions.txt","12_soc_slashdot.txt","04_web_notredame.txt","06_web_google.txt"]
 =#
 #datasets = ["08_web_berkstan.txt"]
-#=
+runs = 2
+
+epsilon_list = [0.0001]
+
+ss_save = [6]
+datasets = ["25_combined_edges.txt","27_guncontrol_edges.txt","29_youtube_edges.txt"]
 for eps in epsilon_list
     for ds in datasets
         ds_name = string(split(ds,".txt")[1])*"_unif"
@@ -1280,6 +1285,7 @@ for eps in epsilon_list
     global j+=1
 end
 
+#=
 
 global j = 1
 for eps in epsilon_list
@@ -1561,6 +1567,7 @@ runs = 2
 epsilon_list = [0.0001]
 
 ss_save = [6]
+#=
 datasets = ["29_youtube_edges.txt"]
 
 
@@ -1615,7 +1622,7 @@ for eps in epsilon_list
     end
     global j+=1
 end
-#=
+
 epsilon_list = [0.05,0.01,0.005,0.001,0.0005]
 
 ss_save = [1,2,3,4,5]

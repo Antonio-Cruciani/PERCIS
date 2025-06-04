@@ -800,8 +800,8 @@ def plot_top_k_values_betweenness_percolation_dep(graph_list, results, k, ss, ex
     plt.savefig("bc_pc" + experiment + ".pdf")
 
 
-def plot_top_k_values_betweenness_percolation(graph_list,results,k,ss,experiment,experiments,graph_name_map):
-    fig, ax = plt.subplots(figsize=(3.5, 2.8), dpi=150) 
+def plot_top_k_values_betweenness_percolation(graph_list,results,k,ss,experiment,experiments,graph_name_map,graph_name_map_2):
+    fig, ax = plt.subplots(figsize=(3.5, 2.8), dpi=300) 
     #fig, ax = plt.subplots(figsize=(3.5, 2.8), dpi=150, constrained_layout=True)  # More robust layout
     markers = ['o', 's', '^', 'D', 'v', 'P', '*', 'X', '<', '>', 'H']
     colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', 
@@ -851,9 +851,9 @@ def plot_top_k_values_betweenness_percolation(graph_list,results,k,ss,experiment
 
     #ax.legend()
     ax.grid(True, which='both', linestyle=':', linewidth=0.4, alpha=0.7)
-    ax.set_title("comparis "+experiments[experiment])
+    ax.set_title("BC vs PC - "+graph_name_map_2[graph_name_map[graph_list[0]]])
     plt.tight_layout()
-    plt.savefig("bc_pc"+experiment+".png",dpi=500)
+    plt.savefig("bc_pc_"+experiment+".png",dpi=500)
 
 
 
