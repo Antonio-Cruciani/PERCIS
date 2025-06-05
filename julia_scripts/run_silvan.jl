@@ -59,7 +59,7 @@ epsilon_list = [0.0001]
 ss_save = [6]
 delta = 0.05
 #runs = 10
-runs = 2
+runs = 1
 graphs_path = "../../percolation_centrality/graphs/"
 #graphs_path = "/home/antonio/Desktop/RES_PERCOLATION/EXACT/graphs/"
 
@@ -73,7 +73,7 @@ output = ""
 @info("Running Experiments for SILVAN on Labeled Graphs")
 
 
-datasets = ["29_youtube_edges.txt"]
+datasets = ["32_youtube_edges.txt"]
 
 
 
@@ -105,7 +105,7 @@ for eps in epsilon_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 10 -s $sampling_rate_ -o $op $eps $delta $gf`
+            args = `-d -v 10 -s $sampling_rate_ -o $op $eps $delta $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")

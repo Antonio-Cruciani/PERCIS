@@ -1565,7 +1565,7 @@ datasets = [
 "youtube_10000_edges.txt" 
 ]
 =#
-runs = 2
+runs = 1
 
 epsilon_list = [0.0001]
 
@@ -1605,7 +1605,7 @@ for eps in epsilon_list
             
             #println(ps)
             #//output = read(`./aperitif -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`, String)
-            args = `-v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
+            args = `-d -v 10 -s $sampling_rate_ -o $op -t $tn $eps $delta $ps $gf`
             #args = `-u -v 1 -g $ss -o $op -t $tn $epsilon $delta $ps $gf`
             @info("----------------------------------------------------------------------------------")
             @info("Run Number $i")

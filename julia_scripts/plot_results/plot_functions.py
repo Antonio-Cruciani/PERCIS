@@ -842,8 +842,8 @@ def plot_top_k_values_betweenness_percolation(graph_list,results,k,ss,experiment
     ax.plot([min_val, max_val], [min_val, max_val], 'k--', label='Equal Scores')
     ax.set_yscale('log')
     ax.set_xscale('log')
-    ax.set_xlim(0.0001,1)
-    ax.set_ylim(0.0001,1)
+    #ax.set_xlim(0.0001,1)
+    #ax.set_ylim(0.0001,1)
 
     ax.set_xlabel(r'Percolation Centrality',fontsize=10)
     ax.set_ylabel("Betweenness Centrality",fontsize=10)
