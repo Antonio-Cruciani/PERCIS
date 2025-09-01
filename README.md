@@ -16,7 +16,8 @@ To run the scripts you need to install ``Julia``.
 ### Installing Julia
 Download the ``julia`` lastest version at: https://julialang.org/
 
-
+### Downloading the datasets
+Please download the datasets using the [link](https://mega.nz/file/ws4xSJLJ#eCTj57leI_3HgxCTlrM1kl056sWLLYhmfN5okj1erSU) provided in the `download_datasets.txt` file and unzip it in this home folder.
 
 ### Running PercIS and reproduce the experiments ###
 
