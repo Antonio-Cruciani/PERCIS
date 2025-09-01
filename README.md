@@ -1,4 +1,4 @@
-# Estimating Percolation Centrality with Progressive Sampling and Non-uniform Sampling #
+# Fast Percolation Centrality Approximation with Importance Sampling #
 
 This repository contains the implementation of our approximation algorithm PercIS, supporting our paper ["Fast Percolation Centrality Approximation
 with Importance Sampling"]().
