@@ -1,7 +1,7 @@
 # Fast Percolation Centrality Approximation with Importance Sampling #
 
 This repository contains the implementation of our approximation algorithm PercIS, supporting our paper ["Fast Percolation Centrality Approximation
-with Importance Sampling"]().
+with Importance Sampling"](https://arxiv.org/abs/2509.11454).
 
 PercIS is an algorithm to compute approximations of the Percolation Centralities from graphs with non-uniform sampling. More details can be found in the paper, 
 
