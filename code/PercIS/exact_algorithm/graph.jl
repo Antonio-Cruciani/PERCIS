@@ -296,3 +296,35 @@ function ramp(x::Float64,y::Float64)::Float64
         return 0
     end
 end
+
+
+
+
+
+
+@inline function compute_d_max_source(n::Int64, X::Array{Float64})
+    start_time::Float64 = time()
+    @info("Computing d_v")
+    n == length(X) ||
+        throw(DimensionMismatch("n must equal length(X)"))
+    n >= 3 ||
+        throw(ArgumentError("At least three vertices are required"))
+    all(x -> isfinite(x) && 0.0 <= x <= 1.0, X) ||
+        throw(ArgumentError("Percolation states must be finite and in [0,1]"))
+    count(x -> x > 0.0, X) >= 2 ||
+        throw(ArgumentError("At least two positive percolation states are required"))
+
+    # Compute sums excluding each vertex without subtracting from the total.
+    dv = Vector{Float64}(undef, n)
+    factor = (n - 1) / (n - 2)
+    total = sum(X)
+    for v in 1:n
+        dv[v] = factor * (1.0 + X[v] / (total - X[v]))
+        isfinite(dv[v]) ||
+            throw(OverflowError("d_v exceeds the Float64 range"))
+    end
+
+    end_time::Float64 = time()-start_time
+    @info("minimum d_v = "*string(minimum(dv))*" maximum d_v = "*string(maximum(dv))*" computed in "*string(end_time)*" seconds")
+    return dv, maximum(dv)
+end
