@@ -20,8 +20,8 @@ separator = "\t"
 for ds in datasets
     gf = graphs_path*ds
     g = load_graph(gf,directed,separator)
-    ds_name = string(split(ds,".txt")[1]) * ps
     for ps in perc_state_list
+        ds_name = string(split(ds,".txt")[1]) * ps
         x = read_percolation(percolation_path*ds_name*".txt")
         @info("Computing Ground Truth percolation centrality for "*ds_name)
         flush(stderr)
