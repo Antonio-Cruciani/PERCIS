@@ -1,0 +1,27 @@
+{
+  "source": "/Users/antonio/Documents/GIT_CODE/PERCIS/code/PercIS/percis",
+  "files": {
+    ".gitignore": "93595b9cac6ee6d1a2560bf570a929a1a02e962e9cc4910c197ebdba99d579c8",
+    ".vscode/settings.json": "b76222f8e61c02a06c6067325cb2e8cd494e288a97027f88806535ec2217c6c3",
+    "LICENSE": "8a897e09551151a6d8abad699c4db92f47c3204cef867f5c692e9c3db3673483",
+    "Makefile": "ed2e98fe4a83b76cdec705e2057db914d8c6ba3d93510dca07588980256a76ed",
+    "include/FixedSampleSize.h": "bf6161a8246af4c462774ff59b081aa54e37d63cd4d970e4fa44d188ec091529",
+    "include/Graph.h": "2e934baf6793fdc584859210e8bf9f871b286bfc1ae4055f251baac2ab8a5d76",
+    "include/NonUniformSampler.h": "560e19a1f25c981ee9387c64a69a02f0bda52257362e2410b3370879d1bb2694",
+    "include/Probabilistic.h": "7419379267284f48d0eb9c35a2f01e2046bb79b0fe492ae1b87ca3cbc9c0c78f",
+    "include/Rand_gen.h": "dc0afa446b338f96dfab2a12514eaa81248c1230318b5dcc0ad4951069f67781",
+    "include/Ranking_list.h": "5e1f9c877d688dc96785c0d4993195b3cb9fc26d1dd577bc2f3ac50c08fe872b",
+    "include/SamplingPreprocessing.h": "91dfea17925ba498f4657abec2776d195e25666dc67d94a0e94799a635ecf0cf",
+    "include/Sp_sampler.h": "5d2262c9d41c7eb45c533e677d8a70c628dc354763d7fb0ea4740e1365c49789",
+    "include/utilities.h": "073735105dc5377d01b86bb237d9374438064869a538c8fc2ac4d12034074d61",
+    "main.cpp": "09d8d3b110c02fa53f2dc52a91424564fbae1a8e6301c49819c5db14112d8805",
+    "percis": "2dbad0c9d60f6c5d5593727e702b45966155e1d74f65b345fa15124ffe83dcf8",
+    "src/Graph.cpp": "b9135afab4eb5d5ae2ec99448a0d04b22c2ee01a5e13e864fc9aff9bbba8e10b",
+    "src/NonUniformSampler.cpp": "c35379a11710e842bfc4d5f6bad896e4cf7687f550c420d1ecf6a3ef7a21733e",
+    "src/Probabilistic.cpp": "919270e43ab65bbf05fade164129d95d73c8d48f31ef4bb432c2417d81019917",
+    "src/Rand_gen.cpp": "9a6d95a65180f7536478ad44f85292c1ca518191d2525522f7d4b5aff2f4ae19",
+    "src/Ranking_list.cpp": "25f102312d5d35c179220c44544c2929fa1ea815598dd6d6b77bacd1ae3e10da",
+    "src/Sp_sampler.cpp": "e74856aaa0b87b5d23812369195734437585e43026cfa5b4b99d157453c03db0",
+    "src/utilities.cpp": "dbfd67c58bfa6b08de1b87c54d701546e121960e17eb43d759e2c57f21f5a10e"
+  }
+}

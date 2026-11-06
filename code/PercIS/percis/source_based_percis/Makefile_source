@@ -1,0 +1,63 @@
+# The source-only executable is independent of the preserved legacy entry point.
+ifeq ($(origin CXX),default)
+CXX := c++
+endif
+CXXFLAGS ?= -O3 -std=c++17 -Wall -Wextra -Wpedantic
+CPPFLAGS += -Iinclude
+
+# Boost.Multiprecision is header-only. Homebrew is not on Clang's default path.
+BOOST_PREFIX ?= $(firstword $(foreach p,/opt/homebrew /usr/local,$(if $(wildcard $(p)/include/boost/multiprecision/cpp_int.hpp),$(p))))
+ifneq ($(BOOST_PREFIX),)
+CPPFLAGS += -I$(BOOST_PREFIX)/include
+endif
+ifeq ($(shell uname -s),Darwin)
+CPPFLAGS += -isysroot $(shell xcrun --show-sdk-path)
+endif
+
+# Portable serial build by default. Example: make CXX=g++-16 OPENMP=1
+ifeq ($(OPENMP),1)
+CXXFLAGS += -fopenmp
+LDFLAGS += -fopenmp
+endif
+
+SOURCE_CPP := src/SourceGraph.cpp src/SourceSampler.cpp src/SourceEstimate.cpp \
+              src/SourceBounds.cpp src/SourceStructure.cpp
+SOURCE_HEADERS := include/SourceOnly.h include/SourceBounds.h
+LEGACY_CPP := src/Graph.cpp src/NonUniformSampler.cpp src/Probabilistic.cpp \
+              src/Rand_gen.cpp src/Ranking_list.cpp src/Sp_sampler.cpp src/utilities.cpp
+
+.PHONY: all build test test-exact clean legacy
+all: percis-source
+build: all
+
+percis-source: source_main.cpp $(SOURCE_CPP) $(SOURCE_HEADERS) Makefile
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) source_main.cpp $(SOURCE_CPP) $(LDFLAGS) -o $@
+
+tests/test_sampler: tests/test_sampler.cpp $(SOURCE_CPP) $(SOURCE_HEADERS) Makefile
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) tests/test_sampler.cpp $(SOURCE_CPP) $(LDFLAGS) -o $@
+
+tests/test_bounds: tests/test_bounds.cpp src/SourceBounds.cpp include/SourceBounds.h Makefile
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) tests/test_bounds.cpp src/SourceBounds.cpp $(LDFLAGS) -o $@
+
+tests/test_structure: tests/test_structure.cpp src/SourceStructure.cpp include/SourceOnly.h Makefile
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) tests/test_structure.cpp src/SourceStructure.cpp $(LDFLAGS) -o $@
+
+test: percis-source tests/test_sampler tests/test_bounds tests/test_structure
+	./tests/test_sampler
+	./tests/test_bounds
+	./tests/test_structure
+	python3 tests/test_source.py ./percis-source
+
+# The exact reference uses only Julia's standard libraries; no Pkg.add needed.
+JULIA ?= julia
+test-exact: percis-source
+	$(JULIA) --startup-file=no --threads 4 tests/test_exact_source.jl
+	JULIA=$(JULIA) python3 tests/test_exact_cli.py ./percis-source
+
+# Requires an OpenMP compiler; original sources are retained for comparison only.
+legacy:
+	$(CXX) $(CPPFLAGS) -O3 -std=c++17 -fopenmp main.cpp $(LEGACY_CPP) -o percis-legacy
+
+clean:
+	rm -f percis-source percis-legacy tests/test_sampler tests/test_bounds tests/test_structure
+
