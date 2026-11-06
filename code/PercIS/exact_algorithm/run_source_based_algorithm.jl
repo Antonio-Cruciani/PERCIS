@@ -8,7 +8,7 @@ output_path = ""
 # Insert the name of the dataset header
 # example: datasets = ["name.txt"]
 
-datasets = ["01_musae_facebook_edges_e_log.txt"]
+datasets = ["01_musae_facebook_edges.txt","02_email_enron.txt","03_ca_astroph.txt"]
 # If undirected otherwise set it to true
 directed = false
 
